@@ -57,6 +57,7 @@ set(ASSIMP_BUILD_OBJ_IMPORTER TRUE)
 set(ASSIMP_BUILD_OFF_IMPORTER TRUE)
 set(ASSIMP_BUILD_PLY_IMPORTER TRUE)
 # Not really sure why it is option here. But `set` doesn't work for the first time `cmake ..` runs.
+add_definitions(-DASSIMP_BUILD_NO_EXPORT)
 option(ASSIMP_BUILD_ALL_IMPORTERS_BY_DEFAULT OFF)
 option(ASSIMP_NO_EXPORT ON)
 option(ASSIMP_BUILD_ASSIMP_TOOLS OFF)
@@ -64,11 +65,6 @@ option(ASSIMP_QT_VIEWER OFF)
 option(ASSIMP_BUILD_SAMPLES OFF)
 add_subdirectory(lib/assimp EXCLUDE_FROM_ALL)
 include_directories(lib/assimp/include)
-
-# Include json
-check_library("json")
-add_subdirectory(lib/json EXCLUDE_FROM_ALL)
-include_directories(lib/json/include)
 
 # Include stb
 # e.g. #include <stb_image.h>
@@ -88,7 +84,7 @@ include_directories(src/extern)
 file(GLOB_RECURSE nash_sources ${intern_dir}/*.cpp ${extern_dir}/*.h)
 set(nash ${nash_sources})
 add_library(nash STATIC ${nash})
-target_link_libraries(nash nanogui assimp nlohmann_json::nlohmann_json ${NANOGUI_EXTRA_LIBS})
+target_link_libraries(nash nanogui assimp ${NANOGUI_EXTRA_LIBS})
 
 # Compile all the executable files
 if(NASH_BUILD_TEST)
