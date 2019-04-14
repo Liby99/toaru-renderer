@@ -1,0 +1,16 @@
+{
+  "name": "teapot_scene",
+  "root": {
+    "type": "empty",
+    "children": [
+      {
+        "type": "assimp_object",
+        "file": "model/teapot.obj"
+      },
+      {
+        "type": "plane",
+        "scale": 5
+      }
+    ]
+  }
+}

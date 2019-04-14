@@ -1,0 +1,21 @@
+build/
+pdf/
+
+# System files
+.DS_Store
+
+# Latex related files
+doc/paper/*.aux
+doc/paper/*.fdb_latexmk
+doc/paper/*.fls
+doc/paper/*.log
+doc/paper/*.pdf
+doc/paper/*.gz
+
+# Clion related
+cmake-build-debug/
+.idea/
+
+# VS/VS-Code related
+.vs/
+.vscode

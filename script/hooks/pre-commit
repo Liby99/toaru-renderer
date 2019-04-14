@@ -1,0 +1,23 @@
+#!/bin/bash
+
+check_prefix=true
+skip_file=false
+for file in `git diff-index --cached --name-status HEAD` ; do
+  # echo "looping file ${file} ${skip_file} ${check_prefix}"
+  if [ "${check_prefix}" == true ] ; then
+    if [[ "${file}" == "D" ]] ; then
+      skip_file=true
+    fi
+    check_prefix=false
+  else
+    if [ "${skip_file}" == false ] ; then
+      if [[ ${file} == *.cpp ]] || [[ ${file} == *.h ]] ; then
+        echo "Formatting file ${file}"
+        clang-format -i ${file}
+        git add ${file}
+      fi
+    fi
+    skip_file=false
+    check_prefix=true
+  fi
+done
