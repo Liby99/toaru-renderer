@@ -1,0 +1,9 @@
+[submodule "lib/nanogui"]
+	path = lib/nanogui
+	url = https://github.com/wjakob/nanogui.git
+[submodule "lib/assimp"]
+	path = lib/assimp
+	url = https://github.com/assimp/assimp.git
+[submodule "lib/stb"]
+	path = lib/stb
+	url = https://github.com/nothings/stb
