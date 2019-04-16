@@ -8,12 +8,14 @@
 
 using namespace Eigen;
 
-typedef Eigen::Matrix<uint32_t, 4, 1> Vector4u;
-typedef Eigen::Matrix<uint32_t, 3, 1> Vector3u;
-typedef Eigen::Matrix<uint32_t, 2, 1> Vector2u;
-typedef Eigen::Matrix<uint32_t, Eigen::Dynamic, Eigen::Dynamic> MatrixXu;
-
 namespace nash {
+  using Eigen::Matrix;
+
+  typedef Eigen::Matrix<uint32_t, 4, 1> Vector4u;
+  typedef Eigen::Matrix<uint32_t, 3, 1> Vector3u;
+  typedef Eigen::Matrix<uint32_t, 2, 1> Vector2u;
+  typedef Eigen::Matrix<uint32_t, Eigen::Dynamic, Eigen::Dynamic> MatrixXu;
+
   class Math {
   public:
     static Vector2f normalCartToPolar(const Vector3f &pos);

@@ -11,7 +11,7 @@ namespace nash {
     PointCloud(const std::vector<Vector3f> &points);
     virtual void render();
 
-  private:
+  protected:
     MatrixXu indices;
     MatrixXf points;
   };

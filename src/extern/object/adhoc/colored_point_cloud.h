@@ -9,7 +9,7 @@ namespace nash {
     ColoredPointCloud(const std::vector<Vector3f> &ps, const std::vector<Vector4u> &cs);
     virtual void render();
 
-  private:
+  protected:
     MatrixXf colors;
   };
 }

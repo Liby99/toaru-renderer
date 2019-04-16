@@ -5,7 +5,18 @@
 #include "physics/core/field.h"
 
 namespace nash {
-  class PhysicsSystem : Object {
+  class PhysicsSystem : public Object {
+  public:
+    PhysicsSystem();
+
+    void addField(const Field &field);
+    void removeField(unsigned int i);
+
+    virtual void start();
+    virtual void update();
+    virtual void render();
+
+  protected:
     std::vector<Field *> fields;
   };
 }
