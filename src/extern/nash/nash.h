@@ -38,3 +38,5 @@
 #include "adhoc/script/toggle.h"
 #include "adhoc/script/third_person_camera.h"
 #include "adhoc/script/first_person_camera.h"
+#include "physics/core/field.h"
+#include "physics/core/physics_system.h"
