@@ -1,8 +1,8 @@
 #ifndef PHYSICS_SYSTEM_H
 #define PHYSICS_SYSTEM_H
 
-#include "object/object.h"
-#include "physics/core/field.h"
+#include "particle.h"
+#include "field.h"
 
 namespace nash {
   class PhysicsSystem : public Object {
@@ -17,6 +17,7 @@ namespace nash {
     virtual void render();
 
   protected:
+    std::vector<Particle *> particles;
     std::vector<Field *> fields;
   };
 }

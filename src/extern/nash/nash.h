@@ -46,3 +46,4 @@
 #include "physics/particle/point_particle.h"
 #include "physics/particle/tetrahedron_particle.h"
 #include "physics/particle/triangle_particle.h"
+#include "physics/adhoc/emitter/emitter.h"

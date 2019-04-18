@@ -16,7 +16,7 @@ namespace nash {
     Gravity(float g);
     Gravity(Vector3f direction, float g);
 
-    virtual void applyForceTo(Particle &p);
+    virtual void applyForceTo(Particle &particle);
   };
 }
 

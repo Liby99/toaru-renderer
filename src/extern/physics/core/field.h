@@ -6,7 +6,7 @@
 namespace nash {
   class Field {
   public:
-    virtual Vector3f getForceAt(Vector3f position);
+    virtual void applyForceTo(Particle &particle);
   };
 }
 
