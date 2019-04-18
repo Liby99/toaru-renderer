@@ -5,6 +5,7 @@
 
 namespace nash {
   class ForwardEulerIntegrator : public Integrator {
+  public:
     virtual void integrate(PhysicsSystem &system, float timestep);
   };
 }

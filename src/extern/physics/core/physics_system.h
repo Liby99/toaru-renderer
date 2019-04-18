@@ -1,7 +1,7 @@
 #ifndef PHYSICS_SYSTEM_H
 #define PHYSICS_SYSTEM_H
 
-#include "particle.h"
+#include "point.h"
 #include "field.h"
 
 namespace nash {
@@ -12,12 +12,12 @@ namespace nash {
     void addField(const Field &field);
     void removeField(unsigned int i);
 
-    virtual void start();
-    virtual void update();
-    virtual void render();
+    int getNumDOFs();
+    void fetchPositions(std::vector<Vector3f> &positions);
+    void fetchVelocities(std::vector<Vector3f> &velocities);
 
   protected:
-    std::vector<Particle *> particles;
+    std::vector<Point *> points;
     std::vector<Field *> fields;
   };
 }

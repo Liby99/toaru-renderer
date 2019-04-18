@@ -5,6 +5,7 @@
 
 namespace nash {
   class Integrator {
+  public:
     virtual void integrate(PhysicsSystem &system, float timestep);
   };
 }
