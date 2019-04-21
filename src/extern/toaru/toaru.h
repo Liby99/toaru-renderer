@@ -4,4 +4,5 @@
 #include "core/canvas.h"
 #include "core/init.h"
 #include "core/scene.h"
+#include "utility/transform.h"
 #include "utility/math.h"
