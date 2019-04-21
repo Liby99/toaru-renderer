@@ -54,5 +54,3 @@ add_copy_res_function(cubemap "image/cubemap" "/posx.jpg" "/negx.jpg" "/posy.jpg
 
 # Functions to copy model, coef and scene
 add_copy_res_function(model "model")
-add_copy_res_function(coefs "coefs")
-add_copy_res_function(scene "scene")

@@ -7,30 +7,7 @@ Entity::Entity() : initialized(false) {
   // Do nothing
 }
 
-void Entity::init(Context &context) {
-  // Change the initialized state
-  initialized = true;
-
-  // First initialize components
-  for (auto it = components.begin(); it != components.end(); it++) {
-    auto comp = it->second;
-    if (comp->isEnabled()) {
-      comp->setEnv(context, *this);
-      comp->tryInit();
-    }
-  }
-
-  // Then initialize children
-  for (int i = 0; i < children.size(); i++) {
-    children[i]->init(context);
-  }
-}
-
 void Entity::update(Context &context, Matrix4f &world) {
-  // Initialize if not initialized
-  if (!initialized)
-    init(context);
-
   // First set the world matrix of our own transform
   transform.world = world;
   Matrix4f currTransf = transform.getTransform();
@@ -39,8 +16,8 @@ void Entity::update(Context &context, Matrix4f &world) {
   for (auto it = components.begin(); it != components.end(); it++) {
     auto comp = it->second;
     if (comp->isEnabled()) {
-      comp->tryInit();
       comp->setEnv(context, *this);
+      comp->tryInit();
       comp->update();
     }
   }

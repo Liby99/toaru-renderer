@@ -18,7 +18,6 @@ namespace toaru {
 
     Entity();
 
-    void init(Context &context);
     void update(Context &context, Matrix4f &world);
     void render(Context &context);
 
