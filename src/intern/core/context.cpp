@@ -109,6 +109,18 @@ Vector2f Context::getScrollMovement() {
   return newScrollPosition - scrollPosition;
 }
 
+Matrix4f &Context::getMainCameraView() {
+  return view;
+}
+
+Matrix4f &Context::getMainCameraProj() {
+  return proj;
+}
+
+Matrix4f &Context::getMainCameraViewProj() {
+  return viewProj;
+}
+
 void Context::resetCursor() {
   glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_NORMAL);
 }
@@ -127,6 +139,12 @@ void Context::setCursorPos(int x, int y) {
 
 void Context::centerCursorPos() {
   setCursorPos(windowWidth / 2, windowHeight / 2);
+}
+
+void Context::setMainCameraMatrices(Matrix4f &view, Matrix4f &proj) {
+  this->view = view;
+  this->proj = proj;
+  this->viewProj = proj * view;
 }
 
 void Context::beforeDraw() {}

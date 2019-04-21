@@ -47,8 +47,10 @@ Matrix4f Camera::getView() {
   y.normalize();
   z.normalize();
   Matrix4f mat;
-  mat << x[0], x[1], x[2], -x.dot(position), y[0], y[1], y[2], -y.dot(position), z[0], z[1], z[2],
-      -z.dot(position), 0, 0, 0, 1;
+  mat << x[0], x[1], x[2], -x.dot(position),
+         y[0], y[1], y[2], -y.dot(position),
+         z[0], z[1], z[2], -z.dot(position),
+         0, 0, 0, 1;
   return mat;
 }
 

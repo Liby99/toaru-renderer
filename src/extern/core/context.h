@@ -32,6 +32,9 @@ namespace toaru {
     Vector2i getCursorMovement();
     const Vector2f &getScrollPosition();
     Vector2f getScrollMovement();
+    Matrix4f &getMainCameraView();
+    Matrix4f &getMainCameraProj();
+    Matrix4f &getMainCameraViewProj();
 
     // Component side operators
     void resetCursor();
@@ -39,7 +42,7 @@ namespace toaru {
     void disableCursor();
     void setCursorPos(int x, int y);
     void centerCursorPos();
-    void setMainCameraMatrices(Matrix4f view, Matrix4f persp);
+    void setMainCameraMatrices(Matrix4f &view, Matrix4f &proj);
 
     // Controller side
     void beforeDraw();
@@ -65,7 +68,7 @@ namespace toaru {
 
     std::chrono::milliseconds start, curr, elapsedTime, deltaTime;
 
-    Matrix4f view, persp;
+    Matrix4f view, proj, viewProj;
 
     void extractModifiers(int modifiers);
   };
