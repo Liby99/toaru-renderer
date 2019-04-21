@@ -1,6 +1,8 @@
 // clang-format off
 #include "core/viewer.h"
 #include "core/context.h"
+#include "core/entity.h"
+#include "core/component.h"
 #include "core/canvas.h"
 #include "core/init.h"
 #include "core/scene.h"
