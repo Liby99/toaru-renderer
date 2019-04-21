@@ -1,10 +1,10 @@
 # Basic setups
 cmake_minimum_required(VERSION 3.10)
-project(nash)
+project(toaru)
 
 # Options
-option(NASH_BUILD_APP "Building application executables" ON)
-option(NASH_BUILD_TEST "Building test executables" ON)
+option(TOARU_BUILD_APP "Building application executables" ON)
+option(TOARU_BUILD_TEST "Building test executables" ON)
 option(USE_OPEN_MP "Build use open mp" OFF)
 
 # Global setup
@@ -73,27 +73,27 @@ include_directories(lib/stb/)
 
 # Generate single header file using the script
 set(generate_header ${script_dir}/generate_header.py)
-execute_process(COMMAND python3 ${generate_header} nash ${extern_dir})
+execute_process(COMMAND python3 ${generate_header} toaru ${extern_dir})
 set(add_clang_format_ignore ${script_dir}/add_clang_format_ignore.py) # And prepend clang-format off
-execute_process(COMMAND python3 ${add_clang_format_ignore} ${extern_dir}/nash/nash.h)
+execute_process(COMMAND python3 ${add_clang_format_ignore} ${extern_dir}/toaru/toaru.h)
 
 # Set Include Directory to Extern
 include_directories(src/extern)
 
-# Compile all the cpp files and link to `nash` library along with NanoGui
-file(GLOB_RECURSE nash_sources ${intern_dir}/*.cpp ${extern_dir}/*.h)
-set(nash ${nash_sources})
-add_library(nash STATIC ${nash})
-target_link_libraries(nash nanogui assimp ${NANOGUI_EXTRA_LIBS})
+# Compile all the cpp files and link to `toaru` library along with NanoGui
+file(GLOB_RECURSE toaru_sources ${intern_dir}/*.cpp ${extern_dir}/*.h)
+set(toaru ${toaru_sources})
+add_library(toaru STATIC ${toaru})
+target_link_libraries(toaru nanogui assimp ${NANOGUI_EXTRA_LIBS})
 
 # Compile all the executable files
-if(NASH_BUILD_TEST)
+if(TOARU_BUILD_TEST)
   file(GLOB_RECURSE tests test/*.cpp)
   list(FILTER tests EXCLUDE REGEX "deprecated") # Ignore tests containing path `deprecated`
-endif(NASH_BUILD_TEST)
-if(NASH_BUILD_APP)
+endif(TOARU_BUILD_TEST)
+if(TOARU_BUILD_APP)
   file(GLOB_RECURSE apps app/*.cpp)
-endif(NASH_BUILD_APP)
+endif(TOARU_BUILD_APP)
 foreach(exec_source ${tests} ${apps})
   get_filename_component(source_dir ${exec_source} DIRECTORY)
   get_filename_component(source_name ${exec_source} NAME)
@@ -103,6 +103,6 @@ foreach(exec_source ${tests} ${apps})
   get_filename_component(target_name ${target_path} NAME)
   add_executable(${target_name} ${exec_source})
   set_target_properties(${target_name} PROPERTIES RUNTIME_OUTPUT_DIRECTORY ${target_dir})
-  target_link_libraries(${target_name} nash)
+  target_link_libraries(${target_name} toaru)
   include("${target_dir}/CMakeLists.txt" OPTIONAL)
 endforeach()
