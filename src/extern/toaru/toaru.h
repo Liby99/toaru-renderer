@@ -13,6 +13,7 @@
 #include "core/canvas.h"
 #include "core/init.h"
 #include "core/scene.h"
+#include "camera/two_point_camera.h"
 #include "material/lambertian.h"
 #include "utility/path.h"
 #include "utility/transform.h"
