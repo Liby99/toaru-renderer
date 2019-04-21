@@ -1,13 +1,13 @@
 #ifndef TOARU_ENTITY_H
 #define TOARU_ENTITY_H
 
-#include "utility/transform.h"
 #include "context.h"
-#include <vector>
-#include <map>
-#include <string>
-#include <optional>
+#include "utility/transform.h"
 #include <any>
+#include <map>
+#include <optional>
+#include <string>
+#include <vector>
 
 namespace toaru {
   class Component;

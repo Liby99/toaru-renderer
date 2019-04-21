@@ -32,6 +32,103 @@ Context::Context() : keyStatus(512) {
   curr = start;
 }
 
+GLFWwindow *Context::getGLFWWindow() {
+  return window;
+}
+
+int Context::getWindowWidth() {
+  return windowWidth;
+}
+
+int Context::getWindowHeight() {
+  return windowHeight;
+}
+
+int Context::getCanvasWidth() {
+  return canvasWidth;
+}
+
+int Context::getCanvasHeight() {
+  return canvasHeight;
+}
+
+double Context::getDeltaTime() {
+  return deltaTime.count() / 1000.0;
+}
+
+double Context::getElapsedTime() {
+  return elapsedTime.count() / 1000.0;
+}
+
+std::chrono::milliseconds Context::getAbsTime() {
+  return curr;
+}
+
+bool Context::getKey(char key) {
+  switch (key) {
+    case '\t': return keyStatus[GLFW_KEY_TAB];
+    case '\n': return keyStatus[GLFW_KEY_ENTER];
+    default: return keyStatus[toupper(key)];
+  }
+}
+
+bool Context::getDirectionKey(Context::Direction dir) {
+  switch (dir) {
+    case Context::Direction::Up: return keyStatus[GLFW_KEY_UP];
+    case Context::Direction::Down: return keyStatus[GLFW_KEY_DOWN];
+    case Context::Direction::Left: return keyStatus[GLFW_KEY_LEFT];
+    case Context::Direction::Right: return keyStatus[GLFW_KEY_RIGHT];
+  }
+}
+
+bool Context::getMouseLeft() {
+  return leftButtonDown;
+}
+
+bool Context::getMouseRight() {
+  return rightButtonDown;
+}
+
+bool Context::cursorIsInside() {
+  return cursorInside;
+}
+
+const Vector2i &Context::getCursorPosition() {
+  return exactCursorPosition;
+}
+
+Vector2i Context::getCursorMovement() {
+  return newCursorPosition - cursorPosition;
+}
+
+const Vector2f &Context::getScrollPosition() {
+  return scrollPosition;
+}
+
+Vector2f Context::getScrollMovement() {
+  return newScrollPosition - scrollPosition;
+}
+
+void Context::resetCursor() {
+  glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_NORMAL);
+}
+
+void Context::hideCursor() {
+  glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_HIDDEN);
+}
+
+void Context::disableCursor() {
+  glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
+}
+
+void Context::setCursorPos(int x, int y) {
+  glfwSetCursorPos(window, x, y);
+}
+
+void Context::centerCursorPos() {
+  setCursorPos(windowWidth / 2, windowHeight / 2);
+}
+
 void Context::beforeDraw() {}
 
 void Context::afterDraw() {
@@ -51,65 +148,10 @@ void Context::bindGLFWWindow(GLFWwindow *win) {
   glfwGetWindowSize(window, &windowWidth, &windowHeight);
 }
 
-GLFWwindow *Context::getGLFWWindow() { return window; }
-
-int Context::getWindowWidth() { return windowWidth; }
-
-int Context::getWindowHeight() { return windowHeight; }
-
-int Context::getCanvasWidth() {
-  return canvasWidth;
-}
-
-int Context::getCanvasHeight() {
-  return canvasHeight;
-}
-
 void Context::setCanvasSize(int width, int height) {
   this->canvasWidth = width;
   this->canvasHeight = height;
 }
-
-void Context::resetCursor() { glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_NORMAL); }
-
-void Context::hideCursor() { glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_HIDDEN); }
-
-void Context::disableCursor() { glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED); }
-
-void Context::setCursorPos(int x, int y) { glfwSetCursorPos(window, x, y); }
-
-void Context::centerCursorPos() { setCursorPos(windowWidth / 2, windowHeight / 2); }
-
-bool Context::getKey(char key) {
-  switch (key) {
-    case '\t': return keyStatus[GLFW_KEY_TAB];
-    case '\n': return keyStatus[GLFW_KEY_ENTER];
-    default: return keyStatus[toupper(key)];
-  }
-}
-
-bool Context::getDirectionKey(Context::Direction dir) {
-  switch (dir) {
-    case Context::Direction::Up: return keyStatus[GLFW_KEY_UP];
-    case Context::Direction::Down: return keyStatus[GLFW_KEY_DOWN];
-    case Context::Direction::Left: return keyStatus[GLFW_KEY_LEFT];
-    case Context::Direction::Right: return keyStatus[GLFW_KEY_RIGHT];
-  }
-}
-
-bool Context::getMouseLeft() { return leftButtonDown; }
-
-bool Context::getMouseRight() { return rightButtonDown; }
-
-bool Context::cursorIsInside() { return cursorInside; }
-
-const Vector2i &Context::getCursorPosition() { return exactCursorPosition; }
-
-Vector2i Context::getCursorMovement() { return newCursorPosition - cursorPosition; }
-
-const Vector2f &Context::getScrollPosition() { return scrollPosition; }
-
-Vector2f Context::getScrollMovement() { return newScrollPosition - scrollPosition; }
 
 bool Context::keyboardEvent(int key, int scancode, int action, int modifiers) {
 
@@ -158,12 +200,6 @@ bool Context::scrollEvent(const Vector2i &p, const Vector2f &rel) {
   newScrollPosition = scrollPosition + rel;
   return true;
 }
-
-double Context::getDeltaTime() { return deltaTime.count() / 1000.0; }
-
-double Context::getElapsedTime() { return elapsedTime.count() / 1000.0; }
-
-std::chrono::milliseconds Context::getAbsTime() { return curr; }
 
 void Context::extractModifiers(int modifiers) {
   shiftStatus = GLFW_MOD_SHIFT & modifiers;

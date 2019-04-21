@@ -1,8 +1,8 @@
 #ifndef TOARU_CANVAS_H
 #define TOARU_CANVAS_H
 
-#include <nanogui/nanogui.h>
 #include "scene.h"
+#include <nanogui/nanogui.h>
 
 namespace toaru {
   class Canvas : public nanogui::GLCanvas {

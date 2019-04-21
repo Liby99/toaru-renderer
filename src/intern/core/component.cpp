@@ -13,6 +13,17 @@ void Component::update() {}
 
 void Component::render() {}
 
+bool Component::isInitialized() {
+  return initialized;
+}
+
+void Component::tryInit() {
+  if (!initialized) {
+    initialized = true;
+    init();
+  }
+}
+
 bool Component::isEnabled() {
   return enabled;
 }

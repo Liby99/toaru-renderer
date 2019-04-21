@@ -6,4 +6,5 @@ NamespaceIndentation: All
 FixNamespaceComments: false
 AllowShortCaseLabelsOnASingleLine: true
 IndentCaseLabels: true
+AllowShortFunctionsOnASingleLine: Empty
 ---

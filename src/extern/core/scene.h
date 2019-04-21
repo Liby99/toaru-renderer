@@ -9,6 +9,7 @@ namespace toaru {
     Scene();
     void update(Context &context);
     void render(Context &context);
+
   private:
   };
 }

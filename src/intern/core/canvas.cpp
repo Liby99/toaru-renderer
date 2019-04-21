@@ -3,8 +3,7 @@
 
 using namespace toaru;
 
-Canvas::Canvas(nanogui::Widget *parent, Scene &s)
-    : nanogui::GLCanvas(parent), scene(s) {
+Canvas::Canvas(nanogui::Widget *parent, Scene &s) : nanogui::GLCanvas(parent), scene(s) {
   // Do nothing
 }
 
@@ -13,7 +12,9 @@ void Canvas::setSize(int width, int height) {
   context.setCanvasSize(width, height);
 }
 
-void Canvas::bindGLFWWindow(GLFWwindow *window) { context.bindGLFWWindow(window); }
+void Canvas::bindGLFWWindow(GLFWwindow *window) {
+  context.bindGLFWWindow(window);
+}
 
 bool Canvas::keyboardEvent(int key, int scancode, int action, int modifiers) {
   return context.keyboardEvent(key, scancode, action, modifiers);

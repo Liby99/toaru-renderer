@@ -16,8 +16,7 @@ const int Viewer::PADDING = 5;
 
 const int Viewer::MIN_REFRESH_INTERVAL = 10;
 
-Viewer::Viewer(Scene &scene)
-    : Viewer(DEFAULT_WIDTH, DEFAULT_HEIGHT, DEFAULT_WINDOW_TITLE, scene) {}
+Viewer::Viewer(Scene &scene) : Viewer(DEFAULT_WIDTH, DEFAULT_HEIGHT, DEFAULT_WINDOW_TITLE, scene) {}
 
 Viewer::Viewer(int w, int h, const std::string &name, Scene &scene)
     : nanogui::Screen(Vector2i(w, h), name, false) {
@@ -47,4 +46,6 @@ void Viewer::start() {
   nanogui::mainloop(MIN_REFRESH_INTERVAL);
 }
 
-void Viewer::draw(NVGcontext *ctx) { Screen::draw(ctx); }
+void Viewer::draw(NVGcontext *ctx) {
+  Screen::draw(ctx);
+}

@@ -16,7 +16,7 @@ void Entity::init(Context &context) {
     auto comp = it->second;
     if (comp->isEnabled()) {
       comp->setEnv(context, *this);
-      comp->init();
+      comp->tryInit();
     }
   }
 
@@ -28,7 +28,8 @@ void Entity::init(Context &context) {
 
 void Entity::update(Context &context, Matrix4f &world) {
   // Initialize if not initialized
-  if (!initialized) init(context);
+  if (!initialized)
+    init(context);
 
   // First set the world matrix of our own transform
   transform.world = world;
@@ -38,6 +39,7 @@ void Entity::update(Context &context, Matrix4f &world) {
   for (auto it = components.begin(); it != components.end(); it++) {
     auto comp = it->second;
     if (comp->isEnabled()) {
+      comp->tryInit();
       comp->setEnv(context, *this);
       comp->update();
     }

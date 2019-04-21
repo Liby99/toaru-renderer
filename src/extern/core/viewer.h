@@ -1,8 +1,8 @@
 #ifndef TOARU_VIEWER_H
 #define TOARU_VIEWER_H
 
-#include <nanogui/nanogui.h>
 #include "canvas.h"
+#include <nanogui/nanogui.h>
 
 namespace toaru {
   class Viewer : public nanogui::Screen {

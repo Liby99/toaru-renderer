@@ -12,6 +12,9 @@ namespace toaru {
     virtual void update();
     virtual void render();
 
+    bool isInitialized();
+    void tryInit();
+
     bool isEnabled();
     void enable();
     void disable();

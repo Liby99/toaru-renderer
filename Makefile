@@ -6,7 +6,7 @@ TEX_PDF = $(patsubst %, $(TEX_OUTPUT_DIR)/%.pdf, $(TEX_TARGET))
 auto: help
 
 help: FORCE
-	@ echo "This is a Makefile for NASH project. You have the following options:"
+	@ echo "This is a Makefile for Toaru project. You have the following options:"
 	@ echo "- make setup: \tSetup the basic infrastructure of the project;"
 	@ echo "- make format: \tFormat all the files;"
 	@ echo "- make doc: \tCompile all the documents in \`doc/\`;"
@@ -21,11 +21,11 @@ format-lib:
 	@ echo "Formatting nash library files"
 	@ find ./src/intern -name '*.cpp' | xargs -I '{}' clang-format -i '{}'
 	@ find ./src/extern -name '*.h' | xargs -I '{}' clang-format -i '{}'
-	
+
 format-app:
 	@ echo "Formatting nash application sources"
 	@ find ./app -name '*.cpp' | xargs -I '{}' clang-format -i '{}'
-	
+
 format-test:
 	@ echo "Formatting nash test sources"
 	@ find ./test -name '*.cpp' | xargs -I '{}' clang-format -i '{}'
@@ -38,22 +38,10 @@ remove-pre-commit:
 	@ echo "Removing pre-commit hook from \`.git/hooks/\`."
 	@ rm -f .git/hooks/pre-commit
 
-doc: $(TEX_PDF)
-
-$(TEX_OUTPUT_DIR)/%.pdf: $(TEX_SOURCE_DIR)/%.tex
-	@ pdflatex $<
-	@ mkdir -p $(TEX_OUTPUT_DIR)/
-	@ mv $(*F).pdf $(TEX_OUTPUT_DIR)/$(*F).pdf
-
-clean: clean-build clean-doc
+clean: clean-build
 
 clean-build:
 	@ echo "Cleaning \`build/\` directory"
 	@ rm -rf build/
-
-clean-doc:
-	@ echo "Cleaning compiled docs in \`doc/\` directory"
-	@ rm -f *.aux *.log
-	@ rm -rf $(TEX_OUTPUT_DIR)
 
 FORCE:
