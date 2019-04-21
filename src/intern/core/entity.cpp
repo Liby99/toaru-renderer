@@ -53,12 +53,7 @@ void Entity::removeComponent(const std::string &key) {
 }
 
 bool Entity::hasComponent(const std::string &key) {
-  return components.find(key) == components.end();
-}
-
-template<typename T>
-T &Entity::getComponent(const std::string &key) {
-  return *(T *)components[key];
+  return components.find(key) != components.end();
 }
 
 void Entity::addChild(Entity &entity) {

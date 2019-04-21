@@ -35,6 +35,11 @@ namespace toaru {
     std::vector<Entity *> children;
     std::map<std::string, Component *> components;
   };
+
+  template<typename T>
+  T &Entity::getComponent(const std::string &key) {
+    return *((T *)(components[key]));
+  }
 }
 
 #endif

@@ -1,5 +1,7 @@
 #include "renderer/mesh_renderer.h"
 
+#include <iostream>
+
 using namespace toaru;
 
 const std::string MeshRenderer::DEFAULT_MESH_NAME = "mesh";
@@ -37,6 +39,10 @@ void MeshRenderer::render() {
 
       // Draw the triangles
       shader.drawIndexed(GL_TRIANGLES, 0, mesh.numFaces());
+    } else {
+      std::cout << "No Material" << std::endl;
     }
+  } else {
+    std::cout << "No Mesh" << std::endl;
   }
 }
