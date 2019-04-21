@@ -8,8 +8,7 @@ int main(int argc, char *argv[]) {
   Scene scene;
 
   Entity camHolder;
-  camHolder.transform.position = Vector3f(2, 2, 2);
-  TwoPointCamera cam;
+  ThirdPersonCamera cam;
   camHolder.addComponent("camera", cam);
   scene.root.addChild(camHolder);
 
