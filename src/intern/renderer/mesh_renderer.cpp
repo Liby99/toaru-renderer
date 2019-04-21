@@ -11,11 +11,32 @@ MeshRenderer::MeshRenderer(const std::string &meshName, const std::string &matNa
   : meshName(meshName), matName(matName), Renderer() {}
 
 void MeshRenderer::render() {
+
+  // First get the mesh and the materials
   if (object().hasComponent(meshName)) {
     Mesh &mesh = object().getComponent<Mesh>(meshName);
     if (object().hasComponent(matName)) {
       Material &mat = object().getComponent<Material>(matName);
-      // TODO
+
+      // First bind the shader
+      Shader &shader = mat.getShader();
+      shader.bind();
+
+      // Get the transform matrices
+      shader.setUniform("model", object().transform.getTransform());
+      shader.setUniform("viewProj", context().getMainCameraViewProj());
+
+      // Then upload all the properties of the mesh
+      shader.uploadIndices(mesh.indices);
+      shader.uploadAttr("position", mesh.positions);
+      shader.uploadAttr("normal", mesh.normals);
+      shader.uploadAttr("texCoord", mesh.texCoords);
+
+      // Pass material specific prooperties
+      mat.prerender();
+
+      // Draw the triangles
+      shader.drawIndexed(GL_TRIANGLES, 0, mesh.numFaces());
     }
   }
 }

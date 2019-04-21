@@ -12,6 +12,9 @@ namespace toaru {
     MatrixXu indices;
 
     Mesh();
+
+    int numVertices();
+    int numFaces();
   };
 }
 

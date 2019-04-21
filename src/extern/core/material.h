@@ -8,12 +8,15 @@ namespace toaru {
   class Material : public Component {
   public:
     Material();
-    // Material(Shader &shader);
+    Material(Shader &shader);
 
-    // virtual void init();
+    virtual void init();
+    virtual void prerender();
+
+    Shader &getShader();
 
   protected:
-    // Shader *shader;
+    Shader *shader;
   };
 }
 
