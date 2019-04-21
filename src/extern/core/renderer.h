@@ -7,6 +7,8 @@ namespace toaru {
   class Renderer : public Component {
   public:
     Renderer();
+
+    virtual void render();
   };
 }
 

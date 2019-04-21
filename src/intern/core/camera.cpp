@@ -12,7 +12,7 @@ const Vector3f Camera::BACKWARD = Vector3f(0, 0, 1);
 
 const Vector3f Camera::UP = Vector3f(0, 1, 0);
 
-Camera::Camera() : fovy(DEFAULT_FOVY), near(DEFAULT_NEAR), far(DEFAULT_FAR), Component() {}
+Camera::Camera() : fovy(DEFAULT_FOVY), zNear(DEFAULT_NEAR), zFar(DEFAULT_FAR), Component() {}
 
 void Camera::update() {
   view = computeView();
@@ -47,8 +47,8 @@ Matrix4f Camera::computeProj() {
   int height = context().getCanvasHeight();
   float aspect = width / (float) height;
   float theta = fovy / 2, d = cos(theta) / sin(theta);
-  float a = (far + near) / (near - far);
-  float b = 2 * far * near / (near - far);
+  float a = (zFar + zNear) / (zNear - zFar);
+  float b = 2 * zFar * zNear / (zNear - zFar);
   Eigen::Matrix4f mat;
   mat << d / aspect, 0, 0, 0, 0, d, 0, 0, 0, 0, a, b, 0, 0, -1, 0;
   return mat;

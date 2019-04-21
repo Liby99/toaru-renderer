@@ -21,7 +21,7 @@ namespace toaru {
     virtual Matrix4f computeView();
     virtual Matrix4f computeProj();
 
-    float fovy, near, far;
+    float fovy, zNear, zFar;
     Matrix4f view, proj;
   };
 }
