@@ -56,8 +56,9 @@ bool Entity::hasComponent(const std::string &key) {
   return components.find(key) == components.end();
 }
 
-Component &Entity::getComponent(const std::string &key) {
-  return *components[key];
+template<typename T>
+T &Entity::getComponent(const std::string &key) {
+  return *(T *)components[key];
 }
 
 void Entity::addChild(Entity &entity) {

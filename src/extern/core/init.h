@@ -2,9 +2,10 @@
 #define TOARU_INIT_H
 
 #include <nanogui/nanogui.h>
+#include "utility/path.h"
 
 namespace toaru {
-  void init();
+  void init(int argc, char *argv[]);
   void exit();
 }
 

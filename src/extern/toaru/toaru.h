@@ -1,6 +1,10 @@
 // clang-format off
+#include "mesh/cube.h"
+#include "renderer/mesh_renderer.h"
+#include "core/shader.h"
 #include "core/viewer.h"
 #include "core/camera.h"
+#include "core/material.h"
 #include "core/renderer.h"
 #include "core/context.h"
 #include "core/mesh.h"
@@ -9,5 +13,6 @@
 #include "core/canvas.h"
 #include "core/init.h"
 #include "core/scene.h"
+#include "utility/path.h"
 #include "utility/transform.h"
 #include "utility/math.h"

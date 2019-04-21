@@ -24,7 +24,7 @@ namespace toaru {
     void addComponent(const std::string &str, Component &comp);
     void removeComponent(const std::string &str);
     bool hasComponent(const std::string &str);
-    Component &getComponent(const std::string &str);
+    template<typename T> T &getComponent(const std::string &str);
 
     void addChild(Entity &entity);
     void removeChild(int index);

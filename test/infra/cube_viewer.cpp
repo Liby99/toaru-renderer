@@ -3,7 +3,7 @@
 using namespace toaru;
 
 int main(int argc, char *argv[]) {
-  toaru::init();
+  toaru::init(argc, argv);
 
   Scene scene;
 
