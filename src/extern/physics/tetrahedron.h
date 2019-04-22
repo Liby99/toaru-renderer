@@ -46,12 +46,14 @@ namespace toaru {
 
     Tetrahedron(float mass, float e, float v, std::vector<std::shared_ptr<Point>> points);
 
-    Tetrahedron(float mass, float e, float v, std::initializer_list<std::shared_ptr<Point>> points);
+    Tetrahedron(float mass, float e, float v, std::shared_ptr<Point> p0, std::shared_ptr<Point> p1,
+                std::shared_ptr<Point> p2, std::shared_ptr<Point> p3);
 
-    void update(float deltaTime);
+    virtual void update(float deltaTime);
+
+    virtual void initRestState();
 
   private:
-    virtual void initRestState();
 
     virtual std::shared_ptr<Face> getFace(std::initializer_list<std::shared_ptr<Point>> points,
                                           std::shared_ptr<Point> opposite);

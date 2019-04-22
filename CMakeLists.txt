@@ -58,6 +58,7 @@ set(ASSIMP_BUILD_OFF_IMPORTER TRUE)
 set(ASSIMP_BUILD_PLY_IMPORTER TRUE)
 # Not really sure why it is option here. But `set` doesn't work for the first time `cmake ..` runs.
 add_definitions(-DASSIMP_BUILD_NO_EXPORT)
+add_definitions(-D_ENABLE_EXTENDED_ALIGNED_STORAGE)
 option(ASSIMP_BUILD_ALL_IMPORTERS_BY_DEFAULT OFF)
 option(ASSIMP_NO_EXPORT ON)
 option(ASSIMP_BUILD_ASSIMP_TOOLS OFF)

@@ -8,18 +8,16 @@ Tetrahedron::Tetrahedron(float mass, float e, float v, std::vector<std::shared_p
   this->mass = mass;
   this->e = e;
   this->v = v;
-  initRestState();
 
 }
 
-Tetrahedron::Tetrahedron(float mass, float e, float v,
-                         std::initializer_list<std::shared_ptr<Point>> points) {
-  assert(points.size() == 4);
-  this->points.insert(this->points.end(), points.begin(), points.end());
+Tetrahedron::Tetrahedron(float mass, float e, float v, std::shared_ptr<Point> p0,
+                         std::shared_ptr<Point> p1, std::shared_ptr<Point> p2,
+                         std::shared_ptr<Point> p3) {
+  this->points.insert(this->points.end(), {p0, p1, p2, p3});
   this->mass = mass;
   this->e = e;
   this->v = v;
-  initRestState();
 }
 
 void Tetrahedron::update(float deltaTime) {
@@ -93,8 +91,9 @@ void Tetrahedron::initRestState() {
   faces.insert(faces.end(), {f1, f2, f3, f4});
 
   // Build tetrahedral frame axes
+  this->axes.resize(3);
   for (int i = 0; i < 3; i++) {
-    this->axes[i] = this->points[i]->position - this->points[4]->position;
+    this->axes[i] = this->points[i]->position - this->points[3]->position;
   }
 
   // Calculate volume
@@ -116,7 +115,7 @@ void Tetrahedron::initRestState() {
 std::shared_ptr<Face> Tetrahedron::getFace(std::initializer_list<std::shared_ptr<Point>> points,
                                            std::shared_ptr<Point> opposite) {
   auto [res, f] = Face::getFace(points);
-  if (res) {
+  if (!res) {
     f->t1 = shared_from_this();
     f->p1 = opposite;
   } else {
@@ -135,7 +134,7 @@ Matrix3f Tetrahedron::calculateCurrentFrame() {
   // Build tetrahedral frame axes
   std::vector<Vector3f> axes(3);
   for (int i = 0; i < 3; i++) {
-    axes[i] = this->points[i]->position - this->points[4]->position;
+    axes[i] = this->points[i]->position - this->points[3]->position;
   }
 
   // Build matrix

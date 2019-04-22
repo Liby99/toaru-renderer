@@ -2,6 +2,8 @@
 
 using namespace toaru;
 
+std::vector<std::shared_ptr<Face>> Face::faces;
+
 std::tuple<bool, std::shared_ptr<Face>> Face::getFace(
   std::initializer_list<std::shared_ptr<Point>> points) {
 

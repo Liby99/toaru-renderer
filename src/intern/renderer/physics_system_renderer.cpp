@@ -33,7 +33,7 @@ void PhysicsSystemRenderer::render() {
           auto p3 = sys.faces[i]->points[2];
 
           // Then get the normal
-          Vector3f n = sys.faces[i]->normal;
+          Vector3f n = sys.faces[i]->normal.normalized();
 
           // Add a face
           indices.col(faceAmount) << vertAmount, vertAmount + 1, vertAmount + 2;
@@ -58,6 +58,10 @@ void PhysicsSystemRenderer::render() {
       indices.conservativeResize(3, faceAmount);
       positions.conservativeResize(3, vertAmount);
       normals.conservativeResize(3, vertAmount);
+
+      //std::cout << indices << std::endl;
+      //std::cout << positions << std::endl;
+      //std::cout << normals << std::endl;
 
       // Pass to shader
       shader.uploadIndices(indices);

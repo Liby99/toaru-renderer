@@ -2,9 +2,8 @@
 
 using namespace toaru;
 
-Point::Point(Vector3f position) {
+Point::Point(Vector3f position) : mass(0), velocity(Vector3f::Zero()), force(Vector3f::Zero()) {
   this->position = position;
-  this->mass = 0;
 }
 
 void Point::addForce(const Vector3f &force) {
@@ -13,6 +12,7 @@ void Point::addForce(const Vector3f &force) {
 
 void Point::addMass(float mass) {
   this->mass += mass;
+  updateInvMass();
 }
 
 bool Point::updateInvMass() {

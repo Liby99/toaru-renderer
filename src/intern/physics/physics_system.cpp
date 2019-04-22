@@ -13,12 +13,23 @@ void PhysicsSystem::pause() {
 }
 
 void PhysicsSystem::stepOnce() {
+
+
   for (auto element : tetrahedrons) {
     element->update(deltaTime);
   }
+  
+  std::cout << "Before" << std::endl;
+  std::cout << points[0]->force << std::endl;
+  std::cout << points[0]->velocity << std::endl;
+  std::cout << points[0]->position << std::endl;
   for (auto element : points) {
     element->update(deltaTime);
   }
+  std::cout << "After" << std::endl;
+  std::cout << points[0]->force << std::endl;
+  std::cout << points[0]->velocity << std::endl;
+  std::cout << points[0]->position << std::endl;
 }
 
 void PhysicsSystem::update() {
