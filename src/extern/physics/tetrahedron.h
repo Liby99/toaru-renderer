@@ -29,20 +29,36 @@ namespace toaru {
     // Rest tetrahedral frame matrix
     Matrix3f invR;
 
-    Tetrahedron(float mass, std::vector<std::shared_ptr<Point>> points);
+    // Constant
+    float e, v;
 
-    Tetrahedron(float mass, std::initializer_list<std::shared_ptr<Point>> points);
+    // Lame constants
+    float lambda, mu, c;
+
+    // Stiffness tensor K
+    Matrix<float, 6, 6> K;
+
+    // Upper K
+    Matrix<float, 3, 3> uK;
+
+    // Lower K
+    Matrix<float, 3, 3> lK;
+
+    Tetrahedron(float mass, float e, float v, std::vector<std::shared_ptr<Point>> points);
+
+    Tetrahedron(float mass, float e, float v, std::initializer_list<std::shared_ptr<Point>> points);
 
     void update(float deltaTime);
 
   private:
-    void initRestState();
+    virtual void initRestState();
 
-    std::shared_ptr<Face> getFace(std::initializer_list<std::shared_ptr<Point>> points);
+    virtual std::shared_ptr<Face> getFace(std::initializer_list<std::shared_ptr<Point>> points,
+                                          std::shared_ptr<Point> opposite);
 
-    void distributeForceToPoint();
+    virtual void distributeForceToPoint();
 
-    Matrix3f calculateCurrentFrame();
+    virtual Matrix3f calculateCurrentFrame();
   };
 }
 #endif

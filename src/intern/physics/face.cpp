@@ -21,7 +21,7 @@ std::tuple<bool, std::shared_ptr<Face>> Face::getFace(
 
   // if not found, create one
   auto face = std::make_shared<Face>(points);
-  face->initFace();
+  face->updateNormal();
   faces.push_back(face);
   return {false, face};
 }
@@ -35,14 +35,33 @@ bool Face::operator==(const Face &other) {
           this->points.end());
 }
 
-void Face::initFace() {
+bool Face::isInternalFace() const {
+  return (t2 != nullptr);
+}
+
+Vector3f Face::getNormal(const std::shared_ptr<Tetrahedron> &t) {
+  updateNormal();
+  if (t2 && t == t2) {
+    return -normal;
+  }
+  return normal;
+}
+
+std::shared_ptr<Point> Face::getOppositePoint(const std::shared_ptr<Tetrahedron>& t) const {
+  if (t2 && t == t2) {
+    return p2;
+  }
+  return p1;
+}
+
+void Face::updateNormal() {
   // e1 = v1 - v0; e2 = v2 - v0; normal = e1 x e2;
   Vector3f e1 = this->points[1]->position - this->points[0]->position;
   Vector3f e2 = this->points[2]->position - this->points[0]->position;
 
   this->normal = e1.cross(e2);
   this->area = this->normal.norm() / 2.0;
-  this->normal.normalize();
+  //this->normal.normalize();
 }
 
 Face::Face(std::initializer_list<std::shared_ptr<Point>> points) {

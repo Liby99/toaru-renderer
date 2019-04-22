@@ -18,7 +18,7 @@ namespace toaru {
     virtual void addMass(float mass);
     virtual bool updateInvMass();
     virtual void update(float deltaTime);
-    bool operator==(const Point &other) const;
+    virtual bool operator==(const Point &other) const;
   };
 }
 

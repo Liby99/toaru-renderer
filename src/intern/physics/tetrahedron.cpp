@@ -2,18 +2,23 @@
 
 using namespace toaru;
 
-Tetrahedron::Tetrahedron(float mass, std::vector<std::shared_ptr<Point>> points) {
+Tetrahedron::Tetrahedron(float mass, float e, float v, std::vector<std::shared_ptr<Point>> points) {
   assert(points.size() == 4);
   this->points.insert(this->points.end(), points.begin(), points.end());
   this->mass = mass;
+  this->e = e;
+  this->v = v;
   initRestState();
 
 }
 
-Tetrahedron::Tetrahedron(float mass, std::initializer_list<std::shared_ptr<Point>> points) {
+Tetrahedron::Tetrahedron(float mass, float e, float v,
+                         std::initializer_list<std::shared_ptr<Point>> points) {
   assert(points.size() == 4);
   this->points.insert(this->points.end(), points.begin(), points.end());
   this->mass = mass;
+  this->e = e;
+  this->v = v;
   initRestState();
 }
 
@@ -36,25 +41,54 @@ void Tetrahedron::update(float deltaTime) {
   Matrix<float, 6, 1> strain;
   strain << epsilon.diagonal(), offDiagonal;
 
-  // Step 3: Turn the internal stress into forces on the particles
+  // Calculate stress using Lame constant and strain
+  Matrix<float, 6, 1> s;
+  s << uK * strain.block(0, 0, 3, 1), lK * strain.block(3, 0, 3, 1);
 
-  /*
-  R << 1, 2, 3, 
-       4, 5, 6, 
-       7, 8, 9;
-  std::cout << R*/
+  // Reshape stress tensor
+  Matrix3f stress;
+  stress.diagonal() << s.block(0, 0, 3, 1);
+  stress(1, 2) = stress(2, 1) = s(3, 0);
+  stress(0, 2) = stress(2, 0) = s(4, 0);
+  stress(0, 1) = stress(1, 0) = s(5, 0);
+
+  // Step 3: Turn the internal stress into forces on the particles
+  std::for_each(faces.begin(), faces.end(), [this, &F, &stress](const std::shared_ptr<Face> &face)
+  {
+    const auto normal = face->getNormal(shared_from_this());
+    const auto force = -0.5 * F * (stress.transpose() * normal);
+    face->getOppositePoint(shared_from_this())->addForce(force);
+  });
+
 }
 
 void Tetrahedron::initRestState() {
+  // Calculate Lame constants
+  lambda = e * v / ((1.0 + v) * (1.0 - 2.0 * v));
+  mu = e / (2.0 * (1.0 + v));
+
+  // Construct Stiffness matrix
+  K = Matrix<float, 6, 6>::Zero();
+  c = 2.0 * mu + lambda;
+  // TODO: leave actual K matrix out for now
+
+  // Upper K
+  uK.fill(lambda);
+  uK.diagonal() << c, c, c;
+
+  // Lower K
+  lK.setZero();
+  lK.diagonal() << mu, mu, mu;
+
   // Build or get four faces
   // 1, 2, 3
-  auto f1 = getFace({points[0], points[1], points[2]});
+  auto f1 = getFace({points[0], points[1], points[2]}, points[3]);
   // 4, 1, 3
-  auto f2 = getFace({points[3], points[0], points[2]});
+  auto f2 = getFace({points[3], points[0], points[2]}, points[1]);
   // 2, 4, 3
-  auto f3 = getFace({points[1], points[3], points[2]});
+  auto f3 = getFace({points[1], points[3], points[2]}, points[0]);
   // 4, 2, 1
-  auto f4 = getFace({points[3], points[1], points[0]});
+  auto f4 = getFace({points[3], points[1], points[0]}, points[2]);
 
   faces.insert(faces.end(), {f1, f2, f3, f4});
 
@@ -79,12 +113,15 @@ void Tetrahedron::initRestState() {
   distributeForceToPoint();
 }
 
-std::shared_ptr<Face> Tetrahedron::getFace(std::initializer_list<std::shared_ptr<Point>> points) {
+std::shared_ptr<Face> Tetrahedron::getFace(std::initializer_list<std::shared_ptr<Point>> points,
+                                           std::shared_ptr<Point> opposite) {
   auto [res, f] = Face::getFace(points);
   if (res) {
     f->t1 = shared_from_this();
+    f->p1 = opposite;
   } else {
     f->t2 = shared_from_this();
+    f->p2 = opposite;
   }
   return f;
 }
