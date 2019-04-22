@@ -2,10 +2,9 @@
 
 using namespace toaru;
 
-Point::Point(Vector3f position, int index) {
+Point::Point(Vector3f position) {
   this->position = position;
   this->mass = 0;
-  this->index = index;
 }
 
 void Point::addForce(const Vector3f &force) {

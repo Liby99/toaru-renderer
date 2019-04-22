@@ -13,9 +13,8 @@ namespace toaru {
     Vector3f force;
     float mass;
     float invMass;
-    int index;
 
-    Point(Vector3f position, int index);
+    Point(Vector3f position);
 
     virtual void addForce(const Vector3f &force);
     virtual void addMass(float mass);
