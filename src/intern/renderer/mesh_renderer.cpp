@@ -10,6 +10,14 @@ MeshRenderer::MeshRenderer() : MeshRenderer(DEFAULT_MESH_NAME, DEFAULT_MATERIAL_
 MeshRenderer::MeshRenderer(const std::string &meshName, const std::string &matName)
   : meshName(meshName), matName(matName), Renderer() {}
 
+void MeshRenderer::setMode(MeshRenderer::Mode mode) {
+  renderMode = mode;
+}
+
+MeshRenderer::Mode MeshRenderer::getMode() {
+  return renderMode;
+}
+
 void MeshRenderer::render() {
 
   // First get the mesh and the materials
@@ -35,8 +43,18 @@ void MeshRenderer::render() {
       // Pass material specific prooperties
       mat.prerender();
 
+      // Set render mode
+      if (renderMode == Mode::LINE) {
+        glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+      } else if (renderMode == Mode::POINT) {
+        glPolygonMode(GL_FRONT_AND_BACK, GL_POINT);
+      }
+
       // Draw the triangles
       shader.drawIndexed(GL_TRIANGLES, 0, mesh.numFaces());
+
+      // Set back to mode fill
+      glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
     }
   }
 }

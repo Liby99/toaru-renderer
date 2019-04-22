@@ -3,6 +3,8 @@
 
 #include "utility/math.h"
 
+#include <vector>
+
 namespace toaru {
   class Point : public std::enable_shared_from_this<Point> {
   public:

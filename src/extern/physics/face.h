@@ -6,7 +6,6 @@
 #include "point.h"
 #include "tetrahedron.h"
 
-#include <execution>
 #include <memory>
 
 namespace toaru {
