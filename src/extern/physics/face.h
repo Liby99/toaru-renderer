@@ -18,11 +18,14 @@ namespace toaru {
 
     float area;
     Vector3f normal;
+
+    // Points on the faces
     std::vector<std::shared_ptr<Point>> points;
 
     std::shared_ptr<Tetrahedron> t1;
     std::shared_ptr<Tetrahedron> t2 = nullptr;
 
+    // Opposite points
     std::shared_ptr<Point> p1;
     std::shared_ptr<Point> p2 = nullptr;
 

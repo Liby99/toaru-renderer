@@ -66,5 +66,5 @@ void Face::updateNormal() {
 
 Face::Face(std::initializer_list<std::shared_ptr<Point>> points) {
   this->points.insert(this->points.end(), points.begin(), points.end());
-
+  
 }

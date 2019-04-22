@@ -14,7 +14,15 @@ namespace toaru {
     // TODO: lookup table ?
     // TODO: AABB
 
+    bool isPlaying;
+    float deltaTime;
+    int step;
+
     PhysicsSystem();
+
+    virtual void play();
+    virtual void pause();
+    virtual void stepOnce();
 
     virtual void update();
   };
