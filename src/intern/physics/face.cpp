@@ -49,7 +49,7 @@ Vector3f Face::getNormal(const std::shared_ptr<Tetrahedron> &t) {
   return normal;
 }
 
-std::shared_ptr<Point> Face::getOppositePoint(const std::shared_ptr<Tetrahedron>& t) const {
+std::shared_ptr<Point> Face::getOppositePoint(const std::shared_ptr<Tetrahedron> &t) const {
   if (t2 && t == t2) {
     return p2;
   }
@@ -63,10 +63,9 @@ void Face::updateNormal() {
 
   this->normal = e1.cross(e2);
   this->area = this->normal.norm() / 2.0;
-  //this->normal.normalize();
 }
 
 Face::Face(std::initializer_list<std::shared_ptr<Point>> points) {
   this->points.insert(this->points.end(), points.begin(), points.end());
-  
+
 }

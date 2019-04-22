@@ -4,6 +4,7 @@
 #include "utility/math.h"
 #include "point.h"
 #include "face.h"
+#include "physics/physics_material.h"
 
 namespace toaru {
   class Face;
@@ -29,20 +30,8 @@ namespace toaru {
     // Rest tetrahedral frame matrix
     Matrix3f invR;
 
-    // Constant
-    float e, v;
-
-    // Lame constants
-    float lambda, mu, c;
-
-    // Stiffness tensor K
-    Matrix<float, 6, 6> K;
-
-    // Upper K
-    Matrix<float, 3, 3> uK;
-
-    // Lower K
-    Matrix<float, 3, 3> lK;
+    // Physics properties
+    std::shared_ptr<PhysicsMaterial> material;
 
     Tetrahedron(float mass, float e, float v, std::vector<std::shared_ptr<Point>> points);
 

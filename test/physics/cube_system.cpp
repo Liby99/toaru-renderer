@@ -17,11 +17,11 @@ public:
     auto G = std::make_shared<Point>(Vector3f(1, -1, -1));
     auto H = std::make_shared<Point>(Vector3f(-1, -1, -1));
 
-    auto T1 = std::make_shared<Tetrahedron>(1.f, 0.5f, 0.3f, A, B, C, E);
-    auto T2 = std::make_shared<Tetrahedron>(1.f, 0.5f, 0.3f, A, C, D, G);
-    auto T3 = std::make_shared<Tetrahedron>(1.f, 0.5f, 0.3f, A, H, E, G);
-    auto T4 = std::make_shared<Tetrahedron>(1.f, 0.5f, 0.3f, C, E, F, G);
-    auto T5 = std::make_shared<Tetrahedron>(1.f, 0.5f, 0.3f, A, C, G, E);
+    auto T1 = std::make_shared<Tetrahedron>(1.f, 18.f, 0.01f, A, B, C, E);
+    auto T2 = std::make_shared<Tetrahedron>(1.f, 18.f, 0.01f, A, C, D, G);
+    auto T3 = std::make_shared<Tetrahedron>(1.f, 18.f, 0.01f, A, H, E, G);
+    auto T4 = std::make_shared<Tetrahedron>(1.f, 18.f, 0.01f, C, E, F, G);
+    auto T5 = std::make_shared<Tetrahedron>(1.f, 18.f, 0.01f, A, C, G, E);
 
     tetrahedrons.insert(tetrahedrons.end(), {T1, T2, T3, T4, T5});
     for (auto element : tetrahedrons) {
@@ -35,7 +35,7 @@ public:
     if (!pressingR) {
       if (context().getKey('R')) {
         pressingR = true;
-        stepOnce();
+        play();
       }
     } else {
       if (!context().getKey('R')) {
@@ -44,14 +44,16 @@ public:
     }
     if (!pressingT) {
       if (context().getKey('T')) {
-        pressingT = true;
-        points[0]->addForce(Vector3f(0, -0.2, 0));
+        //pressingT = true;
+        points[0]->position(1,0) += 0.1;
+        std::cout << points[0]->position << std::endl;
       }
     } else {
       if (!context().getKey('T')) {
         pressingT = false;
       }
     }
+    PhysicsSystem::update();
   }
 };
 
@@ -61,7 +63,7 @@ int main(int argc, char *argv[]) {
   Scene scene;
 
   Entity camHolder;
-  camHolder.transform.position = Vector3f(2, 2, 2);
+  camHolder.transform.position = Vector3f(3, 3, 3);
   TwoPointCamera cam;
   camHolder.addComponent("camera", cam);
   scene.root.addChild(camHolder);

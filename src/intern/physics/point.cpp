@@ -2,7 +2,10 @@
 
 using namespace toaru;
 
-Point::Point(Vector3f position) : mass(0), velocity(Vector3f::Zero()), force(Vector3f::Zero()) {
+Point::Point(Vector3f position)
+  : mass(0),
+    velocity(Vector3f::Zero()),
+    force(Vector3f::Zero()) {
   this->position = position;
 }
 
@@ -24,6 +27,12 @@ bool Point::updateInvMass() {
 }
 
 void Point::update(float deltaTime) {
+  // TODO: correct damping
+  velocity *= 0.99f;
+
+  // TODO: better style to add gravity
+  addForce(Vector3f(0, -9.8f * mass, 0));
+
   // a_i = m^{-1} * f;
   Vector3f acc = force * invMass;
 
@@ -36,6 +45,12 @@ void Point::update(float deltaTime) {
   position += deltaPos;
 
   force = Vector3f(0, 0, 0);
+
+  // TODO: Add ground as a physics object
+  if (position(1, 0) < -1.5) {
+    position(1, 0) = -1.5;
+    velocity(1, 0) = abs(velocity(1, 0)) * 0.99;
+  }
 }
 
 bool Point::operator==(const Point &other) const {
