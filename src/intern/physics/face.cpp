@@ -9,7 +9,7 @@ std::tuple<bool, std::shared_ptr<Face>> Face::getFace(
 
   // Temp face
   Face f(points);
-  auto result = std::find_if(std::execution::par, faces.begin(), faces.end(), [&](const std::shared_ptr<Face> &face)
+  auto result = std::find_if(faces.begin(), faces.end(), [&](const std::shared_ptr<Face> &face)
   {
     return face->operator==(f);
   });
