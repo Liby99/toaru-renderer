@@ -2,6 +2,36 @@
 
 using namespace toaru;
 
+class SwitchingMeshRenderer : public MeshRenderer {
+public:
+  bool pressing;
+
+  SwitchingMeshRenderer() : pressing(false), MeshRenderer() {}
+
+  virtual void update() {
+    if (!pressing) {
+      if (context().getKey('R')) {
+        pressing = true;
+        switch (renderMode) {
+          case Mode::FACE:
+            renderMode = Mode::LINE;
+            break;
+          case Mode::LINE:
+            renderMode = Mode::POINT;
+            break;
+          default:
+            renderMode = Mode::FACE;
+            break;
+        }
+      }
+    } else {
+      if (!context().getKey('R')) {
+        pressing = false;
+      }
+    }
+  }
+};
+
 int main(int argc, char *argv[]) {
   toaru::init(argc, argv);
 
@@ -12,7 +42,7 @@ int main(int argc, char *argv[]) {
   camHolder.addComponent("camera", cam);
   scene.root.addChild(camHolder);
 
-  MeshRenderer renderer;
+  SwitchingMeshRenderer renderer;
 
   Entity planeHolder;
   planeHolder.transform.position << -1.2, 0, 0;
