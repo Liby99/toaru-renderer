@@ -1,12 +1,10 @@
-#include "physics/world.h"
+#include "physics/physics_system.h"
 
 using namespace toaru;
 
-World::World() {
-  
-}
+PhysicsSystem::PhysicsSystem() {}
 
-void World::update() {
+void PhysicsSystem::update() {
   double deltaTime = context().getDeltaTime();
   for (auto element : tetrahedrons) {
     element->update(deltaTime);
