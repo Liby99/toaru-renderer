@@ -45,8 +45,8 @@ void Point::update(float deltaTime) {
 
   // TODO: Add ground as a physics object
   if (position(1, 0) < -2) {
-    position(1, 0) = -2;
-    velocity(1, 0) = abs(velocity(1, 0)) * 0.50;
+    position.y() = -2;
+    velocity.y() = abs(velocity.y()) * 0.50;
   }
 }
 

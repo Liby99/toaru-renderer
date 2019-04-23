@@ -21,6 +21,9 @@ namespace toaru {
     static Vector2f normalCartToPolar(const Vector3f &pos);
     static Vector3f polarToCart(const Vector2f &pol);
     static Vector3f polarToCart(float theta, float phi);
+
+    static float random(float low, float up);
+    static float random(float up);
   };
 }
 
