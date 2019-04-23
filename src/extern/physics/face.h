@@ -21,17 +21,11 @@ namespace toaru {
     std::vector<std::shared_ptr<Point>> points;
 
     std::shared_ptr<Tetrahedron> t1;
-    std::shared_ptr<Tetrahedron> t2 = nullptr;
 
     // Opposite points
     std::shared_ptr<Point> p1;
-    std::shared_ptr<Point> p2 = nullptr;
 
     Face(std::initializer_list<std::shared_ptr<Point>> points);
-
-    virtual bool operator==(const Face &other);
-
-    virtual bool isInternalFace() const;
 
     virtual Vector3f getNormal(const std::shared_ptr<Tetrahedron> &t);
     virtual std::shared_ptr<Point> getOppositePoint(const std::shared_ptr<Tetrahedron> &t) const;

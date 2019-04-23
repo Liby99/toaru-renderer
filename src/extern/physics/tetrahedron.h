@@ -9,12 +9,8 @@
 
 namespace toaru {
   class Face;
-  class PhysicsSystem;
   class Tetrahedron : public std::enable_shared_from_this<Tetrahedron> {
   public:
-
-    // TODO: change this later
-    PhysicsSystem *physicsSystem;
 
     // Mass
     float mass;
@@ -48,16 +44,16 @@ namespace toaru {
 
     virtual void update(float deltaTime);
 
-    virtual void initRestState(PhysicsSystem *system);
+    virtual void initRestState();
 
   private:
 
-    virtual std::shared_ptr<Face> getFace(std::initializer_list<std::shared_ptr<Point>> points,
-                                          std::shared_ptr<Point> opposite);
-
     virtual void distributeForceToPoint();
 
-    virtual Matrix3f calculateCurrentFrame();
+    Matrix3f calculateCurrentFrame();
+
+    std::shared_ptr<Face> makeFace(std::initializer_list<std::shared_ptr<Point>> points,
+                                   std::shared_ptr<Point> opposite);
   };
 }
 #endif

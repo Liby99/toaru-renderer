@@ -8,7 +8,7 @@ constexpr enum FLIP operator&(const enum FLIP selfValue, const enum FLIP inValue
   return (enum FLIP)(uint32_t(selfValue) & uint32_t(inValue));
 }
 
-PhysicsSystem::PhysicsSystem() : isPlaying(false), deltaTime(0.005), step(2) {}
+PhysicsSystem::PhysicsSystem() : isPlaying(false), deltaTime(0.01), step(1) {}
 
 void PhysicsSystem::play() {
   isPlaying = true;
@@ -44,18 +44,9 @@ void PhysicsSystem::update() {
 }
 
 void PhysicsSystem::createUnitCube(Vector3f position, Vector3f extents, float density, float e,
-                                   float v, bool flipX, bool flipY, bool flipZ) {
+                                   float v) {
   Vector3f pos = position;
   Vector3f ext = extents;
-  if (flipX) {
-    ext(0, 0) = -ext(0, 0);
-  }
-  if (flipY) {
-    ext(1, 0) = -ext(1, 0);
-  }
-  if (flipZ) {
-    ext(2, 0) = -ext(2, 0);
-  }
   auto A = Vector3f(-ext(0, 0) + pos(0, 0), ext(1, 0) + pos(1, 0), -ext(2, 0) + pos(2, 0));
   auto B = Vector3f(-ext(0, 0) + pos(0, 0), ext(1, 0) + pos(1, 0), ext(2, 0) + pos(2, 0));
   auto C = Vector3f(ext(0, 0) + pos(0, 0), ext(1, 0) + pos(1, 0), ext(2, 0) + pos(2, 0));
@@ -89,7 +80,7 @@ std::shared_ptr<Point> PhysicsSystem::getPoint(Vector3f position) {
   auto result =
       std::find_if(points.begin(), points.end(), [&](const std::shared_ptr<Point> &point) {
         // std::numeric_limits<float>::epsilon()
-        return (point->position - position).norm() <= std::numeric_limits<float>::epsilon();
+        return (point->position - position).norm() <= std::numeric_limits<float>::epsilon() * 3.0;
       });
 
   // If found
@@ -103,29 +94,4 @@ std::shared_ptr<Point> PhysicsSystem::getPoint(Vector3f position) {
   return point;
 }
 
-std::tuple<bool, std::shared_ptr<Face>>
-PhysicsSystem::getFace(std::initializer_list<std::shared_ptr<Point>> points) {
 
-  assert(points.size() == 3);
-  // Temp face
-  Face f(points);
-  auto result = std::find_if(faces.begin(), faces.end(), [&](const std::shared_ptr<Face> &face) {
-    if (face->operator==(f)) {
-      return true;
-    } else {
-
-      return false;
-    }
-  });
-
-  // If found
-  if (result != faces.end()) {
-    return {true, (*result)};
-  }
-
-  // if not found, create one
-  auto face = std::make_shared<Face>(points);
-  face->updateNormal();
-  faces.push_back(face);
-  return {false, face};
-}

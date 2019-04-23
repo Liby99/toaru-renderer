@@ -2,31 +2,12 @@
 
 using namespace toaru;
 
-bool Face::operator==(const Face &other) {
-  return (std::find(this->points.begin(), this->points.end(), other.points[0]) !=
-          this->points.end()) &&
-         (std::find(this->points.begin(), this->points.end(), other.points[1]) !=
-          this->points.end()) &&
-         (std::find(this->points.begin(), this->points.end(), other.points[2]) !=
-          this->points.end());
-}
-
-bool Face::isInternalFace() const {
-  return (t2 != nullptr);
-}
-
 Vector3f Face::getNormal(const std::shared_ptr<Tetrahedron> &t) {
   updateNormal();
-  if (t2 && t == t2) {
-    return -normal;
-  }
   return normal;
 }
 
 std::shared_ptr<Point> Face::getOppositePoint(const std::shared_ptr<Tetrahedron> &t) const {
-  if (t2 && t == t2) {
-    return p2;
-  }
   return p1;
 }
 

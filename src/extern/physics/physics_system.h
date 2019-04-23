@@ -30,12 +30,9 @@ namespace toaru {
 
     virtual void update();
 
-    void createUnitCube(Vector3f pos, Vector3f ext, float density, float e, float v, bool flipX, bool flipY, bool flipZ);
+    void createUnitCube(Vector3f pos, Vector3f ext, float density, float e, float v);
 
     std::shared_ptr<Point> getPoint(Vector3f position);
-
-    std::tuple<bool, std::shared_ptr<Face>> getFace(
-      std::initializer_list<std::shared_ptr<Point>> points);
   };
 }
 

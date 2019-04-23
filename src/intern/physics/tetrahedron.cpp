@@ -65,19 +65,16 @@ void Tetrahedron::update(float deltaTime) {
 
 }
 
-void Tetrahedron::initRestState(PhysicsSystem * system) {
-  // Get system
-  this->physicsSystem = system;
-
+void Tetrahedron::initRestState() {
   // Build or get four faces
   // 1, 2, 3
-  auto f1 = getFace({points[0], points[1], points[2]}, points[3]);
+  auto f1 = makeFace({points[0], points[1], points[2]}, points[3]);
   // 4, 1, 3
-  auto f2 = getFace({points[3], points[0], points[2]}, points[1]);
+  auto f2 = makeFace({points[3], points[0], points[2]}, points[1]);
   // 2, 4, 3
-  auto f3 = getFace({points[1], points[3], points[2]}, points[0]);
+  auto f3 = makeFace({points[1], points[3], points[2]}, points[0]);
   // 4, 2, 1
-  auto f4 = getFace({points[3], points[1], points[0]}, points[2]);
+  auto f4 = makeFace({points[3], points[1], points[0]}, points[2]);
 
   faces.insert(faces.end(), {f1, f2, f3, f4});
 
@@ -106,19 +103,6 @@ void Tetrahedron::initRestState(PhysicsSystem * system) {
   distributeForceToPoint();
 }
 
-std::shared_ptr<Face> Tetrahedron::getFace(std::initializer_list<std::shared_ptr<Point>> points,
-                                           std::shared_ptr<Point> opposite) {
-  auto [res, f] = physicsSystem->getFace(points);
-  if (!res) {
-    f->t1 = shared_from_this();
-    f->p1 = opposite;
-  } else {
-    f->t2 = shared_from_this();
-    f->p2 = opposite;
-  }
-  return f;
-}
-
 void Tetrahedron::distributeForceToPoint() {
   std::for_each(points.begin(), points.end(),
                 [&](const std::shared_ptr<Point> &p) { p->addMass(mass * 0.25); });
@@ -137,4 +121,12 @@ Matrix3f Tetrahedron::calculateCurrentFrame() {
     T.col(i) = axes[i];
   }
   return T;
+}
+
+std::shared_ptr<Face> Tetrahedron::makeFace(std::initializer_list<std::shared_ptr<Point>> points,
+                                            std::shared_ptr<Point> opposite) {
+  auto face = std::make_shared<Face>(points);
+  face->updateNormal();
+  face->p1 = opposite;
+  return face;
 }

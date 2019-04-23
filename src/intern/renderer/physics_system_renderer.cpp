@@ -25,33 +25,31 @@ void PhysicsSystemRenderer::render() {
 
       // Go through
       for (int i = 0; i < sys.faces.size(); i++) {
-        if (!sys.faces[i]->isInternalFace()) {
 
-          // First get all points
-          auto p1 = sys.faces[i]->points[0];
-          auto p2 = sys.faces[i]->points[1];
-          auto p3 = sys.faces[i]->points[2];
+        // First get all points
+        auto p1 = sys.faces[i]->points[0];
+        auto p2 = sys.faces[i]->points[1];
+        auto p3 = sys.faces[i]->points[2];
 
-          // Then get the normal
-          Vector3f n = sys.faces[i]->normal.normalized();
+        // Then get the normal
+        Vector3f n = sys.faces[i]->normal.normalized();
 
-          // Add a face
-          indices.col(faceAmount) << vertAmount, vertAmount + 1, vertAmount + 2;
-          faceAmount += 1;
+        // Add a face
+        indices.col(faceAmount) << vertAmount, vertAmount + 1, vertAmount + 2;
+        faceAmount += 1;
 
-          // Add three normals
-          normals.col(vertAmount) = n;
-          normals.col(vertAmount + 1) = n;
-          normals.col(vertAmount + 2) = n;
+        // Add three normals
+        normals.col(vertAmount) = n;
+        normals.col(vertAmount + 1) = n;
+        normals.col(vertAmount + 2) = n;
 
-          // Add three positions
-          positions.col(vertAmount) = p1->position;
-          positions.col(vertAmount + 1) = p2->position;
-          positions.col(vertAmount + 2) = p3->position;
+        // Add three positions
+        positions.col(vertAmount) = p1->position;
+        positions.col(vertAmount + 1) = p2->position;
+        positions.col(vertAmount + 2) = p3->position;
 
-          // Increment the vertices
-          vertAmount += 3;
-        }
+        // Increment the vertices
+        vertAmount += 3;
       }
 
       // Resize the positions and normals
@@ -70,8 +68,11 @@ void PhysicsSystemRenderer::render() {
 
       // Material
       mat.prerender();
-      glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+      //glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
       shader.drawIndexed(GL_TRIANGLES, 0, indices.cols());
+
+      // Set back to mode fill
+      glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
     }
   }
 }
