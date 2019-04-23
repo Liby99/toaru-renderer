@@ -1,9 +1,9 @@
 #ifndef TOARU_MESH_RENDERER_H
 #define TOARU_MESH_RENDERER_H
 
-#include "core/renderer.h"
-#include "core/mesh.h"
 #include "core/material.h"
+#include "core/mesh.h"
+#include "core/renderer.h"
 
 namespace toaru {
   class MeshRenderer : public Renderer {

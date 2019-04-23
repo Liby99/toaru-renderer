@@ -3,7 +3,8 @@
 
 using namespace toaru;
 
-Tetrahedron::Tetrahedron(float density, float e, float v, std::vector<std::shared_ptr<Point>> points) {
+Tetrahedron::Tetrahedron(float density, float e, float v,
+                         std::vector<std::shared_ptr<Point>> points) {
   assert(points.size() == 4);
   this->points.insert(this->points.end(), points.begin(), points.end());
   this->density = density;
@@ -21,12 +22,12 @@ Tetrahedron::Tetrahedron(float density, float e, float v, std::shared_ptr<Point>
 void Tetrahedron::update(float deltaTime) {
   // Step 1: Measure the deformation (strain)
 
-  // Deformation Gradient: F = TR^{-1} 
+  // Deformation Gradient: F = TR^{-1}
   Matrix3f T = calculateCurrentFrame();
   Matrix3f F_m = T * invR;
 
   // Corotational frame
-  Eigen::JacobiSVD<Matrix3f> D(F_m, ComputeFullU| ComputeFullV);
+  Eigen::JacobiSVD<Matrix3f> D(F_m, ComputeFullU | ComputeFullV);
 
   Matrix3f Q = D.matrixV() * D.matrixU().transpose();
   Matrix3f S = Matrix3f::Zero();
@@ -54,15 +55,13 @@ void Tetrahedron::update(float deltaTime) {
   stress(0, 1) = stress(1, 0) = s(5, 0);
 
   // Step 3: Turn the internal stress into forces on the particles
-  std::for_each(faces.begin(), faces.end(), [this, &F, &stress](const std::shared_ptr<Face> &face)
-  {
+  std::for_each(faces.begin(), faces.end(), [this, &F, &stress](const std::shared_ptr<Face> &face) {
     Vector3f normal = face->getNormal(shared_from_this());
-    //Vector3f force = 0.5 * F * (normal.transpose() * stress).transpose();
+    // Vector3f force = 0.5 * F * (normal.transpose() * stress).transpose();
     Vector3f force = 0.5 * F * stress * normal;
     auto point = face->getOppositePoint(shared_from_this());
     point->addForce(force);
   });
-
 }
 
 void Tetrahedron::initRestState() {

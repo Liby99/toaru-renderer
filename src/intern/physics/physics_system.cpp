@@ -1,5 +1,7 @@
 #include "physics/physics_system.h"
+#ifdef _WIN32
 #include "omp.h"
+#endif
 
 using namespace toaru;
 
@@ -29,7 +31,7 @@ void PhysicsSystem::stepOnce() {
 // std::cout << points[0]->velocity << std::endl;
 // std::cout << points[0]->position << std::endl;
 #pragma omp parallel for
-  for (int i = 0; i < points.size(); i ++) {
+  for (int i = 0; i < points.size(); i++) {
     const auto element = points[i];
     element->update(deltaTime);
   }
@@ -75,8 +77,8 @@ void PhysicsSystem::createUnitCube(Vector3f position, Vector3f extents, float de
 
 std::shared_ptr<Point> PhysicsSystem::getPoint(Vector3f position) {
   // Temp face
-  //float i = std::numeric_limits<float>::epsilon() * 3.0;
-  //std::cout << i << std::endl;
+  // float i = std::numeric_limits<float>::epsilon() * 3.0;
+  // std::cout << i << std::endl;
   auto result =
       std::find_if(points.begin(), points.end(), [&](const std::shared_ptr<Point> &point) {
         // std::numeric_limits<float>::epsilon()
@@ -93,5 +95,3 @@ std::shared_ptr<Point> PhysicsSystem::getPoint(Vector3f position) {
   points.push_back(point);
   return point;
 }
-
-

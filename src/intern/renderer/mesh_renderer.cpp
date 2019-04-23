@@ -8,7 +8,7 @@ const std::string MeshRenderer::DEFAULT_MATERIAL_NAME = "material";
 MeshRenderer::MeshRenderer() : MeshRenderer(DEFAULT_MESH_NAME, DEFAULT_MATERIAL_NAME) {}
 
 MeshRenderer::MeshRenderer(const std::string &meshName, const std::string &matName)
-  : meshName(meshName), matName(matName), Renderer() {}
+    : meshName(meshName), matName(matName), Renderer() {}
 
 void MeshRenderer::setMode(MeshRenderer::Mode mode) {
   renderMode = mode;

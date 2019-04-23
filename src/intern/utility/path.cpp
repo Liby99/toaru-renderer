@@ -5,9 +5,13 @@ using namespace toaru;
 
 std::string Path::argv0 = std::string("");
 
-void Path::init(char *a0) { argv0 = std::string(a0); }
+void Path::init(char *a0) {
+  argv0 = std::string(a0);
+}
 
-const std::string &Path::getArgv0() { return argv0; }
+const std::string &Path::getArgv0() {
+  return argv0;
+}
 
 std::string Path::getCurrentWorkingDirectory() {
 #if defined(__APPLE__) || defined(__unix__)

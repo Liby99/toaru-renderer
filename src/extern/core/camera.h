@@ -1,8 +1,8 @@
 #ifndef TOARU_CAMERA_H
 #define TOARU_CAMERA_H
 
-#include "utility/math.h"
 #include "component.h"
+#include "utility/math.h"
 
 namespace toaru {
   class Camera : public Component {

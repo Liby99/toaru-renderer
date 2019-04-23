@@ -1,8 +1,8 @@
 #ifndef TOARU_PHYSICS_SYSTEM_RENDERER_H
 #define TOARU_PHYSICS_SYSTEM_RENDERER_H
 
-#include "core/renderer.h"
 #include "core/material.h"
+#include "core/renderer.h"
 #include "physics/physics_system.h"
 
 namespace toaru {

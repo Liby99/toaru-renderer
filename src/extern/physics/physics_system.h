@@ -10,7 +10,6 @@ namespace toaru {
   class Tetrahedron;
   class PhysicsSystem : public Component {
   public:
-
     std::vector<std::shared_ptr<Tetrahedron>> tetrahedrons;
     std::vector<std::shared_ptr<Point>> points;
     std::vector<std::shared_ptr<Face>> faces;

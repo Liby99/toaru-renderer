@@ -8,6 +8,7 @@ namespace toaru {
   public:
     Vector3f target;
     TwoPointCamera();
+
   protected:
     virtual Matrix4f computeView();
   };

@@ -10,6 +10,7 @@ namespace toaru {
     Sphere();
     Sphere(int subdivision);
     virtual void init();
+
   protected:
     int subdivision;
     typedef std::vector<Vector3f> Vertices;

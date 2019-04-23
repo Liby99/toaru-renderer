@@ -8,8 +8,7 @@ const float ThirdPersonCamera::SCROLL_SPEED = 1.5f;
 
 const float ThirdPersonCamera::ROTATE_SPEED = 0.8f;
 
-ThirdPersonCamera::ThirdPersonCamera()
-    : azimuth(0), incline(0), distance(3), TwoPointCamera() {}
+ThirdPersonCamera::ThirdPersonCamera() : azimuth(0), incline(0), distance(3), TwoPointCamera() {}
 
 void ThirdPersonCamera::update() {
 
@@ -46,8 +45,8 @@ void ThirdPersonCamera::updateAngle(double dt) {
   if (context().getMouseLeft()) {
     Vector2i curRel = context().getCursorMovement();
     azimuth -= curRel.x() * ROTATE_SPEED * dt;
-    incline =
-        fmaxf(-Math::PI / 2 + 0.01f, fminf(Math::PI / 2 - 0.01f, incline + curRel.y() * ROTATE_SPEED * dt));
+    incline = fmaxf(-Math::PI / 2 + 0.01f,
+                    fminf(Math::PI / 2 - 0.01f, incline + curRel.y() * ROTATE_SPEED * dt));
   }
 }
 

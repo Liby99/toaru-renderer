@@ -2,6 +2,6 @@
 
 using namespace toaru;
 
-Renderer::Renderer() {};
+Renderer::Renderer(){};
 
 void Renderer::render() {}

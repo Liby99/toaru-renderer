@@ -57,9 +57,9 @@ void PhysicsSystemRenderer::render() {
       positions.conservativeResize(3, vertAmount);
       normals.conservativeResize(3, vertAmount);
 
-      //std::cout << indices << std::endl;
-      //std::cout << positions << std::endl;
-      //std::cout << normals << std::endl;
+      // std::cout << indices << std::endl;
+      // std::cout << positions << std::endl;
+      // std::cout << normals << std::endl;
 
       // Pass to shader
       shader.uploadIndices(indices);
@@ -68,7 +68,7 @@ void PhysicsSystemRenderer::render() {
 
       // Material
       mat.prerender();
-      //glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+      // glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
       shader.drawIndexed(GL_TRIANGLES, 0, indices.cols());
 
       // Set back to mode fill

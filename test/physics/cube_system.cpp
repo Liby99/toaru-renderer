@@ -50,7 +50,7 @@ public:
     }
     if (context().getKey('T')) {
       for (auto element : points) {
-        if (element->position(1,0) > 6.0)
+        if (element->position(1, 0) > 6.0)
           element->addForce(Vector3f(10, 10, 10));
       }
       std::cout << points[0]->position << std::endl;

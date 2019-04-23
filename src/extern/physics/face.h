@@ -13,7 +13,6 @@ namespace toaru {
 
   class Face {
   public:
-
     float area;
     Vector3f normal;
 

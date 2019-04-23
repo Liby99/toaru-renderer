@@ -17,7 +17,6 @@ namespace toaru {
     virtual void update();
 
   protected:
-
     void updateCameraTarget(double dt);
     void updateAngle(double dt);
     void updateDistance(double dt);

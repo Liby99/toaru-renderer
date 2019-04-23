@@ -4,7 +4,9 @@ using namespace toaru;
 
 GLShaderWrapper::GLShaderWrapper() : nanogui::GLShader() {}
 
-GLuint GLShaderWrapper::getProgramId() const { return mProgramShader; }
+GLuint GLShaderWrapper::getProgramId() const {
+  return mProgramShader;
+}
 
 const std::string Shader::DEFAULT_VERT_SHADER =
     "#version 400\n"
@@ -52,11 +54,17 @@ void Shader::init() {
   }
 }
 
-void Shader::bind() { shader->bind(); }
+void Shader::bind() {
+  shader->bind();
+}
 
-void Shader::free() { shader->free(); }
+void Shader::free() {
+  shader->free();
+}
 
-GLuint Shader::getProgramId() { return shader->getProgramId(); }
+GLuint Shader::getProgramId() {
+  return shader->getProgramId();
+}
 
 void Shader::setUniform(const std::string &name, const Matrix4f &mat) {
   shader->setUniform(name, mat, false);
@@ -114,15 +122,21 @@ void Shader::setUniform(const std::string &name, const int *arr, unsigned int am
   glUniform1iv(loc, amount, arr);
 }
 
-void Shader::freeAttr(const std::string &name) { shader->freeAttrib(name); }
+void Shader::freeAttr(const std::string &name) {
+  shader->freeAttrib(name);
+}
 
-bool Shader::hasAttr(const std::string &name) { return shader->hasAttrib(name); }
+bool Shader::hasAttr(const std::string &name) {
+  return shader->hasAttrib(name);
+}
 
 void Shader::shareAttr(const Shader &other, const std::string &name, const std::string &as) {
   shader->shareAttrib(*(other.shader), name, as);
 }
 
-void Shader::uploadIndices(const nanogui::MatrixXu &m) { shader->uploadIndices(m); }
+void Shader::uploadIndices(const nanogui::MatrixXu &m) {
+  shader->uploadIndices(m);
+}
 
 void Shader::drawArray(int type, uint32_t offset, uint32_t count) {
   shader->drawArray(type, offset, count);
@@ -165,15 +179,19 @@ Shader &Shader::get() {
   }
 }
 
-Shader::Shader() : name(""), path(""), simple(true), initialized(false), shader(new GLShaderWrapper()) {
+Shader::Shader()
+    : name(""), path(""), simple(true), initialized(false), shader(new GLShaderWrapper()) {
   // Do nothing
 }
 
 Shader::Shader(const std::string &name)
-    : name(Path::getFileName(name)), path(name), simple(false), initialized(false), shader(new GLShaderWrapper()) {
+    : name(Path::getFileName(name)), path(name), simple(false), initialized(false),
+      shader(new GLShaderWrapper()) {
   // Do nothing
 }
 
-Shader::~Shader() { delete shader; }
+Shader::~Shader() {
+  delete shader;
+}
 
 std::map<std::string, Shader *> Shader::store = std::map<std::string, Shader *>();

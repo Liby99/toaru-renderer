@@ -19,6 +19,7 @@
 #include "camera/two_point_camera.h"
 #include "camera/third_person_camera.h"
 #include "physics/point.h"
+#include "physics/physics_material.h"
 #include "physics/physics_system.h"
 #include "physics/face.h"
 #include "physics/tetrahedron.h"

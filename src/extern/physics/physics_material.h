@@ -3,8 +3,7 @@
 
 #include "utility/math.h"
 
-namespace toaru
-{
+namespace toaru {
   class PhysicsMaterial {
   public:
     // Constant

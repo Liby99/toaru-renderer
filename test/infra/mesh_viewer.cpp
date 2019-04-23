@@ -13,15 +13,9 @@ public:
       if (context().getKey('R')) {
         pressing = true;
         switch (renderMode) {
-          case Mode::FACE:
-            renderMode = Mode::LINE;
-            break;
-          case Mode::LINE:
-            renderMode = Mode::POINT;
-            break;
-          default:
-            renderMode = Mode::FACE;
-            break;
+          case Mode::FACE: renderMode = Mode::LINE; break;
+          case Mode::LINE: renderMode = Mode::POINT; break;
+          default: renderMode = Mode::FACE; break;
         }
       }
     } else {
