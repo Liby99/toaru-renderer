@@ -3,20 +3,20 @@
 
 using namespace toaru;
 
-Tetrahedron::Tetrahedron(float density, float e, float v,
-                         std::vector<std::shared_ptr<Point>> points) {
+Tetrahedron::Tetrahedron(float density, const PhysicsMaterial &K, const PhysicsMaterial &D,
+                         std::vector<std::shared_ptr<Point>> points)
+  : K(K), D(D) {
   assert(points.size() == 4);
   this->points.insert(this->points.end(), points.begin(), points.end());
   this->density = density;
-  this->material = std::make_shared<PhysicsMaterial>(e, v);
 }
 
-Tetrahedron::Tetrahedron(float density, float e, float v, std::shared_ptr<Point> p0,
-                         std::shared_ptr<Point> p1, std::shared_ptr<Point> p2,
-                         std::shared_ptr<Point> p3) {
+Tetrahedron::Tetrahedron(float density, const PhysicsMaterial &K, const PhysicsMaterial &D,
+                         std::shared_ptr<Point> p0, std::shared_ptr<Point> p1, std::shared_ptr<Point> p2,
+                         std::shared_ptr<Point> p3)
+  : K(K), D(D) {
   this->points.insert(this->points.end(), {p0, p1, p2, p3});
   this->density = density;
-  this->material = std::make_shared<PhysicsMaterial>(e, v);
 }
 
 void Tetrahedron::update(float deltaTime) {
@@ -29,6 +29,9 @@ void Tetrahedron::update(float deltaTime) {
   // Corotational frame
   Eigen::JacobiSVD<Matrix3f> D(F_m, ComputeFullU | ComputeFullV);
 
+  // Q = V * U';
+  // F = U * S * U';
+  // origF = Q*F = V * U' * U * S * U' = V * S * U';
   Matrix3f Q = D.matrixV() * D.matrixU().transpose();
   Matrix3f S = Matrix3f::Zero();
   S.diagonal() << D.singularValues();
@@ -36,26 +39,22 @@ void Tetrahedron::update(float deltaTime) {
 
   // Green's Strain Tensor
   Matrix3f strain = 0.5 * (F.transpose() * F - Matrix3f::Identity());
+  // Calculate Delta Strain tensor
+  Matrix3f deltaStrain = Matrix3f::Zero();
+  if (lastStrain != Matrix3f::Zero()) {
+    deltaStrain = strain - lastStrain;
+  }
+  lastStrain = strain;
+
+  // Calculate Strain rate tensor
+  deltaStrain /= deltaTime;
 
   // Step 2: Relate strain to the internal forces (stress)
-  // Reshape strain tensor
-  Vector3f offDiagonal;
-  offDiagonal << strain(1, 2), strain(0, 2), strain(0, 1);
-  offDiagonal *= 2.0;
-
-  // Calculate stress using Lame constant and strain
-  Matrix<float, 6, 1> s;
-  s << material->uK * strain.diagonal(), material->lK * offDiagonal;
-
-  // Reshape stress tensor
-  Matrix3f stress;
-  stress.diagonal() << s.block(0, 0, 3, 1);
-  stress(1, 2) = stress(2, 1) = s(3, 0);
-  stress(0, 2) = stress(2, 0) = s(4, 0);
-  stress(0, 1) = stress(1, 0) = s(5, 0);
+  Matrix3f stress = toStress(strain, this->K) + toStress(deltaStrain, this->D);
 
   // Step 3: Turn the internal stress into forces on the particles
-  std::for_each(faces.begin(), faces.end(), [this, &F, &stress](const std::shared_ptr<Face> &face) {
+  std::for_each(faces.begin(), faces.end(), [this, &F, &stress](const std::shared_ptr<Face> &face)
+  {
     Vector3f normal = face->getNormal(shared_from_this());
     // Vector3f force = 0.5 * F * (normal.transpose() * stress).transpose();
     Vector3f force = 0.5 * F * stress * normal;
@@ -100,6 +99,9 @@ void Tetrahedron::initRestState() {
   assert(res == true);
 
   distributeForceToPoint();
+
+  // initialize last strain
+  lastStrain = Matrix3f::Zero();
 }
 
 void Tetrahedron::distributeForceToPoint() {
@@ -128,4 +130,24 @@ std::shared_ptr<Face> Tetrahedron::makeFace(std::initializer_list<std::shared_pt
   face->updateNormal();
   face->p1 = opposite;
   return face;
+}
+
+Matrix3f Tetrahedron::toStress(const Matrix3f &strain, const PhysicsMaterial &K) const {
+  // Reshape strain tensor
+  Vector3f offDiagonal;
+  offDiagonal << strain(1, 2), strain(0, 2), strain(0, 1);
+  offDiagonal *= 2.0;
+
+  // Calculate stress using Lame constant and strain
+  Matrix<float, 6, 1> s;
+  s << K.upper * strain.diagonal(), K.lower * offDiagonal;
+
+  // Reshape stress tensor
+  Matrix3f stress;
+  stress.diagonal() << s.block(0, 0, 3, 1);
+  stress(1, 2) = stress(2, 1) = s(3, 0);
+  stress(0, 2) = stress(2, 0) = s(4, 0);
+  stress(0, 1) = stress(1, 0) = s(5, 0);
+
+  return stress;
 }

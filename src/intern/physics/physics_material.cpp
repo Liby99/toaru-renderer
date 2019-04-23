@@ -2,24 +2,28 @@
 
 using namespace toaru;
 
-PhysicsMaterial::PhysicsMaterial(float e, float v) {
+PhysicsMaterial::PhysicsMaterial(float e, float v, bool calculateLame) {
   this->e = e;
   this->v = v;
-
-  // Calculate Lame constants
-  lambda = e * v / ((1.0 + v) * (1.0 - 2.0 * v));
-  mu = e / (2.0 * (1.0 + v));
+  if (calculateLame) {
+    // Calculate Lame constants
+    lambda = e * v / ((1.0 + v) * (1.0 - 2.0 * v));
+    mu = e / (2.0 * (1.0 + v));
+  } else {
+    lambda = e;
+    mu = v;
+  }
 
   // Construct Stiffness matrix
-  K = Matrix<float, 6, 6>::Zero();
+  mat = Matrix<float, 6, 6>::Zero();
   c = 2.0 * mu + lambda;
   // TODO: leave actual K matrix out for now
 
   // Upper K
-  uK.fill(lambda);
-  uK.diagonal() << c, c, c;
+  upper.fill(lambda);
+  upper.diagonal() << c, c, c;
 
   // Lower K
-  lK.setZero();
-  lK.diagonal() << mu, mu, mu;
+  lower.setZero();
+  lower.diagonal() << mu, mu, mu;
 }

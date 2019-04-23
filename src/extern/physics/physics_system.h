@@ -14,6 +14,9 @@ namespace toaru {
     std::vector<std::shared_ptr<Point>> points;
     std::vector<std::shared_ptr<Face>> faces;
 
+    std::vector<std::unique_ptr<PhysicsMaterial>> Ks;
+    std::vector<std::unique_ptr<PhysicsMaterial>> Ds;
+
     // TODO: lookup table ?
     // TODO: AABB
 
@@ -30,7 +33,7 @@ namespace toaru {
     virtual void init();
     virtual void update();
 
-    void createUnitCube(Vector3f pos, Vector3f ext, float density, float e, float v);
+    void createUnitCube(Vector3f pos, Vector3f ext, float density, const PhysicsMaterial & K, const PhysicsMaterial & D);
 
     std::shared_ptr<Point> getPoint(Vector3f position);
   };

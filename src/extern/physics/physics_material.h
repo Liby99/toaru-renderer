@@ -13,15 +13,15 @@ namespace toaru {
     float lambda, mu, c;
 
     // Stiffness tensor K
-    Matrix<float, 6, 6> K;
+    Matrix<float, 6, 6> mat;
 
     // Upper K
-    Matrix<float, 3, 3> uK;
+    Matrix<float, 3, 3> upper;
 
     // Lower K
-    Matrix<float, 3, 3> lK;
+    Matrix<float, 3, 3> lower;
 
-    PhysicsMaterial(float e, float v);
+    PhysicsMaterial(float e, float v, bool calculateLame = true);
   };
 }
 

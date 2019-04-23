@@ -9,6 +9,7 @@
 
 namespace toaru {
   class Face;
+
   class Tetrahedron : public std::enable_shared_from_this<Tetrahedron> {
   public:
     // Mass
@@ -33,11 +34,12 @@ namespace toaru {
     Matrix3f invR;
 
     // Physics properties
-    std::shared_ptr<PhysicsMaterial> material;
+    const PhysicsMaterial &K;
+    const PhysicsMaterial &D;
 
-    Tetrahedron(float density, float e, float v, std::vector<std::shared_ptr<Point>> points);
+    Tetrahedron(float density, const PhysicsMaterial &K, const PhysicsMaterial &D, std::vector<std::shared_ptr<Point>> points);
 
-    Tetrahedron(float density, float e, float v, std::shared_ptr<Point> p0,
+    Tetrahedron(float density, const PhysicsMaterial &K, const PhysicsMaterial &D, std::shared_ptr<Point> p0,
                 std::shared_ptr<Point> p1, std::shared_ptr<Point> p2, std::shared_ptr<Point> p3);
 
     virtual void update(float deltaTime);
@@ -51,6 +53,9 @@ namespace toaru {
 
     std::shared_ptr<Face> makeFace(std::initializer_list<std::shared_ptr<Point>> points,
                                    std::shared_ptr<Point> opposite);
+    Matrix3f toStress(const Matrix3f &strain, const PhysicsMaterial &K) const;
+
+    Matrix3f lastStrain;
   };
 }
 #endif

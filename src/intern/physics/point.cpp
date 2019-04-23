@@ -24,8 +24,6 @@ bool Point::updateInvMass() {
 }
 
 void Point::update(float deltaTime) {
-  // TODO: correct damping
-  velocity *= 0.995f;
 
   // TODO: better style to add gravity
   addForce(Vector3f(0, -9.8f * mass, 0));
@@ -44,9 +42,11 @@ void Point::update(float deltaTime) {
   force = Vector3f(0, 0, 0);
 
   // TODO: Add ground as a physics object
-  if (position(1, 0) < -2) {
-    position(1, 0) = -2;
-    velocity(1, 0) = abs(velocity(1, 0)) * 0.50;
+  if (position.y() < -2) {
+    position.y() = -2;
+    velocity.y() = abs(velocity.y()) * 0.50;
+    velocity.x() = velocity.x() * 0.99;
+    velocity.z() = velocity.z() * 0.99;
   }
 }
 
