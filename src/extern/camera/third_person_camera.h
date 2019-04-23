@@ -6,11 +6,12 @@
 namespace toaru {
   class ThirdPersonCamera : public TwoPointCamera {
   public:
-    static const float MOVE_SPEED;
-    static const float SCROLL_SPEED;
-    static const float ROTATE_SPEED;
+    static const float MOVE_SPEED, SCROLL_SPEED, ROTATE_SPEED;
+    static const float MAX_INCLINE, MIN_INCLINE;
 
     float azimuth, incline, distance;
+    float moveSpeed, scrollSpeed, rotateSpeed;
+    bool allowMove, allowScroll, allowRotate;
 
     ThirdPersonCamera();
 
