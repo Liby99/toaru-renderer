@@ -28,43 +28,39 @@ public:
   }
 
   virtual void update() {
-    if (!pressingR) {
-      if (context().getKey('R')) {
-        pressingR = true;
-        play();
-      }
-    } else {
-      if (!context().getKey('R')) {
-        pressingR = false;
-      }
-    }
-
     if (!pressingP) {
       if (context().getKey('P')) {
-        pressingR = true;
-        pause();
+        pressingP = true;
+        if (isPlaying) pause();
+        else play();
       }
     } else {
       if (!context().getKey('P')) {
-        pressingR = false;
+        pressingP = false;
       }
     }
 
-    if (context().getKey('T')) {
+    if (isPlaying) {
       for (auto element : points) {
-        if (element->position(1, 0) > 4.5) {
-          element->addForce(Vector3f(10, 10, 10));
+        if (element->position.y() > 2) {
+          if (context().getDirectionKey(Context::Direction::Down))
+            element->addForce(Vector3f(0, 0, 10));
+          if (context().getDirectionKey(Context::Direction::Up))
+            element->addForce(Vector3f(0, 0, -10));
+          if (context().getDirectionKey(Context::Direction::Right))
+            element->addForce(Vector3f(10, 0, 0));
+          if (context().getDirectionKey(Context::Direction::Left))
+            element->addForce(Vector3f(-10, 0, 0));
         }
       }
-      // std::cout << points[0]->position << std::endl;
     }
 
-    if (context().getKey('G')) {
+    if (context().getKey('R')) {
       for (auto element : points) {
-        element->position(1, 0) += 3;
+        element->position.y() += 1;
       }
-      // std::cout << points[0]->position << std::endl;
     }
+
     PhysicsSystem::update();
   }
 };
@@ -75,8 +71,12 @@ int main(int argc, char *argv[]) {
   Scene scene;
 
   Entity camHolder;
-  camHolder.transform.position = Vector3f(3, 3, 3);
+  camHolder.transform.position = Vector3f(-1, 30, 29);
   ThirdPersonCamera cam;
+  cam.target = Vector3f(-1, 0, -1);
+  cam.allowRotate = false;
+  cam.moveSpeed = 10.0f;
+  cam.scrollSpeed = 5.0f;
   camHolder.addComponent("camera", cam);
   scene.root.addChild(camHolder);
 
@@ -91,7 +91,7 @@ int main(int argc, char *argv[]) {
 
   Entity floorHolder;
   floorHolder.transform.scale << 100, 100, 100;
-  floorHolder.transform.position << 0, -2, 0;
+  floorHolder.transform.position << -1, -2, -1;
   Plane plane;
   Lambertian floorMat;
   MeshRenderer meshRenderer;

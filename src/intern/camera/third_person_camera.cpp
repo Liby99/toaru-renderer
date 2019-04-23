@@ -8,12 +8,20 @@ const float ThirdPersonCamera::SCROLL_SPEED = 1.5f;
 
 const float ThirdPersonCamera::ROTATE_SPEED = 0.8f;
 
-ThirdPersonCamera::ThirdPersonCamera() : azimuth(0), incline(0), distance(3), TwoPointCamera() {}
+const float ThirdPersonCamera::MAX_INCLINE = Math::PI / 2 - 0.01f;
+
+const float ThirdPersonCamera::MIN_INCLINE = -Math::PI / 2 + 0.01f;
+
+ThirdPersonCamera::ThirdPersonCamera()
+  : azimuth(0), incline(0), distance(3),
+    moveSpeed(MOVE_SPEED), scrollSpeed(SCROLL_SPEED), rotateSpeed(ROTATE_SPEED),
+    allowMove(true), allowScroll(true), allowRotate(true),
+    TwoPointCamera() {}
 
 void ThirdPersonCamera::init() {
   Vector3f diff = object().transform.position - target;
   distance = diff.norm();
-  azimuth = atan2(diff.z(), diff.x());
+  azimuth = atan2(diff.x(), diff.y());
   incline = atan(diff.y() / Vector2f(diff.z(), diff.x()).norm());
 }
 
@@ -21,9 +29,9 @@ void ThirdPersonCamera::update() {
 
   // First update the position and target
   double dt = context().getDeltaTime();
-  updateAngle(dt);
-  updateDistance(dt);
-  updateCameraTarget(dt);
+  if (allowRotate) updateAngle(dt);
+  if (allowScroll) updateDistance(dt);
+  if (allowMove) updateCameraTarget(dt);
   updateCameraPosition();
 
   // Then use parent's update
@@ -45,20 +53,20 @@ void ThirdPersonCamera::updateCameraTarget(double dt) {
   if (context().getKey('d'))
     vel += Vector3f(cos(azimuth), 0, -sin(azimuth));
   if (vel.dot(vel) > 0)
-    target += vel.normalized() * MOVE_SPEED * dt;
+    target += vel.normalized() * moveSpeed * dt;
 }
 
 void ThirdPersonCamera::updateAngle(double dt) {
   if (context().getMouseLeft()) {
     Vector2i curRel = context().getCursorMovement();
-    azimuth -= curRel.x() * ROTATE_SPEED * dt;
-    incline = fmaxf(-Math::PI / 2 + 0.01f,
-                    fminf(Math::PI / 2 - 0.01f, incline + curRel.y() * ROTATE_SPEED * dt));
+    azimuth -= curRel.x() * rotateSpeed * dt;
+    float rawIncline = incline + curRel.y() * rotateSpeed * dt;
+    incline = fmaxf(MIN_INCLINE, fminf(MAX_INCLINE, rawIncline));
   }
 }
 
 void ThirdPersonCamera::updateDistance(double dt) {
-  distance = fmaxf(0.01f, distance - context().getScrollMovement().y() * SCROLL_SPEED * dt);
+  distance = fmaxf(0.01f, distance - context().getScrollMovement().y() * scrollSpeed * dt);
 }
 
 void ThirdPersonCamera::updateCameraPosition() {

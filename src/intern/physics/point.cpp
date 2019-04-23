@@ -47,6 +47,9 @@ void Point::update(float deltaTime) {
   if (position(1, 0) < -2) {
     position.y() = -2;
     velocity.y() = abs(velocity.y()) * 0.50;
+
+    // TODO: Add friction
+    force += Vector3f(-velocity.x(), 0, -velocity.z());
   }
 }
 
