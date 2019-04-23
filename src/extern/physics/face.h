@@ -13,8 +13,6 @@ namespace toaru {
 
   class Face {
   public:
-    // List of all faces
-    static std::vector<std::shared_ptr<Face>> faces;
 
     float area;
     Vector3f normal;
@@ -29,9 +27,6 @@ namespace toaru {
     std::shared_ptr<Point> p1;
     std::shared_ptr<Point> p2 = nullptr;
 
-    static std::tuple<bool, std::shared_ptr<Face>> getFace(
-      std::initializer_list<std::shared_ptr<Point>> points);
-
     Face(std::initializer_list<std::shared_ptr<Point>> points);
 
     virtual bool operator==(const Face &other);
@@ -41,7 +36,6 @@ namespace toaru {
     virtual Vector3f getNormal(const std::shared_ptr<Tetrahedron> &t);
     virtual std::shared_ptr<Point> getOppositePoint(const std::shared_ptr<Tetrahedron> &t) const;
 
-  private:
     virtual void updateNormal();
   };
 }

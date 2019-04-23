@@ -70,6 +70,7 @@ void PhysicsSystemRenderer::render() {
 
       // Material
       mat.prerender();
+      glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
       shader.drawIndexed(GL_TRIANGLES, 0, indices.cols());
     }
   }

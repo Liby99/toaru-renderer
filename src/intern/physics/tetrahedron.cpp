@@ -3,18 +3,18 @@
 
 using namespace toaru;
 
-Tetrahedron::Tetrahedron(float mass, float e, float v, std::vector<std::shared_ptr<Point>> points) {
+Tetrahedron::Tetrahedron(float density, float e, float v, std::vector<std::shared_ptr<Point>> points) {
   assert(points.size() == 4);
   this->points.insert(this->points.end(), points.begin(), points.end());
-  this->mass = mass;
+  this->density = density;
   this->material = std::make_shared<PhysicsMaterial>(e, v);
 }
 
-Tetrahedron::Tetrahedron(float mass, float e, float v, std::shared_ptr<Point> p0,
+Tetrahedron::Tetrahedron(float density, float e, float v, std::shared_ptr<Point> p0,
                          std::shared_ptr<Point> p1, std::shared_ptr<Point> p2,
                          std::shared_ptr<Point> p3) {
   this->points.insert(this->points.end(), {p0, p1, p2, p3});
-  this->mass = mass;
+  this->density = density;
   this->material = std::make_shared<PhysicsMaterial>(e, v);
 }
 
@@ -65,7 +65,10 @@ void Tetrahedron::update(float deltaTime) {
 
 }
 
-void Tetrahedron::initRestState() {
+void Tetrahedron::initRestState(PhysicsSystem * system) {
+  // Get system
+  this->physicsSystem = system;
+
   // Build or get four faces
   // 1, 2, 3
   auto f1 = getFace({points[0], points[1], points[2]}, points[3]);
@@ -88,6 +91,9 @@ void Tetrahedron::initRestState() {
   constexpr float factor = 1.0 / 6.0;
   this->volume = factor * (this->axes[0].cross(this->axes[1])).dot(this->axes[2]);
 
+  // Calculate mass based on volume and density
+  this->mass = volume * density;
+
   // Build rest matrix
   bool res;
   Matrix3f R;
@@ -102,7 +108,7 @@ void Tetrahedron::initRestState() {
 
 std::shared_ptr<Face> Tetrahedron::getFace(std::initializer_list<std::shared_ptr<Point>> points,
                                            std::shared_ptr<Point> opposite) {
-  auto [res, f] = Face::getFace(points);
+  auto [res, f] = physicsSystem->getFace(points);
   if (!res) {
     f->t1 = shared_from_this();
     f->p1 = opposite;
