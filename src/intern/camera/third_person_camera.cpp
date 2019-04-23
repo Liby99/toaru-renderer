@@ -10,6 +10,13 @@ const float ThirdPersonCamera::ROTATE_SPEED = 0.8f;
 
 ThirdPersonCamera::ThirdPersonCamera() : azimuth(0), incline(0), distance(3), TwoPointCamera() {}
 
+void ThirdPersonCamera::init() {
+  Vector3f diff = object().transform.position - target;
+  distance = diff.norm();
+  azimuth = atan2(diff.z(), diff.x());
+  incline = atan(diff.y() / Vector2f(diff.z(), diff.x()).norm());
+}
+
 void ThirdPersonCamera::update() {
 
   // First update the position and target

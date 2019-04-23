@@ -2,7 +2,7 @@
 
 using namespace toaru;
 
-TwoPointCamera::TwoPointCamera() : Camera() {}
+TwoPointCamera::TwoPointCamera() : target(Vector3f::Zero()), Camera() {}
 
 Matrix4f TwoPointCamera::computeView() {
   Vector3f position = object().transform.position;

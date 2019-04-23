@@ -37,6 +37,15 @@ void PhysicsSystem::stepOnce() {
   }
 }
 
+void PhysicsSystem::init() {
+  for (auto element : tetrahedrons) {
+    element->initRestState();
+    for (auto f : element->faces) {
+      faces.push_back(f);
+    }
+  }
+}
+
 void PhysicsSystem::update() {
   if (isPlaying) {
     for (int i = 0; i < step; i++) {

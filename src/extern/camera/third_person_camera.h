@@ -14,6 +14,7 @@ namespace toaru {
 
     ThirdPersonCamera();
 
+    virtual void init();
     virtual void update();
 
   protected:

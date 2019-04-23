@@ -27,6 +27,7 @@ namespace toaru {
     virtual void pause();
     virtual void stepOnce();
 
+    virtual void init();
     virtual void update();
 
     void createUnitCube(Vector3f pos, Vector3f ext, float density, float e, float v);
