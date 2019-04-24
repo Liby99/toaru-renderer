@@ -19,6 +19,11 @@ Tetrahedron::Tetrahedron(float density, const PhysicsMaterial &K, const PhysicsM
   this->density = density;
 }
 
+const Point &Tetrahedron::getPoint(int i) const {
+  assert(i >= 0 && i < 5);
+  return *points[i];
+}
+
 void Tetrahedron::update(float deltaTime) {
   // Step 1: Measure the deformation (strain)
 

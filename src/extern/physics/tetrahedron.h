@@ -42,9 +42,11 @@ namespace toaru {
     Tetrahedron(float density, const PhysicsMaterial &K, const PhysicsMaterial &D, std::shared_ptr<Point> p0,
                 std::shared_ptr<Point> p1, std::shared_ptr<Point> p2, std::shared_ptr<Point> p3);
 
-    virtual void update(float deltaTime);
+    const Point &getPoint(int i) const;
 
-    virtual void initRestState();
+    void update(float deltaTime);
+
+    void initRestState();
 
   private:
     virtual void distributeForceToPoint();
