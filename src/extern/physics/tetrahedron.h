@@ -43,6 +43,7 @@ namespace toaru {
                 std::shared_ptr<Point> p1, std::shared_ptr<Point> p2, std::shared_ptr<Point> p3);
 
     const Point &getPoint(int i) const;
+    Vector3f getCenter() const;
 
     void update(float deltaTime);
 

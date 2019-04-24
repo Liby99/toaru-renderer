@@ -24,6 +24,10 @@ const Point &Tetrahedron::getPoint(int i) const {
   return *points[i];
 }
 
+Vector3f Tetrahedron::getCenter() const {
+  return (points[0]->position + points[1]->position + points[2]->position + points[3]->position) / 4.0f;
+}
+
 void Tetrahedron::update(float deltaTime) {
   // Step 1: Measure the deformation (strain)
 

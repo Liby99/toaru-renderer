@@ -18,6 +18,8 @@
 #include "core/scene.h"
 #include "camera/two_point_camera.h"
 #include "camera/third_person_camera.h"
+#include "physics/aabb_tree.h"
+#include "physics/aabb_tree_node.h"
 #include "physics/point.h"
 #include "physics/physics_material.h"
 #include "physics/ray.h"

@@ -13,12 +13,16 @@ namespace toaru {
 
     AxisAlignedBoundingBox();
 
+    void reset();
+
     void extend(Vector3f p);
     void extend(const Tetrahedron &tetra);
     void extend(const AxisAlignedBoundingBox &aabb);
 
-    bool intersect(const AxisAlignedBoundingBox &other);
-    bool intersect(const Ray &ray);
+    bool intersect(const AxisAlignedBoundingBox &other) const;
+    bool intersect(const Ray &ray) const;
+
+    Vector3f getDimension();
 
     static Vector3f minVec(Vector3f a, Vector3f b);
     static Vector3f maxVec(Vector3f a, Vector3f b);

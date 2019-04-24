@@ -4,6 +4,10 @@ using namespace toaru;
 
 AxisAlignedBoundingBox::AxisAlignedBoundingBox() : initialized(false) {}
 
+void AxisAlignedBoundingBox::reset() {
+  initialized = false;
+}
+
 void AxisAlignedBoundingBox::extend(Vector3f p) {
   if (!initialized) {
     minCorner = p;
@@ -27,14 +31,14 @@ void AxisAlignedBoundingBox::extend(const AxisAlignedBoundingBox &aabb) {
   extend(aabb.maxCorner);
 }
 
-bool AxisAlignedBoundingBox::intersect(const AxisAlignedBoundingBox &other) {
+bool AxisAlignedBoundingBox::intersect(const AxisAlignedBoundingBox &other) const {
   Vector3f nmin = maxVec(minCorner, other.minCorner);
   Vector3f nmax = minVec(maxCorner, other.maxCorner);
   Vector3f diagnal = nmax - nmin;
   return diagnal.x() > 0 && diagnal.y() > 0 && diagnal.z() > 0;
 }
 
-bool AxisAlignedBoundingBox::intersect(const Ray &ray) {
+bool AxisAlignedBoundingBox::intersect(const Ray &ray) const {
 
   // Calculate the intersections
   Vector3f t1, t2;
@@ -50,6 +54,10 @@ bool AxisAlignedBoundingBox::intersect(const Ray &ray) {
   
   // Check t
   return (tmin > 0 && tmin <= tmax) || (tmin < 0 && tmax > 0);
+}
+
+Vector3f AxisAlignedBoundingBox::getDimension() {
+  return maxCorner - minCorner;
 }
 
 Vector3f AxisAlignedBoundingBox::minVec(Vector3f a, Vector3f b) {
