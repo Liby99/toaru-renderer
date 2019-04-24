@@ -9,6 +9,11 @@ using namespace Eigen;
 namespace toaru {
   using Eigen::Matrix;
 
+  using std::shared_ptr;
+  using std::unique_ptr;
+  using std::make_shared;
+  using std::make_unique;
+
   typedef Eigen::Matrix<uint32_t, 4, 1> Vector4u;
   typedef Eigen::Matrix<uint32_t, 3, 1> Vector3u;
   typedef Eigen::Matrix<uint32_t, 2, 1> Vector2u;
