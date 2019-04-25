@@ -27,9 +27,9 @@ void PhysicsSystemRenderer::render() {
       for (int i = 0; i < sys.faces.size(); i++) {
 
         // First get all points
-        auto p1 = sys.faces[i]->points[0].get();
-        auto p2 = sys.faces[i]->points[1].get();
-        auto p3 = sys.faces[i]->points[2].get();
+        auto p1 = sys.faces[i]->points[0];
+        auto p2 = sys.faces[i]->points[1];
+        auto p3 = sys.faces[i]->points[2];
 
         // Then get the normal
         Vector3f n = sys.faces[i]->normal.normalized();
@@ -44,9 +44,9 @@ void PhysicsSystemRenderer::render() {
         normals.col(vertAmount + 2) = n;
 
         // Add three positions
-        positions.col(vertAmount) = p1.position;
-        positions.col(vertAmount + 1) = p2.position;
-        positions.col(vertAmount + 2) = p3.position;
+        positions.col(vertAmount) = p1->position;
+        positions.col(vertAmount + 1) = p2->position;
+        positions.col(vertAmount + 2) = p3->position;
 
         // Increment the vertices
         vertAmount += 3;

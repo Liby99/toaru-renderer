@@ -6,27 +6,27 @@ using namespace toaru;
 Tetrahedron::Tetrahedron(float density, const PhysicsMaterial &K, const PhysicsMaterial &D,
                          Point &p0, Point &p1, Point &p2, Point &p3)
   : K(K), D(D) {
-  this->points.insert(this->points.end(), {p0, p1, p2, p3});
+  this->points.insert(this->points.end(), {&p0, &p1, &p2, &p3});
   this->density = density;
 }
 
 const Point &Tetrahedron::getPoint(int i) const {
   assert(i >= 0 && i < 5);
-  return points[i];
+  return *points[i];
 }
 
 Vector3f Tetrahedron::getCenter() const {
-  return (points[0].get().position + points[1].get().position + points[2].get().position + points[3].get().position) / 4.0f;
+  return (points[0]->position + points[1]->position + points[2]->position + points[3]->position) / 4.0f;
 }
 
 bool Tetrahedron::intersect(const Tetrahedron &other) const {
-  Vector3f &p0 = points[0].get().position, &p1 = points[1].get().position,
-           &p2 = points[2].get().position, &p3 = points[3].get().position;
+  Vector3f &p0 = points[0]->position, &p1 = points[1]->position,
+           &p2 = points[2]->position, &p3 = points[3]->position;
   Vector3f e1 = p1 - p0, e2 = p2 - p0, e3 = p3 - p0;
   float e1l = e1.norm(), e2l = e2.norm(), e3l = e3.norm();
   Vector3f e1n = e1 / e1l, e2n = e2 / e2l, e3n = e3 / e3l;
   for (auto p : points) {
-    Vector3f u = p.get().position - p0;
+    Vector3f u = p->position - p0;
     float d1 = u.dot(e1n), d2 = u.dot(e2n), d3 = u.dot(e3n);
     if (d1 < e1l && d2 < e2l && d3 < e3l) {
       return true;
@@ -72,7 +72,7 @@ void Tetrahedron::initRestState() {
   // Build tetrahedral frame axes
   this->axes.resize(3);
   for (int i = 0; i < 3; i++) {
-    this->axes[i] = this->points[i].get().position - this->points[3].get().position;
+    this->axes[i] = this->points[i]->position - this->points[3]->position;
   }
 
   // Calculate volume
@@ -99,14 +99,14 @@ void Tetrahedron::initRestState() {
 
 void Tetrahedron::distributeForceToPoint() {
   std::for_each(points.begin(), points.end(),
-                [&](const std::reference_wrapper<Point> &p) { p.get().addMass(mass * 0.25); });
+                [&](Point *p) { p->addMass(mass * 0.25); });
 }
 
 Matrix3f Tetrahedron::calculateCurrentFrame() {
   // Build tetrahedral frame axes
   std::vector<Vector3f> axes(3);
   for (int i = 0; i < 3; i++) {
-    axes[i] = this->points[i].get().position - this->points[3].get().position;
+    axes[i] = this->points[i]->position - this->points[3]->position;
   }
 
   // Build matrix

@@ -105,16 +105,16 @@ Point &PhysicsSystem::getPoint(Vector3f position) {
 void PhysicsSystem::makeFace(std::unique_ptr<Tetrahedron> &tet) {
   // Build or get four faces
   // 1, 2, 3
-  auto f1 = std::make_unique<Face>(tet->points[0], tet->points[1], tet->points[2], tet->points[3]);
+  auto f1 = std::make_unique<Face>(*tet->points[0], *tet->points[1], *tet->points[2], *tet->points[3]);
   f1->updateNormal();
   // 4, 1, 3
-  auto f2 = std::make_unique<Face>(tet->points[3], tet->points[0], tet->points[2], tet->points[1]);
+  auto f2 = std::make_unique<Face>(*tet->points[3], *tet->points[0], *tet->points[2], *tet->points[1]);
   f2->updateNormal();
   // 2, 4, 3
-  auto f3 = std::make_unique<Face>(tet->points[1], tet->points[3], tet->points[2], tet->points[0]);
+  auto f3 = std::make_unique<Face>(*tet->points[1], *tet->points[3], *tet->points[2], *tet->points[0]);
   f3->updateNormal();
   // 4, 2, 1
-  auto f4 = std::make_unique<Face>(tet->points[3], tet->points[1], tet->points[0], tet->points[2]);
+  auto f4 = std::make_unique<Face>(*tet->points[3], *tet->points[1], *tet->points[0], *tet->points[2]);
   f4->updateNormal();
 
   faces.push_back(move(f1));

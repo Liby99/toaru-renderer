@@ -19,7 +19,7 @@ namespace toaru {
     float density;
 
     // Points
-    std::vector<std::reference_wrapper<Point>> points;
+    std::vector<Point *> points;
 
     // Faces
     std::vector<std::reference_wrapper<Face>> faces;

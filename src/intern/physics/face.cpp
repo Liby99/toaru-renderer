@@ -12,8 +12,8 @@ Point &Face::getOppositePoint() const {
 
 void Face::updateNormal() {
   // e1 = v1 - v0; e2 = v2 - v0; normal = e1 x e2;
-  Vector3f e1 = this->points[1].get().position - this->points[0].get().position;
-  Vector3f e2 = this->points[2].get().position - this->points[0].get().position;
+  Vector3f e1 = this->points[1]->position - this->points[0]->position;
+  Vector3f e2 = this->points[2]->position - this->points[0]->position;
 
   this->normal = e1.cross(e2);
   this->area = this->normal.norm() / 2.0;
@@ -21,5 +21,5 @@ void Face::updateNormal() {
 
 Face::Face(Point &p0, Point &p1, Point &p2, Point &opposite)
   : p1(opposite) {
-  this->points.insert(this->points.end(), {p0, p1, p2});
+  this->points.insert(this->points.end(), {&p0, &p1, &p2});
 }

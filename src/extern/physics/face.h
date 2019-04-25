@@ -17,7 +17,7 @@ namespace toaru {
     Vector3f normal;
 
     // Points on the faces
-    std::vector<std::reference_wrapper<Point>> points;
+    std::vector<Point *> points;
 
     std::shared_ptr<Tetrahedron> t1;
 
