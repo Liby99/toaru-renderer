@@ -17,17 +17,17 @@ namespace toaru {
     Vector3f normal;
 
     // Points on the faces
-    std::vector<std::shared_ptr<Point>> points;
+    std::vector<std::reference_wrapper<Point>> points;
 
     std::shared_ptr<Tetrahedron> t1;
 
     // Opposite points
-    std::shared_ptr<Point> p1;
+    Point& p1;
 
-    Face(std::initializer_list<std::shared_ptr<Point>> points);
+    Face(Point &p0, Point &p1, Point &p2, Point &opposite);
 
-    virtual Vector3f getNormal(const std::shared_ptr<Tetrahedron> &t);
-    virtual std::shared_ptr<Point> getOppositePoint(const std::shared_ptr<Tetrahedron> &t) const;
+    virtual Vector3f getNormal();
+    Point & getOppositePoint() const;
 
     virtual void updateNormal();
   };

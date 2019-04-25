@@ -10,7 +10,7 @@
 namespace toaru {
   class Face;
 
-  class Tetrahedron : public std::enable_shared_from_this<Tetrahedron> {
+  class Tetrahedron{
   public:
     // Mass
     float mass;
@@ -19,10 +19,10 @@ namespace toaru {
     float density;
 
     // Points
-    std::vector<std::shared_ptr<Point>> points;
+    std::vector<std::reference_wrapper<Point>> points;
 
     // Faces
-    std::vector<std::shared_ptr<Face>> faces;
+    std::vector<std::reference_wrapper<Face>> faces;
 
     // Rest axis
     std::vector<Vector3f> axes;
@@ -37,10 +37,8 @@ namespace toaru {
     const PhysicsMaterial &K;
     const PhysicsMaterial &D;
 
-    Tetrahedron(float density, const PhysicsMaterial &K, const PhysicsMaterial &D, std::vector<std::shared_ptr<Point>> points);
-
-    Tetrahedron(float density, const PhysicsMaterial &K, const PhysicsMaterial &D, std::shared_ptr<Point> p0,
-                std::shared_ptr<Point> p1, std::shared_ptr<Point> p2, std::shared_ptr<Point> p3);
+    Tetrahedron(float density, const PhysicsMaterial &K, const PhysicsMaterial &D, Point & p0,
+                Point &p1, Point &p2, Point &p3);
 
     const Point &getPoint(int i) const;
     Vector3f getCenter() const;
@@ -56,8 +54,6 @@ namespace toaru {
 
     Matrix3f calculateCurrentFrame();
 
-    std::shared_ptr<Face> makeFace(std::initializer_list<std::shared_ptr<Point>> points,
-                                   std::shared_ptr<Point> opposite);
     Matrix3f toStress(const Matrix3f &strain, const PhysicsMaterial &K) const;
 
     Matrix3f lastStrain;

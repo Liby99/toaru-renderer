@@ -4,16 +4,7 @@
 using namespace toaru;
 
 Tetrahedron::Tetrahedron(float density, const PhysicsMaterial &K, const PhysicsMaterial &D,
-                         std::vector<std::shared_ptr<Point>> points)
-  : K(K), D(D) {
-  assert(points.size() == 4);
-  this->points.insert(this->points.end(), points.begin(), points.end());
-  this->density = density;
-}
-
-Tetrahedron::Tetrahedron(float density, const PhysicsMaterial &K, const PhysicsMaterial &D,
-                         std::shared_ptr<Point> p0, std::shared_ptr<Point> p1, std::shared_ptr<Point> p2,
-                         std::shared_ptr<Point> p3)
+                         Point &p0, Point &p1, Point &p2, Point &p3)
   : K(K), D(D) {
   this->points.insert(this->points.end(), {p0, p1, p2, p3});
   this->density = density;
@@ -49,18 +40,7 @@ void Tetrahedron::update(float deltaTime) {
 
   // Deformation Gradient: F = TR^{-1}
   Matrix3f T = calculateCurrentFrame();
-  Matrix3f F_m = T * invR;
-
-  // Corotational frame
-  Eigen::JacobiSVD<Matrix3f> D(F_m, ComputeFullU | ComputeFullV);
-
-  // Q = V * U';
-  // F = U * S * U';
-  // origF = Q*F = V * U' * U * S * U' = V * S * U';
-  Matrix3f Q = D.matrixV() * D.matrixU().transpose();
-  Matrix3f S = Matrix3f::Zero();
-  S.diagonal() << D.singularValues();
-  Matrix3f F = D.matrixU() * S * D.matrixU().transpose();
+  Matrix3f F = T * invR;
 
   // Green's Strain Tensor
   Matrix3f strain = 0.5 * (F.transpose() * F - Matrix3f::Identity());
@@ -78,33 +58,21 @@ void Tetrahedron::update(float deltaTime) {
   Matrix3f stress = toStress(strain, this->K) + toStress(deltaStrain, this->D);
 
   // Step 3: Turn the internal stress into forces on the particles
-  std::for_each(faces.begin(), faces.end(), [this, &F, &stress](const std::shared_ptr<Face> &face)
+  std::for_each(faces.begin(), faces.end(), [this, &F, &stress](Face &face)
   {
-    Vector3f normal = face->getNormal(shared_from_this());
+    Vector3f normal = face.getNormal();
     // Vector3f force = 0.5 * F * (normal.transpose() * stress).transpose();
     Vector3f force = 0.5 * F * stress * normal;
-    auto point = face->getOppositePoint(shared_from_this());
-    point->addForce(force);
+    auto & point = face.getOppositePoint();
+    point.addForce(force);
   });
 }
 
 void Tetrahedron::initRestState() {
-  // Build or get four faces
-  // 1, 2, 3
-  auto f1 = makeFace({points[0], points[1], points[2]}, points[3]);
-  // 4, 1, 3
-  auto f2 = makeFace({points[3], points[0], points[2]}, points[1]);
-  // 2, 4, 3
-  auto f3 = makeFace({points[1], points[3], points[2]}, points[0]);
-  // 4, 2, 1
-  auto f4 = makeFace({points[3], points[1], points[0]}, points[2]);
-
-  faces.insert(faces.end(), {f1, f2, f3, f4});
-
   // Build tetrahedral frame axes
   this->axes.resize(3);
   for (int i = 0; i < 3; i++) {
-    this->axes[i] = this->points[i]->position - this->points[3]->position;
+    this->axes[i] = this->points[i].get().position - this->points[3].get().position;
   }
 
   // Calculate volume
@@ -131,14 +99,14 @@ void Tetrahedron::initRestState() {
 
 void Tetrahedron::distributeForceToPoint() {
   std::for_each(points.begin(), points.end(),
-                [&](const std::shared_ptr<Point> &p) { p->addMass(mass * 0.25); });
+                [&](const std::reference_wrapper<Point> &p) { p.get().addMass(mass * 0.25); });
 }
 
 Matrix3f Tetrahedron::calculateCurrentFrame() {
   // Build tetrahedral frame axes
   std::vector<Vector3f> axes(3);
   for (int i = 0; i < 3; i++) {
-    axes[i] = this->points[i]->position - this->points[3]->position;
+    axes[i] = this->points[i].get().position - this->points[3].get().position;
   }
 
   // Build matrix
@@ -149,13 +117,6 @@ Matrix3f Tetrahedron::calculateCurrentFrame() {
   return T;
 }
 
-std::shared_ptr<Face> Tetrahedron::makeFace(std::initializer_list<std::shared_ptr<Point>> points,
-                                            std::shared_ptr<Point> opposite) {
-  auto face = std::make_shared<Face>(points);
-  face->updateNormal();
-  face->p1 = opposite;
-  return face;
-}
 
 Matrix3f Tetrahedron::toStress(const Matrix3f &strain, const PhysicsMaterial &K) const {
   // Reshape strain tensor
