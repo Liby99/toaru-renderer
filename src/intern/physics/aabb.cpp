@@ -8,7 +8,7 @@ void AxisAlignedBoundingBox::reset() {
   initialized = false;
 }
 
-void AxisAlignedBoundingBox::extend(Vector3f p) {
+void AxisAlignedBoundingBox::extend(const Vector3f &p) {
   if (!initialized) {
     minCorner = p;
     maxCorner = p;
@@ -29,6 +29,12 @@ void AxisAlignedBoundingBox::extend(const Tetrahedron &tetra) {
 void AxisAlignedBoundingBox::extend(const AxisAlignedBoundingBox &aabb) {
   extend(aabb.minCorner);
   extend(aabb.maxCorner);
+}
+
+bool AxisAlignedBoundingBox::isInside(const Vector3f &p) const {
+  return p(0) > minCorner(0) && p(0) < maxCorner(0) &&
+         p(1) > minCorner(1) && p(1) < maxCorner(1) &&
+         p(2) > minCorner(2) && p(2) < maxCorner(2);
 }
 
 bool AxisAlignedBoundingBox::intersect(const AxisAlignedBoundingBox &other) const {
@@ -56,7 +62,14 @@ bool AxisAlignedBoundingBox::intersect(const Ray &ray) const {
   return (tmin > 0 && tmin <= tmax) || (tmin < 0 && tmax > 0);
 }
 
-Vector3f AxisAlignedBoundingBox::getDimension() {
+bool AxisAlignedBoundingBox::intersect(const Tetrahedron &tetra) const {
+  return isInside(tetra.points[0]->position) || 
+         isInside(tetra.points[1]->position) ||
+         isInside(tetra.points[2]->position) ||
+         isInside(tetra.points[3]->position);
+}
+
+Vector3f AxisAlignedBoundingBox::getDimension() const {
   return maxCorner - minCorner;
 }
 

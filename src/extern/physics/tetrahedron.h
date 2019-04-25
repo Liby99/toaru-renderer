@@ -44,6 +44,8 @@ namespace toaru {
 
     const Point &getPoint(int i) const;
     Vector3f getCenter() const;
+    bool isInside(const Vector3f &p) const;
+    bool intersect(const Tetrahedron &other) const;
 
     void update(float deltaTime);
 

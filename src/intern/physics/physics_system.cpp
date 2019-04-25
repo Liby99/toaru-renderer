@@ -31,10 +31,6 @@ void PhysicsSystem::stepOnce() {
     const auto element = tetrahedrons[i];
     element->update(deltaTime);
   }
-  // std::cout << "Next:" << std::endl;
-  // std::cout << points[0]->force << std::endl;
-  // std::cout << points[0]->velocity << std::endl;
-  // std::cout << points[0]->position << std::endl;
 #pragma omp parallel for
   for (int i = 0; i < points.size(); i++) {
     const auto element = points[i];

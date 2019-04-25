@@ -28,6 +28,22 @@ Vector3f Tetrahedron::getCenter() const {
   return (points[0]->position + points[1]->position + points[2]->position + points[3]->position) / 4.0f;
 }
 
+bool Tetrahedron::intersect(const Tetrahedron &other) const {
+  Vector3f &p0 = points[0]->position, &p1 = points[1]->position,
+           &p2 = points[2]->position, &p3 = points[3]->position;
+  Vector3f e1 = p1 - p0, e2 = p2 - p0, e3 = p3 - p0;
+  float e1l = e1.norm(), e2l = e2.norm(), e3l = e3.norm();
+  Vector3f e1n = e1 / e1l, e2n = e2 / e2l, e3n = e3 / e3l;
+  for (auto p : points) {
+    Vector3f u = p->position - p0;
+    float d1 = u.dot(e1n), d2 = u.dot(e2n), d3 = u.dot(e3n);
+    if (d1 < e1l && d2 < e2l && d3 < e3l) {
+      return true;
+    }
+  }
+  return false;
+}
+
 void Tetrahedron::update(float deltaTime) {
   // Step 1: Measure the deformation (strain)
 
