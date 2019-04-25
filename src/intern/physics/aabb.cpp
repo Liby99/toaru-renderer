@@ -63,10 +63,10 @@ bool AxisAlignedBoundingBox::intersect(const Ray &ray) const {
 }
 
 bool AxisAlignedBoundingBox::intersect(const Tetrahedron &tetra) const {
-  return isInside(tetra.points[0]->position) || 
-         isInside(tetra.points[1]->position) ||
-         isInside(tetra.points[2]->position) ||
-         isInside(tetra.points[3]->position);
+  return isInside(tetra.getPoint(0).position) || 
+         isInside(tetra.getPoint(1).position) ||
+         isInside(tetra.getPoint(2).position) ||
+         isInside(tetra.getPoint(3).position);
 }
 
 Vector3f AxisAlignedBoundingBox::getDimension() const {

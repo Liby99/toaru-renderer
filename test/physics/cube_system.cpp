@@ -78,7 +78,7 @@ int main(int argc, char *argv[]) {
   camHolder.transform.position = Vector3f(-1, 30, 29);
   ThirdPersonCamera cam;
   cam.target = Vector3f(-1, 0, -1);
-  cam.allowRotate = false;
+  // cam.allowRotate = false;
   cam.moveSpeed = 10.0f;
   cam.scrollSpeed = 5.0f;
   camHolder.addComponent("camera", cam);
