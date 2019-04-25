@@ -22,7 +22,7 @@ namespace toaru {
     std::vector<Point *> points;
 
     // Faces
-    std::vector<std::reference_wrapper<Face>> faces;
+    std::vector<Face *> faces;
 
     // Rest axis
     std::vector<Vector3f> axes;

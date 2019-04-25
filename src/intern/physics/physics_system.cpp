@@ -118,11 +118,11 @@ void PhysicsSystem::makeFace(std::unique_ptr<Tetrahedron> &tet) {
   f4->updateNormal();
 
   faces.push_back(move(f1));
-  tet->faces.push_back(*faces[faces.size() - 1]);
+  tet->faces.push_back(&*faces[faces.size() - 1]);
   faces.push_back(move(f2));
-  tet->faces.push_back(*faces[faces.size() - 1]);
+  tet->faces.push_back(&*faces[faces.size() - 1]);
   faces.push_back(move(f3));
-  tet->faces.push_back(*faces[faces.size() - 1]);
+  tet->faces.push_back(&*faces[faces.size() - 1]);
   faces.push_back(move(f4));
-  tet->faces.push_back(*faces[faces.size() - 1]);
+  tet->faces.push_back(&*faces[faces.size() - 1]);
 }

@@ -58,12 +58,12 @@ void Tetrahedron::update(float deltaTime) {
   Matrix3f stress = toStress(strain, this->K) + toStress(deltaStrain, this->D);
 
   // Step 3: Turn the internal stress into forces on the particles
-  std::for_each(faces.begin(), faces.end(), [this, &F, &stress](Face &face)
+  std::for_each(faces.begin(), faces.end(), [this, &F, &stress](Face *face)
   {
-    Vector3f normal = face.getNormal();
+    Vector3f normal = face->getNormal();
     // Vector3f force = 0.5 * F * (normal.transpose() * stress).transpose();
     Vector3f force = 0.5 * F * stress * normal;
-    auto & point = face.getOppositePoint();
+    auto & point = face->getOppositePoint();
     point.addForce(force);
   });
 }
