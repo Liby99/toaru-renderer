@@ -4,17 +4,12 @@
 #endif
 
 using namespace toaru;
-
-enum class FLIP : uint32_t { None = 0, X = 1 << 0, Y = 1 << 1, Z = 1 << 2 };
-
-constexpr enum FLIP operator&(const enum FLIP selfValue, const enum FLIP inValue) {
-  return (enum FLIP)(uint32_t(selfValue) & uint32_t(inValue));
-}
+using namespace std;
 
 PhysicsSystem::PhysicsSystem()
   : isPlaying(false),
-    deltaTime(0.01),
-    step(1) {
+    deltaTime(0.0005),
+    step(40) {
 }
 
 void PhysicsSystem::play() {
@@ -28,26 +23,20 @@ void PhysicsSystem::pause() {
 void PhysicsSystem::stepOnce() {
 #pragma omp parallel for
   for (int i = 0; i < tetrahedrons.size(); i++) {
-    const auto element = tetrahedrons[i];
+    auto &element = tetrahedrons[i];
     element->update(deltaTime);
   }
-  // std::cout << "Next:" << std::endl;
-  // std::cout << points[0]->force << std::endl;
-  // std::cout << points[0]->velocity << std::endl;
-  // std::cout << points[0]->position << std::endl;
 #pragma omp parallel for
   for (int i = 0; i < points.size(); i++) {
-    const auto element = points[i];
+    auto &element = points[i];
     element->update(deltaTime);
   }
 }
 
 void PhysicsSystem::init() {
-  for (auto element : tetrahedrons) {
+  for (auto &element : tetrahedrons) {
+    makeFace(element);
     element->initRestState();
-    for (auto f : element->faces) {
-      faces.push_back(f);
-    }
   }
 }
 
@@ -72,46 +61,68 @@ void PhysicsSystem::createUnitCube(Vector3f position, Vector3f extents, float de
   auto G = Vector3f(ext(0, 0) + pos(0, 0), -ext(1, 0) + pos(1, 0), -ext(2, 0) + pos(2, 0));
   auto H = Vector3f(-ext(0, 0) + pos(0, 0), -ext(1, 0) + pos(1, 0), -ext(2, 0) + pos(2, 0));
 
-  auto T1 = std::make_shared<Tetrahedron>(density, KMat, DMat, getPoint(A), getPoint(B),
-                                          getPoint(C),
-                                          getPoint(E));
-  auto T2 = std::make_shared<Tetrahedron>(density, KMat, DMat, getPoint(A), getPoint(C),
-                                          getPoint(D),
-                                          getPoint(G));
-  auto T3 = std::make_shared<Tetrahedron>(density, KMat, DMat, getPoint(A), getPoint(H),
-                                          getPoint(E),
-                                          getPoint(G));
-  auto T4 = std::make_shared<Tetrahedron>(density, KMat, DMat, getPoint(C), getPoint(E),
-                                          getPoint(F),
-                                          getPoint(G));
-  auto T5 = std::make_shared<Tetrahedron>(density, KMat, DMat, getPoint(A), getPoint(C),
-                                          getPoint(G),
-                                          getPoint(E));
+  auto T1 = make_unique<Tetrahedron>(density, KMat, DMat, getPoint(A), getPoint(B), getPoint(C),
+                                     getPoint(E));
+  auto T2 = make_unique<Tetrahedron>(density, KMat, DMat, getPoint(A), getPoint(C), getPoint(D),
+                                     getPoint(G));
+  auto T3 = make_unique<Tetrahedron>(density, KMat, DMat, getPoint(A), getPoint(H),
+                                     getPoint(E),
+                                     getPoint(G));
+  auto T4 = make_unique<Tetrahedron>(density, KMat, DMat, getPoint(C), getPoint(E), getPoint(F),
+                                     getPoint(G));
+  auto T5 = make_unique<Tetrahedron>(density, KMat, DMat, getPoint(A), getPoint(C), getPoint(G),
+                                     getPoint(E));
 
-  tetrahedrons.insert(tetrahedrons.end(), {T1, T2, T3, T4, T5});
-
-  // points.insert(points.end(), {A, B, C, D, E, F, G, H});
-  // faces.insert(faces.end(), faces.begin(), faces.end());
+  tetrahedrons.push_back(move(T1));
+  tetrahedrons.push_back(move(T2));
+  tetrahedrons.push_back(move(T3));
+  tetrahedrons.push_back(move(T4));
+  tetrahedrons.push_back(move(T5)); 
 }
 
-std::shared_ptr<Point> PhysicsSystem::getPoint(Vector3f position) {
+Point &PhysicsSystem::getPoint(Vector3f position) {
   // Temp face
   // float i = std::numeric_limits<float>::epsilon() * 3.0;
   // std::cout << i << std::endl;
   auto result =
-    std::find_if(points.begin(), points.end(), [&](const std::shared_ptr<Point> &point)
+    find_if(points.begin(), points.end(), [&](const unique_ptr<Point> &point)
     {
       // std::numeric_limits<float>::epsilon()
-      return (point->position - position).norm() <= std::numeric_limits<float>::epsilon() * 3.0;
+      return (point->position - position).norm() <= numeric_limits<float>::epsilon() * 3.0;
     });
 
   // If found
   if (result != points.end()) {
-    return (*result);
+    return (**result);
   }
 
   // if not found, create one
-  auto point = std::make_shared<Point>(position);
-  points.push_back(point);
-  return point;
+  auto point = make_unique<Point>(position);
+  points.push_back(move(point));
+  return *points[points.size()-1];
+}
+
+void PhysicsSystem::makeFace(std::unique_ptr<Tetrahedron> &tet) {
+  // Build or get four faces
+  // 1, 2, 3
+  auto f1 = std::make_unique<Face>(tet->points[0], tet->points[1], tet->points[2], tet->points[3]);
+  f1->updateNormal();
+  // 4, 1, 3
+  auto f2 = std::make_unique<Face>(tet->points[3], tet->points[0], tet->points[2], tet->points[1]);
+  f2->updateNormal();
+  // 2, 4, 3
+  auto f3 = std::make_unique<Face>(tet->points[1], tet->points[3], tet->points[2], tet->points[0]);
+  f3->updateNormal();
+  // 4, 2, 1
+  auto f4 = std::make_unique<Face>(tet->points[3], tet->points[1], tet->points[0], tet->points[2]);
+  f4->updateNormal();
+
+  faces.push_back(move(f1));
+  tet->faces.push_back(*faces[faces.size() - 1]);
+  faces.push_back(move(f2));
+  tet->faces.push_back(*faces[faces.size() - 1]);
+  faces.push_back(move(f3));
+  tet->faces.push_back(*faces[faces.size() - 1]);
+  faces.push_back(move(f4));
+  tet->faces.push_back(*faces[faces.size() - 1]);
 }

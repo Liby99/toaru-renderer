@@ -10,9 +10,9 @@ namespace toaru {
   class Tetrahedron;
   class PhysicsSystem : public Component {
   public:
-    std::vector<std::shared_ptr<Tetrahedron>> tetrahedrons;
-    std::vector<std::shared_ptr<Point>> points;
-    std::vector<std::shared_ptr<Face>> faces;
+    std::vector<std::unique_ptr<Tetrahedron>> tetrahedrons;
+    std::vector<std::unique_ptr<Point>> points;
+    std::vector<std::unique_ptr<Face>> faces;
 
     std::vector<std::unique_ptr<PhysicsMaterial>> Ks;
     std::vector<std::unique_ptr<PhysicsMaterial>> Ds;
@@ -33,9 +33,12 @@ namespace toaru {
     virtual void init();
     virtual void update();
 
-    void createUnitCube(Vector3f pos, Vector3f ext, float density, const PhysicsMaterial & K, const PhysicsMaterial & D);
+    void createUnitCube(Vector3f pos, Vector3f ext, float density, const PhysicsMaterial &K,
+                        const PhysicsMaterial &D);
 
-    std::shared_ptr<Point> getPoint(Vector3f position);
+    Point& getPoint(Vector3f position);
+
+    void makeFace(std::unique_ptr<Tetrahedron> &tet);
   };
 }
 

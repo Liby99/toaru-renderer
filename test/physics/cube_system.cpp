@@ -8,14 +8,14 @@ public:
 
   virtual void init() {
 
-    int countX = 2;
-    int countY = 8;
-    int countZ = 2;
+    int countX = 3;
+    int countY = 10;
+    int countZ = 8;
     Vector3f extent = Vector3f(1, 1, 1);
     Vector3f start = Vector3f(-countX * extent.x(), 0, -countZ * extent.z());
 
-    Ks.push_back(std::make_unique<PhysicsMaterial>(1000000.0f, 0.1f));
-    Ds.push_back(std::make_unique<PhysicsMaterial>(3000.0f, 6000.f, false));
+    Ks.push_back(std::make_unique<PhysicsMaterial>(3200000.0f, 0.499f));
+    Ds.push_back(std::make_unique<PhysicsMaterial>(160000.0f, 150000.0f, false));
 
     for (unsigned int i = 0; i < countX; i++) {
       for (unsigned int j = 0; j < countY; j++) {
@@ -45,22 +45,22 @@ public:
     }
 
     if (isPlaying) {
-      for (auto element : points) {
+      for (auto & element : points) {
         if (element->position.y() > 4.0) {
           if (context().getDirectionKey(Context::Direction::Down))
-            element->addForce(Vector3f(0, 0, 1000));
+            element->addForce(Vector3f(0, 0, 10000));
           if (context().getDirectionKey(Context::Direction::Up))
-            element->addForce(Vector3f(0, 0, -1000));
+            element->addForce(Vector3f(0, 0, -10000));
           if (context().getDirectionKey(Context::Direction::Right))
-            element->addForce(Vector3f(1000, 0, 0));
+            element->addForce(Vector3f(10000, 0, 0));
           if (context().getDirectionKey(Context::Direction::Left))
-            element->addForce(Vector3f(-1000, 0, 0));
+            element->addForce(Vector3f(-10000, 0, 0));
         }
       }
     }
 
     if (context().getKey('R')) {
-      for (auto element : points) {
+      for (auto & element : points) {
         element->position.y() += 1;
       }
     }

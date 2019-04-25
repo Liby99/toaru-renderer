@@ -24,7 +24,6 @@ bool Point::updateInvMass() {
 }
 
 void Point::update(float deltaTime) {
-
   // TODO: better style to add gravity
   addForce(Vector3f(0, -9.8f * mass, 0));
 
