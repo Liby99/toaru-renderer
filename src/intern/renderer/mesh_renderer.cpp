@@ -38,7 +38,7 @@ void MeshRenderer::render() {
       shader.uploadIndices(mesh.indices);
       shader.uploadAttr("position", mesh.positions);
       shader.uploadAttr("normal", mesh.normals);
-      shader.uploadAttr("texCoord", mesh.texCoords);
+      // shader.uploadAttr("texCoord", mesh.texCoords);
 
       // Pass material specific prooperties
       mat.prerender();
