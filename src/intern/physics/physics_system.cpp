@@ -134,14 +134,19 @@ const Face &PhysicsSystem::getFace(int i1, int i2, int i3, int opposite) {
   std::sort(indices.begin(), indices.end());
   std::string hash = std::to_string(indices[0]) + "," + std::to_string(indices[1]) + "," + std::to_string(indices[2]);
 
-  if (faceLookUpTable.find(hash) != faceLookUpTable.end()) {
-    Face &face = *faceLookUpTable[hash];
-    face.internal = true;
-    return face;
+  // First make the face
+  Point &p1 = *points[i1], &p2 = *points[i2], &p3 = *points[i3], &p4 = *points[opposite];
+  auto ptr = make_unique<Face>(p1, p2, p3, p4);
+
+  // Then mark it to be internal if the face is already found in the degenerate faces
+  if (degenerateFaces.find(hash) != degenerateFaces.end()) {
+    ptr->internal = true;
+    degenerateFaces[hash]->internal = true;
   } else {
-    Point &p1 = *points[i1], &p2 = *points[i2], &p3 = *points[i3], &p4 = *points[opposite];
-    auto ptr = make_unique<Face>(p1, p2, p3, p4);
-    faces.push_back(move(ptr));
-    return *faces[faces.size() - 1].get();
+    degenerateFaces[hash] = ptr.get();
   }
+
+  // Still put the face into faces vector and return the face reference
+  faces.push_back(move(ptr));
+  return *faces[faces.size() - 1].get();
 }

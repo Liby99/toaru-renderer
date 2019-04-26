@@ -8,6 +8,7 @@
 namespace toaru {
   class PhysicsSystemRenderer : public Renderer {
   public:
+    bool renderAllFaces = false;
     virtual void render();
   };
 }

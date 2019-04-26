@@ -34,7 +34,7 @@ namespace toaru {
     int createBox(const PhysicsMaterial &mat, Vector3f center, Vector3f size, Vector3u sub = Vector3u(1, 1, 1));
 
   private:
-    std::map<std::string, Face *> faceLookUpTable;
+    std::map<std::string, Face *> degenerateFaces;
     const Face &getFace(int i1, int i2, int i3, int opposite);
   };
 }
