@@ -29,6 +29,9 @@ namespace toaru {
     // Rest tetrahedral frame matrix
     Matrix3f invR;
 
+    // Plastic strain tensor
+    Matrix3f plasticStrain;
+
     // Physics properties
     const PhysicsMaterial &mat;
 

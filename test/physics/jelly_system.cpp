@@ -39,10 +39,10 @@ public:
   }
 
   virtual void init() {
-    k = make_unique<MaterialTensor>(2000000.0f, 0.499f);
-    d = make_unique<MaterialTensor>(5000.0f, 1000.0f, false);
-    mat = make_unique<PhysicsMaterial>(1000.f, *k, *d);
-    createBox(*mat, Vector3f(0, 5, 0), Vector3f(2, 4, 3), Vector3u(2, 4, 3));
+    k = make_unique<MaterialTensor>(2000000.0f, 0.1f);
+    d = make_unique<MaterialTensor>(1000.0f, 1000.0f, false);
+    mat = make_unique<PhysicsMaterial>(1000.f, 0.001f, 0.1f, *k, *d);
+    createBox(*mat, Vector3f(0, 5, 0), Vector3f(2, 5, 4), Vector3u(4, 10, 8));
     PhysicsSystem::init();
   }
 
@@ -76,7 +76,7 @@ public:
 
     if (context().getKey('R')) {
       for (auto & element : points) {
-        element->position.y() += 1;
+        element->position.y() += 5;
       }
     }
 

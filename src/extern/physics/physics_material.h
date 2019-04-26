@@ -7,8 +7,20 @@ namespace toaru {
   class PhysicsMaterial {
   public:
     const float density;
-    const MaterialTensor &k, d;
-    PhysicsMaterial(float density, const MaterialTensor &k, const MaterialTensor &d);
+    
+    // Elastic limit
+    const float gamma1;
+
+    // Plastic limit
+    const float gamma2;
+
+    // Stiffness matrix
+    const MaterialTensor &k;
+
+    // Damping matrix
+    const MaterialTensor &d;
+
+    PhysicsMaterial(float density, float gamma1, float gamma2, const MaterialTensor &k, const MaterialTensor &d);
   };
 }
 

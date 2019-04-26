@@ -1,10 +1,12 @@
 #include "physics/tetrahedron.h"
+#include <iostream>
 
 using namespace toaru;
 
 Tetrahedron::Tetrahedron(const PhysicsMaterial &mat, Point & p0, Point &p1, Point &p2, Point &p3)
   : mat(mat) {
   this->points.insert(this->points.end(), {&p0, &p1, &p2, &p3});
+  this->plasticStrain.setZero();
 }
 
 const Point &Tetrahedron::getPoint(int i) const {
@@ -44,7 +46,28 @@ void Tetrahedron::update(float deltaTime) {
   Matrix3f F = T * invR;
 
   // Green's Strain Tensor
-  Matrix3f strain = 0.5 * (F.transpose() * F - Matrix3f::Identity());
+  Matrix3f elasticStrain = 0.5 * (F.transpose() * F - Matrix3f::Identity());
+
+  // Update plastic strain
+  // Step 1 : Calculate amount of deformation
+  Matrix3f deform = elasticStrain - ((elasticStrain.trace()) / 3.0) * Matrix3f::Identity();
+  float magnitude = deform.norm();
+
+  // If magnitude is larger than gamma1
+  if (magnitude > mat.gamma1) {
+    // Calculate deltaPlasticStrain
+    Matrix3f deltaPlasticStrain = ((magnitude - mat.gamma1) / magnitude) * deform;
+
+    // Update plasticStrain
+    plasticStrain -= deltaPlasticStrain;
+
+    // Clip plasticStrain
+    plasticStrain *= std::min<float>(1.0, (mat.gamma2)/(plasticStrain.norm()));
+  }
+
+  // Final strain tensor = elastic strain + plastic strain
+  Matrix3f strain = elasticStrain + plasticStrain;
+
   // Calculate Delta Strain tensor
   Matrix3f deltaStrain = Matrix3f::Zero();
   if (lastStrain != Matrix3f::Zero()) {
@@ -120,21 +143,9 @@ Matrix3f Tetrahedron::calculateCurrentFrame() {
 
 
 Matrix3f Tetrahedron::toStress(const Matrix3f &strain, const MaterialTensor &t) const {
-  // Reshape strain tensor
-  Vector3f offDiagonal;
-  offDiagonal << strain(1, 2), strain(0, 2), strain(0, 1);
-  offDiagonal *= 2.0;
 
   // Calculate stress using Lame constant and strain
-  Matrix<float, 6, 1> s;
-  s << t.upper * strain.diagonal(), t.lower * offDiagonal;
-
-  // Reshape stress tensor
-  Matrix3f stress;
-  stress.diagonal() << s.block(0, 0, 3, 1);
-  stress(1, 2) = stress(2, 1) = s(3, 0);
-  stress(0, 2) = stress(2, 0) = s(4, 0);
-  stress(0, 1) = stress(1, 0) = s(5, 0);
+  auto stress = 2 * t.mu * strain + t.lambda * strain.trace() * Matrix3f::Identity();
 
   return stress;
 }
