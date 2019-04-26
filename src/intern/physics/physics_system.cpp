@@ -76,45 +76,44 @@ int PhysicsSystem::createBox(const PhysicsMaterial &mat, Vector3f center, Vector
   assert(sub.x() > 0 && sub.y() > 0 && sub.z() > 0);
 
   // First construct all the points
-  std::vector<std::vector<std::vector<int>>> points(sub.x());
+  std::vector<std::vector<std::vector<int>>> points(sub.x() + 1);
   for (int i = 0; i < sub.x() + 1; i++) {
-    points[i] = std::vector<std::vector<int>>(sub.y());
+    points[i] = std::vector<std::vector<int>>(sub.y() + 1);
     float x = start.x() + i * step.x();
     for (int j = 0; j < sub.y() + 1; j++) {
-      points[i][j] = std::vector<int>(sub.z());
+      points[i][j] = std::vector<int>(sub.z() + 1);
       float y = start.y() + j * step.y();
       for (int k = 0; k < sub.z() + 1; k++) {
         float z = start.z() + k * step.z();
-        Vector3f p(x, y, z);
-        points[i][j][k] = addPoint(p);
+        points[i][j][k] = addPoint(Vector3f(x, y, z));
       }
     }
   }
 
   // Then construct all the tetrahedrons
-  // for (int i = 0; i < sub.x(); i++) {
-  //   for (int j = 0; j < sub.y(); j++) {
-  //     for (int k = 0; k < sub.z(); k++) {
-  //       bool startFrom000 = (i + j + k) % 2 == 0;
-  //       int i0 = points[i][j][k], i1 = points[i + 1][j][k], i2 = points[i + 1][j][k + 1], 
-  //           i3 = points[i][j][k + 1], i4 = points[i][j + 1][k], i5 = points[i + 1][j + 1][k], 
-  //           i6 = points[i + 1][j + 1][k + 1], i7 = points[i][j + 1][k + 1];
-  //       if (startFrom000) {
-  //         addTetrahedron(objId, i0, i2, i1, i5);
-  //         addTetrahedron(objId, i0, i3, i2, i7);
-  //         addTetrahedron(objId, i0, i7, i2, i5);
-  //         addTetrahedron(objId, i0, i5, i4, i7);
-  //         addTetrahedron(objId, i6, i5, i2, i7);
-  //       } else {
-  //         addTetrahedron(objId, i0, i3, i1, i4);
-  //         addTetrahedron(objId, i1, i3, i2, i6);
-  //         addTetrahedron(objId, i1, i4, i3, i6);
-  //         addTetrahedron(objId, i1, i4, i6, i5);
-  //         addTetrahedron(objId, i4, i3, i6, i7);
-  //       }
-  //     }
-  //   }
-  // }
+  for (int i = 0; i < sub.x(); i++) {
+    for (int j = 0; j < sub.y(); j++) {
+      for (int k = 0; k < sub.z(); k++) {
+        bool startFrom000 = (i + j + k) % 2 == 0;
+        int i0 = points[i][j][k], i1 = points[i + 1][j][k], i2 = points[i + 1][j][k + 1], 
+            i3 = points[i][j][k + 1], i4 = points[i][j + 1][k], i5 = points[i + 1][j + 1][k], 
+            i6 = points[i + 1][j + 1][k + 1], i7 = points[i][j + 1][k + 1];
+        if (startFrom000) {
+          addTetrahedron(objId, i0, i2, i1, i5);
+          addTetrahedron(objId, i0, i3, i2, i7);
+          addTetrahedron(objId, i0, i7, i2, i5);
+          addTetrahedron(objId, i0, i5, i4, i7);
+          addTetrahedron(objId, i6, i5, i2, i7);
+        } else {
+          addTetrahedron(objId, i0, i3, i1, i4);
+          addTetrahedron(objId, i1, i3, i2, i6);
+          addTetrahedron(objId, i1, i4, i3, i6);
+          addTetrahedron(objId, i1, i4, i6, i5);
+          addTetrahedron(objId, i4, i3, i6, i7);
+        }
+      }
+    }
+  }
 
   return objId;
 }

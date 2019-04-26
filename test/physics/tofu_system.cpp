@@ -14,11 +14,13 @@ public:
   }
 
   virtual void init() {
-    k = make_unique<MaterialTensor>(3200000.0f, 0.499f);
-    d = make_unique<MaterialTensor>(160000.0f, 150000.0f, false);
+    k = make_unique<MaterialTensor>(1000.0f, 0.499f);
+    d = make_unique<MaterialTensor>(500.0f, 1000.0f, false);
     mat = make_unique<PhysicsMaterial>(1000.f, *k, *d);
-    createBox(*mat, Vector3f(0, 3, 0), Vector3f(1, 1, 1));
-    std::cout << "#Tetras: " << tetrahedrons.size() << ", #Faces: " << faces.size() << std::endl;
+    createBox(*mat, Vector3f(0, 5, 0), Vector3f(2, 4, 3), Vector3u(2, 4, 3));
+    std::cout << "#Tetras: " << tetrahedrons.size() << 
+                 ", #Faces: " << faces.size() << 
+                 ", #Points: " << points.size() << std::endl;
     PhysicsSystem::init();
   }
 
