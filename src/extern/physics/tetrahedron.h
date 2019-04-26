@@ -18,7 +18,7 @@ namespace toaru {
     std::vector<Point *> points;
 
     // Faces
-    std::vector<Face *> faces;
+    std::vector<const Face *> faces;
 
     // Rest axis
     std::vector<Vector3f> axes;
@@ -39,9 +39,10 @@ namespace toaru {
     bool isInside(const Vector3f &p) const;
     bool intersect(const Tetrahedron &other) const;
 
-    void update(float deltaTime);
-
+    void addFace(const Face &face);
     void initRestState();
+
+    void update(float deltaTime);
 
   private:
     virtual void distributeForceToPoint();

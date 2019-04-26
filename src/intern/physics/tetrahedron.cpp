@@ -1,5 +1,4 @@
 #include "physics/tetrahedron.h"
-#include <iostream>
 
 using namespace toaru;
 
@@ -33,6 +32,10 @@ bool Tetrahedron::intersect(const Tetrahedron &other) const {
   return false;
 }
 
+void Tetrahedron::addFace(const Face &face) {
+  faces.push_back(&face);
+}
+
 void Tetrahedron::update(float deltaTime) {
   // Step 1: Measure the deformation (strain)
 
@@ -56,7 +59,7 @@ void Tetrahedron::update(float deltaTime) {
   Matrix3f stress = toStress(strain, mat.k) + toStress(deltaStrain, mat.d);
 
   // Step 3: Turn the internal stress into forces on the particles
-  std::for_each(faces.begin(), faces.end(), [this, &F, &stress](Face *face)
+  std::for_each(faces.begin(), faces.end(), [this, &F, &stress](const Face *face)
   {
     Vector3f normal = face->getNormal();
     // Vector3f force = 0.5 * F * (normal.transpose() * stress).transpose();

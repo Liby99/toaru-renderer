@@ -18,9 +18,6 @@ public:
     d = make_unique<MaterialTensor>(5000.0f, 1000.0f, false);
     mat = make_unique<PhysicsMaterial>(1000.f, *k, *d);
     createBox(*mat, Vector3f(0, 5, 0), Vector3f(2, 4, 3), Vector3u(2, 4, 3));
-    std::cout << "#Tetras: " << tetrahedrons.size() << 
-                 ", #Faces: " << faces.size() << 
-                 ", #Points: " << points.size() << std::endl;
     PhysicsSystem::init();
   }
 

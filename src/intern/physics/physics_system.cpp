@@ -31,7 +31,6 @@ void PhysicsSystem::stepOnce() {
 
 void PhysicsSystem::init() {
   for (auto &element : tetrahedrons) {
-    makeFace(element);
     element->initRestState();
   }
 }
@@ -59,11 +58,23 @@ int PhysicsSystem::addPoint(const Vector3f &p, bool isFixed) {
 }
 
 int PhysicsSystem::addTetrahedron(int objId, int i1, int i2, int i3, int i4) {
+
+  // First get the object and the points for constructing the tetrahedron
   PhysicsObject &obj = *objects[objId];
   const PhysicsMaterial &mat = obj.mat;
   Point &p1 = *points[i1], &p2 = *points[i2], &p3 = *points[i3], &p4 = *points[i4];
+
+  // Cache the tetra id
   int tetraId = tetrahedrons.size();
+
+  // Construct the tetrahedron and give it the corresponding faces
   auto tetra = make_unique<Tetrahedron>(mat, p1, p2, p3, p4);
+  tetra->addFace(getFace(i1, i2, i3, i4));
+  tetra->addFace(getFace(i4, i1, i3, i2));
+  tetra->addFace(getFace(i2, i4, i3, i1));
+  tetra->addFace(getFace(i4, i2, i1, i3));
+
+  // Add the tetrahedron to the physics object and add it to the all tetrahedrons list
   obj.addTetrahedron(*tetra);
   tetrahedrons.push_back(move(tetra));
   return tetraId;
@@ -118,70 +129,19 @@ int PhysicsSystem::createBox(const PhysicsMaterial &mat, Vector3f center, Vector
   return objId;
 }
 
-void PhysicsSystem::createUnitCube(Vector3f position, Vector3f extents, const PhysicsMaterial &mat) {
-  Vector3f pos = position;
-  Vector3f ext = extents;
-  auto A = Vector3f(-ext(0, 0) + pos(0, 0), ext(1, 0) + pos(1, 0), -ext(2, 0) + pos(2, 0));
-  auto B = Vector3f(-ext(0, 0) + pos(0, 0), ext(1, 0) + pos(1, 0), ext(2, 0) + pos(2, 0));
-  auto C = Vector3f(ext(0, 0) + pos(0, 0), ext(1, 0) + pos(1, 0), ext(2, 0) + pos(2, 0));
-  auto D = Vector3f(ext(0, 0) + pos(0, 0), ext(1, 0) + pos(1, 0), -ext(2, 0) + pos(2, 0));
-  auto E = Vector3f(-ext(0, 0) + pos(0, 0), -ext(1, 0) + pos(1, 0), ext(2, 0) + pos(2, 0));
-  auto F = Vector3f(ext(0, 0) + pos(0, 0), -ext(1, 0) + pos(1, 0), ext(2, 0) + pos(2, 0));
-  auto G = Vector3f(ext(0, 0) + pos(0, 0), -ext(1, 0) + pos(1, 0), -ext(2, 0) + pos(2, 0));
-  auto H = Vector3f(-ext(0, 0) + pos(0, 0), -ext(1, 0) + pos(1, 0), -ext(2, 0) + pos(2, 0));
+const Face &PhysicsSystem::getFace(int i1, int i2, int i3, int opposite) {
+  std::vector<int> indices = {i1, i2, i3};
+  std::sort(indices.begin(), indices.end());
+  std::string hash = std::to_string(indices[0]) + "," + std::to_string(indices[1]) + "," + std::to_string(indices[2]);
 
-  auto T1 = make_unique<Tetrahedron>(mat, getPoint(A), getPoint(B), getPoint(C), getPoint(E));
-  auto T2 = make_unique<Tetrahedron>(mat, getPoint(A), getPoint(C), getPoint(D), getPoint(G));
-  auto T3 = make_unique<Tetrahedron>(mat, getPoint(A), getPoint(H), getPoint(E), getPoint(G));
-  auto T4 = make_unique<Tetrahedron>(mat, getPoint(C), getPoint(E), getPoint(F), getPoint(G));
-  auto T5 = make_unique<Tetrahedron>(mat, getPoint(A), getPoint(C), getPoint(G), getPoint(E));
-
-  tetrahedrons.push_back(move(T1));
-  tetrahedrons.push_back(move(T2));
-  tetrahedrons.push_back(move(T3));
-  tetrahedrons.push_back(move(T4));
-  tetrahedrons.push_back(move(T5)); 
-}
-
-Point &PhysicsSystem::getPoint(Vector3f position) {
-  // Temp face
-  // float i = std::numeric_limits<float>::epsilon() * 3.0;
-  // std::cout << i << std::endl;
-  auto result =
-    find_if(points.begin(), points.end(), [&](const unique_ptr<Point> &point)
-    {
-      // std::numeric_limits<float>::epsilon()
-      return (point->position - position).norm() <= numeric_limits<float>::epsilon() * 3.0;
-    });
-
-  // If found
-  if (result != points.end()) {
-    return (**result);
+  if (faceLookUpTable.find(hash) != faceLookUpTable.end()) {
+    Face &face = *faceLookUpTable[hash];
+    face.internal = true;
+    return face;
+  } else {
+    Point &p1 = *points[i1], &p2 = *points[i2], &p3 = *points[i3], &p4 = *points[opposite];
+    auto ptr = make_unique<Face>(p1, p2, p3, p4);
+    faces.push_back(move(ptr));
+    return *faces[faces.size() - 1].get();
   }
-
-  // if not found, create one
-  auto point = make_unique<Point>(position, 0);
-  points.push_back(move(point));
-  return *points[points.size()-1];
-}
-
-void PhysicsSystem::makeFace(std::unique_ptr<Tetrahedron> &tet) {
-  // Build or get four faces
-  // 1, 2, 3
-  auto f1 = std::make_unique<Face>(*tet->points[0], *tet->points[1], *tet->points[2], *tet->points[3]);
-  // 4, 1, 3
-  auto f2 = std::make_unique<Face>(*tet->points[3], *tet->points[0], *tet->points[2], *tet->points[1]);
-  // 2, 4, 3
-  auto f3 = std::make_unique<Face>(*tet->points[1], *tet->points[3], *tet->points[2], *tet->points[0]);
-  // 4, 2, 1
-  auto f4 = std::make_unique<Face>(*tet->points[3], *tet->points[1], *tet->points[0], *tet->points[2]);
-
-  faces.push_back(move(f1));
-  tet->faces.push_back(faces[faces.size() - 1].get());
-  faces.push_back(move(f2));
-  tet->faces.push_back(faces[faces.size() - 1].get());
-  faces.push_back(move(f3));
-  tet->faces.push_back(faces[faces.size() - 1].get());
-  faces.push_back(move(f4));
-  tet->faces.push_back(faces[faces.size() - 1].get());
 }

@@ -6,7 +6,6 @@
 #include <vector>
 
 namespace toaru {
-  class Face;
   class PhysicsSystem : public Component {
   public:
     std::vector<std::unique_ptr<PhysicsObject>> objects;
@@ -34,11 +33,9 @@ namespace toaru {
 
     int createBox(const PhysicsMaterial &mat, Vector3f center, Vector3f size, Vector3u sub = Vector3u(1, 1, 1));
 
-    void createUnitCube(Vector3f pos, Vector3f ext, const PhysicsMaterial &mat);
-
-    Point& getPoint(Vector3f position);
-
-    void makeFace(std::unique_ptr<Tetrahedron> &tet);
+  private:
+    std::map<std::string, Face *> faceLookUpTable;
+    const Face &getFace(int i1, int i2, int i3, int opposite);
   };
 }
 
