@@ -3,19 +3,19 @@
 
 using namespace toaru;
 
-class TofuSystem : public PhysicsSystem {
+class JellySystem : public PhysicsSystem {
 public:
   bool pressingR = false, pressingP = false, pressingY = false;
   std::unique_ptr<MaterialTensor> k, d;
   std::unique_ptr<PhysicsMaterial> mat;
 
-  TofuSystem() : PhysicsSystem() {
+  JellySystem() : PhysicsSystem() {
     isPlaying = false;
   }
 
   virtual void init() {
-    k = make_unique<MaterialTensor>(1000.0f, 0.499f);
-    d = make_unique<MaterialTensor>(500.0f, 1000.0f, false);
+    k = make_unique<MaterialTensor>(2000000.0f, 0.499f);
+    d = make_unique<MaterialTensor>(5000.0f, 1000.0f, false);
     mat = make_unique<PhysicsMaterial>(1000.f, *k, *d);
     createBox(*mat, Vector3f(0, 5, 0), Vector3f(2, 4, 3), Vector3u(2, 4, 3));
     std::cout << "#Tetras: " << tetrahedrons.size() << 
@@ -68,18 +68,17 @@ int main(int argc, char * argv[]) {
   Scene scene;
 
   Entity camHolder;
-  camHolder.transform.position = Vector3f(-1, 30, 29);
+  camHolder.transform.position = Vector3f(0, 10, 10);
   ThirdPersonCamera cam;
-  cam.target = Vector3f(-1, 0, -1);
-  // cam.allowRotate = false;
   cam.moveSpeed = 10.0f;
   cam.scrollSpeed = 5.0f;
   camHolder.addComponent("camera", cam);
   scene.root.addChild(camHolder);
 
   Entity physicsHolder;
-  TofuSystem sys;
+  JellySystem sys;
   Lambertian lambMat;
+  lambMat.ambientColor = Vector3f(1, 1, 1);
   PhysicsSystemRenderer renderer;
   renderer.renderMode = Renderer::Mode::LINE;
   physicsHolder.addComponent("system", sys);
