@@ -3,6 +3,31 @@
 
 using namespace toaru;
 
+class JellySystemRenderSwitch : public Component {
+public:
+  bool pressingM = false;
+  virtual void update() {
+    if (!pressingM) {
+      if (context().getKey('M')) {
+        pressingM = true;
+        Lambertian &material = object().getComponent<Lambertian>("material");
+        PhysicsSystemRenderer &renderer = object().getComponent<PhysicsSystemRenderer>("renderer");
+        if (renderer.renderMode == Renderer::Mode::FACE) {
+          renderer.renderMode = Renderer::Mode::LINE;
+          material.ambientColor = Vector3f(1, 1, 1);
+        } else {
+          renderer.renderMode = Renderer::Mode::FACE;
+          material.ambientColor = Vector3f(0.1, 0.1, 0.1);
+        }
+      }
+    } else {
+      if (!context().getKey('M')) {
+        pressingM = false;
+      }
+    }
+  }
+};
+
 class JellySystem : public PhysicsSystem {
 public:
   bool pressingR = false, pressingP = false, pressingY = false;
@@ -75,12 +100,12 @@ int main(int argc, char * argv[]) {
   Entity physicsHolder;
   JellySystem sys;
   Lambertian lambMat;
-  lambMat.ambientColor = Vector3f(1, 1, 1);
   PhysicsSystemRenderer renderer;
-  renderer.renderMode = Renderer::Mode::LINE;
+  JellySystemRenderSwitch switcher;
   physicsHolder.addComponent("system", sys);
   physicsHolder.addComponent("material", lambMat);
   physicsHolder.addComponent("renderer", renderer);
+  physicsHolder.addComponent("switcher", switcher);
   scene.root.addChild(physicsHolder);
 
   Entity floorHolder;

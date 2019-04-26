@@ -106,9 +106,9 @@ int PhysicsSystem::createBox(const PhysicsMaterial &mat, Vector3f center, Vector
     for (int j = 0; j < sub.y(); j++) {
       for (int k = 0; k < sub.z(); k++) {
         bool startFrom000 = (i + j + k) % 2 == 0;
-        int i0 = points[i][j][k], i1 = points[i + 1][j][k], i2 = points[i + 1][j][k + 1], 
-            i3 = points[i][j][k + 1], i4 = points[i][j + 1][k], i5 = points[i + 1][j + 1][k], 
-            i6 = points[i + 1][j + 1][k + 1], i7 = points[i][j + 1][k + 1];
+        int i0 = points[i][j][k], i1 = points[i][j][k + 1], i2 = points[i + 1][j][k + 1], 
+            i3 = points[i + 1][j][k], i4 = points[i][j + 1][k], i5 = points[i][j + 1][k + 1], 
+            i6 = points[i + 1][j + 1][k + 1], i7 = points[i + 1][j + 1][k];
         if (startFrom000) {
           addTetrahedron(objId, i0, i2, i1, i5);
           addTetrahedron(objId, i0, i3, i2, i7);

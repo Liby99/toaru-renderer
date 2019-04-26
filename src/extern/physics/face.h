@@ -30,6 +30,7 @@ namespace toaru {
 
     bool isInternal() const;
     Vector3f getNormal() const;
+    Vector3f getCurrentNormal() const;
     Point & getOppositePoint() const;
     void updateNormal();
   };
