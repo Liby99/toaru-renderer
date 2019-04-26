@@ -90,7 +90,7 @@ int main(int argc, char * argv[]) {
   Scene scene;
 
   Entity camHolder;
-  camHolder.transform.position = Vector3f(0, 10, 10);
+  camHolder.transform.position = Vector3f(10, 10, 10);
   ThirdPersonCamera cam;
   cam.moveSpeed = 10.0f;
   cam.scrollSpeed = 5.0f;

@@ -33,7 +33,7 @@ void PhysicsSystemRenderer::render() {
           auto p3 = sys.faces[i]->points[2];
 
           // Then get the normal
-          Vector3f n = sys.faces[i]->getCurrentNormal();
+          Vector3f n = sys.faces[i]->getNormal();
 
           // Add a face
           indices.col(faceAmount) << vertAmount, vertAmount + 1, vertAmount + 2;

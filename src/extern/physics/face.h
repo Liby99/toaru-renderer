@@ -13,8 +13,8 @@ namespace toaru {
 
   class Face {
   public:
-    float area;
-    Vector3f normal;
+    float restArea;
+    Vector3f restNormal;
 
     bool internal;
 
@@ -30,9 +30,7 @@ namespace toaru {
 
     bool isInternal() const;
     Vector3f getNormal() const;
-    Vector3f getCurrentNormal() const;
     Point & getOppositePoint() const;
-    void updateNormal();
   };
 }
 
