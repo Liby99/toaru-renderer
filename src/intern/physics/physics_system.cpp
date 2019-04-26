@@ -6,11 +6,7 @@
 using namespace toaru;
 using namespace std;
 
-PhysicsSystem::PhysicsSystem()
-  : isPlaying(false),
-    deltaTime(0.0005),
-    step(40) {
-}
+PhysicsSystem::PhysicsSystem() : isPlaying(true), deltaTime(0.0005), step(40) {}
 
 void PhysicsSystem::play() {
   isPlaying = true;
@@ -46,6 +42,12 @@ void PhysicsSystem::update() {
       stepOnce();
     }
   }
+}
+
+int PhysicsSystem::addObject(const PhysicsMaterial &mat) {
+  int id = objects.size();
+  objects.push_back(make_unique<PhysicsObject>(mat));
+  return id;
 }
 
 void PhysicsSystem::createUnitCube(Vector3f position, Vector3f extents, const PhysicsMaterial &mat) {
@@ -111,11 +113,11 @@ void PhysicsSystem::makeFace(std::unique_ptr<Tetrahedron> &tet) {
   f4->updateNormal();
 
   faces.push_back(move(f1));
-  tet->faces.push_back(&*faces[faces.size() - 1]);
+  tet->faces.push_back(faces[faces.size() - 1].get());
   faces.push_back(move(f2));
-  tet->faces.push_back(&*faces[faces.size() - 1]);
+  tet->faces.push_back(faces[faces.size() - 1].get());
   faces.push_back(move(f3));
-  tet->faces.push_back(&*faces[faces.size() - 1]);
+  tet->faces.push_back(faces[faces.size() - 1].get());
   faces.push_back(move(f4));
-  tet->faces.push_back(&*faces[faces.size() - 1]);
+  tet->faces.push_back(faces[faces.size() - 1].get());
 }

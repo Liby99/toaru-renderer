@@ -3,7 +3,6 @@
 
 #include "face.h"
 #include "physics_material.h"
-#include "physics_system.h"
 #include "point.h"
 #include "utility/math.h"
 

@@ -2,14 +2,14 @@
 #define TOARU_PHYSICS_SYSTEM_H
 
 #include "core/component.h"
-#include "tetrahedron.h"
+#include "physics_object.h"
 #include <vector>
 
 namespace toaru {
   class Face;
-  class Tetrahedron;
   class PhysicsSystem : public Component {
   public:
+    std::vector<std::unique_ptr<PhysicsObject>> objects;
     std::vector<std::unique_ptr<Tetrahedron>> tetrahedrons;
     std::vector<std::unique_ptr<Point>> points;
     std::vector<std::unique_ptr<Face>> faces;
@@ -20,12 +20,17 @@ namespace toaru {
 
     PhysicsSystem();
 
-    virtual void play();
-    virtual void pause();
-    virtual void stepOnce();
+    void play();
+    void pause();
+    void stepOnce();
 
+  protected:
     virtual void init();
     virtual void update();
+
+    int addObject(const PhysicsMaterial &mat);
+    // int addPoint(const Vector3f &pos);
+    // int addTetrahedron(int i1, int i2, int i3, int i4);
 
     void createUnitCube(Vector3f pos, Vector3f ext, const PhysicsMaterial &mat);
 

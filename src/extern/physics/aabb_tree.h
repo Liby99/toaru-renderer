@@ -1,6 +1,7 @@
 #ifndef TOARU_PHYSICS_AABB_TREE_H
 #define TOARU_PHYSICS_AABB_TREE_H
 
+#include <optional>
 #include "aabb_tree_node.h"
 #include "collision.h"
 

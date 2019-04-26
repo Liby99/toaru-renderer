@@ -8,6 +8,10 @@ public:
   std::unique_ptr<MaterialTensor> k, d;
   std::unique_ptr<PhysicsMaterial> mat;
 
+  CubePhysicsSystem() : PhysicsSystem() {
+    isPlaying = false;
+  }
+
   virtual void init() {
 
     int countX = 3;

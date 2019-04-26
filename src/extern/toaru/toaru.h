@@ -26,6 +26,7 @@
 #include "physics/physics_material.h"
 #include "physics/ray.h"
 #include "physics/physics_system.h"
+#include "physics/physics_object.h"
 #include "physics/aabb.h"
 #include "physics/face.h"
 #include "physics/tetrahedron.h"
