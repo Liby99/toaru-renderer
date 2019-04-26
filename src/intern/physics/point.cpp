@@ -2,7 +2,8 @@
 
 using namespace toaru;
 
-Point::Point(Vector3f position) : mass(0), velocity(Vector3f::Zero()), force(Vector3f::Zero()) {
+Point::Point(Vector3f position, int index)
+  : mass(0), index(index), velocity(Vector3f::Zero()), force(Vector3f::Zero()) {
   this->position = position;
 }
 

@@ -50,6 +50,21 @@ int PhysicsSystem::addObject(const PhysicsMaterial &mat) {
   return id;
 }
 
+int PhysicsSystem::addPoint(const Vector3f &p) {
+  int id = points.size();
+  points.push_back(make_unique<Point>(p, id));
+  return id;
+}
+
+int PhysicsSystem::addTetrahedron(int objId, int i1, int i2, int i3, int i4) {
+  const PhysicsObject &obj = *objects[objId];
+  const PhysicsMaterial &mat = obj.mat;
+  Point &p1 = *points[i1], &p2 = *points[i2], &p3 = *points[i3], &p4 = *points[i4];
+  int tetraId = tetrahedrons.size();
+  tetrahedrons.push_back(make_unique<Tetrahedron>(mat, p1, p2, p3, p4));
+  return tetraId;
+}
+
 void PhysicsSystem::createUnitCube(Vector3f position, Vector3f extents, const PhysicsMaterial &mat) {
   Vector3f pos = position;
   Vector3f ext = extents;
@@ -92,7 +107,7 @@ Point &PhysicsSystem::getPoint(Vector3f position) {
   }
 
   // if not found, create one
-  auto point = make_unique<Point>(position);
+  auto point = make_unique<Point>(position, 0);
   points.push_back(move(point));
   return *points[points.size()-1];
 }

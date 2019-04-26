@@ -8,13 +8,11 @@
 namespace toaru {
   class Point : public std::enable_shared_from_this<Point> {
   public:
-    Vector3f position;
-    Vector3f velocity;
-    Vector3f force;
-    float mass;
-    float invMass;
+    Vector3f position, velocity, force;
+    float mass, invMass;
+    int index;
 
-    Point(Vector3f position);
+    Point(Vector3f position, int index);
 
     virtual void addForce(const Vector3f &force);
     virtual void addMass(float mass);
