@@ -3,11 +3,9 @@
 
 using namespace toaru;
 
-Tetrahedron::Tetrahedron(float density, const PhysicsMaterial &K, const PhysicsMaterial &D,
-                         Point &p0, Point &p1, Point &p2, Point &p3)
-  : K(K), D(D) {
+Tetrahedron::Tetrahedron(const PhysicsMaterial &mat, Point & p0, Point &p1, Point &p2, Point &p3)
+  : mat(mat) {
   this->points.insert(this->points.end(), {&p0, &p1, &p2, &p3});
-  this->density = density;
 }
 
 const Point &Tetrahedron::getPoint(int i) const {
@@ -55,7 +53,7 @@ void Tetrahedron::update(float deltaTime) {
   deltaStrain /= deltaTime;
 
   // Step 2: Relate strain to the internal forces (stress)
-  Matrix3f stress = toStress(strain, this->K) + toStress(deltaStrain, this->D);
+  Matrix3f stress = toStress(strain, mat.k) + toStress(deltaStrain, mat.d);
 
   // Step 3: Turn the internal stress into forces on the particles
   std::for_each(faces.begin(), faces.end(), [this, &F, &stress](Face *face)
@@ -80,7 +78,7 @@ void Tetrahedron::initRestState() {
   this->volume = factor * (this->axes[0].cross(this->axes[1])).dot(this->axes[2]);
 
   // Calculate mass based on volume and density
-  this->mass = volume * density;
+  this->mass = volume * mat.density;
 
   // Build rest matrix
   bool res;
@@ -118,7 +116,7 @@ Matrix3f Tetrahedron::calculateCurrentFrame() {
 }
 
 
-Matrix3f Tetrahedron::toStress(const Matrix3f &strain, const PhysicsMaterial &K) const {
+Matrix3f Tetrahedron::toStress(const Matrix3f &strain, const MaterialTensor &t) const {
   // Reshape strain tensor
   Vector3f offDiagonal;
   offDiagonal << strain(1, 2), strain(0, 2), strain(0, 1);
@@ -126,7 +124,7 @@ Matrix3f Tetrahedron::toStress(const Matrix3f &strain, const PhysicsMaterial &K)
 
   // Calculate stress using Lame constant and strain
   Matrix<float, 6, 1> s;
-  s << K.upper * strain.diagonal(), K.lower * offDiagonal;
+  s << t.upper * strain.diagonal(), t.lower * offDiagonal;
 
   // Reshape stress tensor
   Matrix3f stress;

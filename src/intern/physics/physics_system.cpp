@@ -48,8 +48,7 @@ void PhysicsSystem::update() {
   }
 }
 
-void PhysicsSystem::createUnitCube(Vector3f position, Vector3f extents, float density,
-                                   const PhysicsMaterial &KMat, const PhysicsMaterial &DMat) {
+void PhysicsSystem::createUnitCube(Vector3f position, Vector3f extents, const PhysicsMaterial &mat) {
   Vector3f pos = position;
   Vector3f ext = extents;
   auto A = Vector3f(-ext(0, 0) + pos(0, 0), ext(1, 0) + pos(1, 0), -ext(2, 0) + pos(2, 0));
@@ -61,17 +60,11 @@ void PhysicsSystem::createUnitCube(Vector3f position, Vector3f extents, float de
   auto G = Vector3f(ext(0, 0) + pos(0, 0), -ext(1, 0) + pos(1, 0), -ext(2, 0) + pos(2, 0));
   auto H = Vector3f(-ext(0, 0) + pos(0, 0), -ext(1, 0) + pos(1, 0), -ext(2, 0) + pos(2, 0));
 
-  auto T1 = make_unique<Tetrahedron>(density, KMat, DMat, getPoint(A), getPoint(B), getPoint(C),
-                                     getPoint(E));
-  auto T2 = make_unique<Tetrahedron>(density, KMat, DMat, getPoint(A), getPoint(C), getPoint(D),
-                                     getPoint(G));
-  auto T3 = make_unique<Tetrahedron>(density, KMat, DMat, getPoint(A), getPoint(H),
-                                     getPoint(E),
-                                     getPoint(G));
-  auto T4 = make_unique<Tetrahedron>(density, KMat, DMat, getPoint(C), getPoint(E), getPoint(F),
-                                     getPoint(G));
-  auto T5 = make_unique<Tetrahedron>(density, KMat, DMat, getPoint(A), getPoint(C), getPoint(G),
-                                     getPoint(E));
+  auto T1 = make_unique<Tetrahedron>(mat, getPoint(A), getPoint(B), getPoint(C), getPoint(E));
+  auto T2 = make_unique<Tetrahedron>(mat, getPoint(A), getPoint(C), getPoint(D), getPoint(G));
+  auto T3 = make_unique<Tetrahedron>(mat, getPoint(A), getPoint(H), getPoint(E), getPoint(G));
+  auto T4 = make_unique<Tetrahedron>(mat, getPoint(C), getPoint(E), getPoint(F), getPoint(G));
+  auto T5 = make_unique<Tetrahedron>(mat, getPoint(A), getPoint(C), getPoint(G), getPoint(E));
 
   tetrahedrons.push_back(move(T1));
   tetrahedrons.push_back(move(T2));

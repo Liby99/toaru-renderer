@@ -2,7 +2,7 @@
 #define TOARU_PHYSICS_SYSTEM_H
 
 #include "core/component.h"
-#include "physics/tetrahedron.h"
+#include "tetrahedron.h"
 #include <vector>
 
 namespace toaru {
@@ -13,12 +13,6 @@ namespace toaru {
     std::vector<std::unique_ptr<Tetrahedron>> tetrahedrons;
     std::vector<std::unique_ptr<Point>> points;
     std::vector<std::unique_ptr<Face>> faces;
-
-    std::vector<std::unique_ptr<PhysicsMaterial>> Ks;
-    std::vector<std::unique_ptr<PhysicsMaterial>> Ds;
-
-    // TODO: lookup table ?
-    // TODO: AABB
 
     bool isPlaying;
     float deltaTime;
@@ -33,8 +27,7 @@ namespace toaru {
     virtual void init();
     virtual void update();
 
-    void createUnitCube(Vector3f pos, Vector3f ext, float density, const PhysicsMaterial &K,
-                        const PhysicsMaterial &D);
+    void createUnitCube(Vector3f pos, Vector3f ext, const PhysicsMaterial &mat);
 
     Point& getPoint(Vector3f position);
 

@@ -5,6 +5,8 @@ using namespace toaru;
 class CubePhysicsSystem : public PhysicsSystem {
 public:
   bool pressingR = false, pressingP = false, pressingY = false;
+  std::unique_ptr<MaterialTensor> k, d;
+  std::unique_ptr<PhysicsMaterial> mat;
 
   virtual void init() {
 
@@ -14,8 +16,9 @@ public:
     Vector3f extent = Vector3f(1, 1, 1);
     Vector3f start = Vector3f(-countX * extent.x(), 0, -countZ * extent.z());
 
-    Ks.push_back(std::make_unique<PhysicsMaterial>(3200000.0f, 0.499f));
-    Ds.push_back(std::make_unique<PhysicsMaterial>(160000.0f, 150000.0f, false));
+    k = std::make_unique<MaterialTensor>(3200000.0f, 0.499f);
+    d = std::make_unique<MaterialTensor>(160000.0f, 150000.0f, false);
+    mat = std::make_unique<PhysicsMaterial>(1000.f, *k, *d);
 
     for (unsigned int i = 0; i < countX; i++) {
       for (unsigned int j = 0; j < countY; j++) {
@@ -23,7 +26,7 @@ public:
           Vector3f pos =
             Vector3f(start.x() + i * extent.x() * 2.0, start.y() + j * extent.y() * 2.0,
                      start.z() + k * extent.z() * 2.0);
-          createUnitCube(pos, extent, 1000.f, *Ks[0], *Ds[0]);
+          createUnitCube(pos, extent, *mat);
         }
       }
     }

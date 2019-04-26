@@ -2,7 +2,7 @@
 #define TOARU_TETRAHEDRON_H
 
 #include "face.h"
-#include "physics/physics_material.h"
+#include "physics_material.h"
 #include "physics_system.h"
 #include "point.h"
 #include "utility/math.h"
@@ -14,9 +14,6 @@ namespace toaru {
   public:
     // Mass
     float mass;
-
-    // Density
-    float density;
 
     // Points
     std::vector<Point *> points;
@@ -34,11 +31,9 @@ namespace toaru {
     Matrix3f invR;
 
     // Physics properties
-    const PhysicsMaterial &K;
-    const PhysicsMaterial &D;
+    const PhysicsMaterial &mat;
 
-    Tetrahedron(float density, const PhysicsMaterial &K, const PhysicsMaterial &D, Point & p0,
-                Point &p1, Point &p2, Point &p3);
+    Tetrahedron(const PhysicsMaterial &mat, Point & p0, Point &p1, Point &p2, Point &p3);
 
     const Point &getPoint(int i) const;
     Vector3f getCenter() const;
@@ -54,7 +49,7 @@ namespace toaru {
 
     Matrix3f calculateCurrentFrame();
 
-    Matrix3f toStress(const Matrix3f &strain, const PhysicsMaterial &K) const;
+    Matrix3f toStress(const Matrix3f &strain, const MaterialTensor &t) const;
 
     Matrix3f lastStrain;
   };
