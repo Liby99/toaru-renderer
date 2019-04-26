@@ -29,8 +29,10 @@ namespace toaru {
     virtual void update();
 
     int addObject(const PhysicsMaterial &mat);
-    int addPoint(const Vector3f &pos);
+    int addPoint(const Vector3f &pos, bool isFixed = false);
     int addTetrahedron(int obj, int i1, int i2, int i3, int i4);
+
+    int createBox(const PhysicsMaterial &mat, Vector3f center, Vector3f size, Vector3u sub = Vector3u(1, 1, 1));
 
     void createUnitCube(Vector3f pos, Vector3f ext, const PhysicsMaterial &mat);
 

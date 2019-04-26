@@ -16,6 +16,8 @@ namespace toaru {
     float area;
     Vector3f normal;
 
+    bool internal;
+
     // Points on the faces
     std::vector<Point *> points;
 
@@ -26,10 +28,10 @@ namespace toaru {
 
     Face(Point &p0, Point &p1, Point &p2, Point &opposite);
 
-    virtual Vector3f getNormal();
+    bool isInternal() const;
+    Vector3f getNormal() const;
     Point & getOppositePoint() const;
-
-    virtual void updateNormal();
+    void updateNormal();
   };
 }
 

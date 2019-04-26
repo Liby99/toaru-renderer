@@ -1,5 +1,5 @@
-#ifndef TOARU_POINT_H
-#define TOARU_POINT_H
+#ifndef TOARU_PHYSICS_POINT_H
+#define TOARU_PHYSICS_POINT_H
 
 #include "utility/math.h"
 
@@ -10,15 +10,17 @@ namespace toaru {
   public:
     Vector3f position, velocity, force;
     float mass, invMass;
+    bool isFixed;
     int index;
 
-    Point(Vector3f position, int index);
+    Point(Vector3f position, int index, bool isFixed = false);
 
-    virtual void addForce(const Vector3f &force);
-    virtual void addMass(float mass);
-    virtual bool updateInvMass();
-    virtual void update(float deltaTime);
-    virtual bool operator==(const Point &other) const;
+    void addForce(const Vector3f &force);
+    void addMass(float mass);
+    bool updateInvMass();
+    void update(float deltaTime);
+    void integrate(float deltaTime);
+    bool operator==(const Point &other) const;
   };
 }
 

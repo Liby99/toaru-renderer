@@ -46,23 +46,77 @@ void PhysicsSystem::update() {
 
 int PhysicsSystem::addObject(const PhysicsMaterial &mat) {
   int id = objects.size();
-  objects.push_back(make_unique<PhysicsObject>(mat));
+  auto obj = make_unique<PhysicsObject>(mat);
+  objects.push_back(move(obj));
   return id;
 }
 
-int PhysicsSystem::addPoint(const Vector3f &p) {
+int PhysicsSystem::addPoint(const Vector3f &p, bool isFixed) {
   int id = points.size();
-  points.push_back(make_unique<Point>(p, id));
+  auto point = make_unique<Point>(p, id, isFixed);
+  points.push_back(move(point));
   return id;
 }
 
 int PhysicsSystem::addTetrahedron(int objId, int i1, int i2, int i3, int i4) {
-  const PhysicsObject &obj = *objects[objId];
+  PhysicsObject &obj = *objects[objId];
   const PhysicsMaterial &mat = obj.mat;
   Point &p1 = *points[i1], &p2 = *points[i2], &p3 = *points[i3], &p4 = *points[i4];
   int tetraId = tetrahedrons.size();
-  tetrahedrons.push_back(make_unique<Tetrahedron>(mat, p1, p2, p3, p4));
+  auto tetra = make_unique<Tetrahedron>(mat, p1, p2, p3, p4);
+  obj.addTetrahedron(*tetra);
+  tetrahedrons.push_back(move(tetra));
   return tetraId;
+}
+
+int PhysicsSystem::createBox(const PhysicsMaterial &mat, Vector3f center, Vector3f size, Vector3u sub) {
+  int objId = addObject(mat);
+  Vector3f start = center - size / 2.0f;
+  Vector3f step = Vector3f(size.x() / sub.x(), size.y() / sub.y(), size.z() / sub.z());
+  assert(sub.x() > 0 && sub.y() > 0 && sub.z() > 0);
+
+  // First construct all the points
+  std::vector<std::vector<std::vector<int>>> points(sub.x());
+  for (int i = 0; i < sub.x() + 1; i++) {
+    points[i] = std::vector<std::vector<int>>(sub.y());
+    float x = start.x() + i * step.x();
+    for (int j = 0; j < sub.y() + 1; j++) {
+      points[i][j] = std::vector<int>(sub.z());
+      float y = start.y() + j * step.y();
+      for (int k = 0; k < sub.z() + 1; k++) {
+        float z = start.z() + k * step.z();
+        Vector3f p(x, y, z);
+        points[i][j][k] = addPoint(p);
+      }
+    }
+  }
+
+  // Then construct all the tetrahedrons
+  // for (int i = 0; i < sub.x(); i++) {
+  //   for (int j = 0; j < sub.y(); j++) {
+  //     for (int k = 0; k < sub.z(); k++) {
+  //       bool startFrom000 = (i + j + k) % 2 == 0;
+  //       int i0 = points[i][j][k], i1 = points[i + 1][j][k], i2 = points[i + 1][j][k + 1], 
+  //           i3 = points[i][j][k + 1], i4 = points[i][j + 1][k], i5 = points[i + 1][j + 1][k], 
+  //           i6 = points[i + 1][j + 1][k + 1], i7 = points[i][j + 1][k + 1];
+  //       if (startFrom000) {
+  //         addTetrahedron(objId, i0, i2, i1, i5);
+  //         addTetrahedron(objId, i0, i3, i2, i7);
+  //         addTetrahedron(objId, i0, i7, i2, i5);
+  //         addTetrahedron(objId, i0, i5, i4, i7);
+  //         addTetrahedron(objId, i6, i5, i2, i7);
+  //       } else {
+  //         addTetrahedron(objId, i0, i3, i1, i4);
+  //         addTetrahedron(objId, i1, i3, i2, i6);
+  //         addTetrahedron(objId, i1, i4, i3, i6);
+  //         addTetrahedron(objId, i1, i4, i6, i5);
+  //         addTetrahedron(objId, i4, i3, i6, i7);
+  //       }
+  //     }
+  //   }
+  // }
+
+  return objId;
 }
 
 void PhysicsSystem::createUnitCube(Vector3f position, Vector3f extents, const PhysicsMaterial &mat) {
@@ -116,16 +170,12 @@ void PhysicsSystem::makeFace(std::unique_ptr<Tetrahedron> &tet) {
   // Build or get four faces
   // 1, 2, 3
   auto f1 = std::make_unique<Face>(*tet->points[0], *tet->points[1], *tet->points[2], *tet->points[3]);
-  f1->updateNormal();
   // 4, 1, 3
   auto f2 = std::make_unique<Face>(*tet->points[3], *tet->points[0], *tet->points[2], *tet->points[1]);
-  f2->updateNormal();
   // 2, 4, 3
   auto f3 = std::make_unique<Face>(*tet->points[1], *tet->points[3], *tet->points[2], *tet->points[0]);
-  f3->updateNormal();
   // 4, 2, 1
   auto f4 = std::make_unique<Face>(*tet->points[3], *tet->points[1], *tet->points[0], *tet->points[2]);
-  f4->updateNormal();
 
   faces.push_back(move(f1));
   tet->faces.push_back(faces[faces.size() - 1].get());

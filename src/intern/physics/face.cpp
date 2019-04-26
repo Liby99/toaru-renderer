@@ -2,7 +2,16 @@
 
 using namespace toaru;
 
-Vector3f Face::getNormal() {
+Face::Face(Point &p0, Point &p1, Point &p2, Point &opposite) : p1(opposite), internal(false) {
+  this->points.insert(this->points.end(), {&p0, &p1, &p2});
+  updateNormal();
+}
+
+bool Face::isInternal() const {
+  return internal;
+}
+
+Vector3f Face::getNormal() const {
   return normal;
 }
 
@@ -17,9 +26,4 @@ void Face::updateNormal() {
 
   this->normal = e1.cross(e2);
   this->area = this->normal.norm() / 2.0;
-}
-
-Face::Face(Point &p0, Point &p1, Point &p2, Point &opposite)
-  : p1(opposite) {
-  this->points.insert(this->points.end(), {&p0, &p1, &p2});
 }

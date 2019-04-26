@@ -2,6 +2,6 @@
 
 using namespace toaru;
 
-Renderer::Renderer(){};
+Renderer::Renderer() : renderMode(Mode::FACE), Component() {};
 
 void Renderer::render() {}

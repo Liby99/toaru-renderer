@@ -8,8 +8,6 @@
 namespace toaru {
   class MeshRenderer : public Renderer {
   public:
-    enum Mode { FACE, LINE, POINT };
-
     const static std::string DEFAULT_MESH_NAME;
     const static std::string DEFAULT_MATERIAL_NAME;
 
@@ -22,7 +20,6 @@ namespace toaru {
     virtual void render();
 
   protected:
-    Mode renderMode;
     const std::string &meshName, &matName;
   };
 }

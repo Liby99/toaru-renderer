@@ -68,6 +68,14 @@ void PhysicsSystemRenderer::render() {
 
       // Material
       mat.prerender();
+
+      // Set render mode
+      if (renderMode == Mode::LINE) {
+        glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+      } else if (renderMode == Mode::POINT) {
+        glPolygonMode(GL_FRONT_AND_BACK, GL_POINT);
+      }
+
       // glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
       shader.drawIndexed(GL_TRIANGLES, 0, indices.cols());
 

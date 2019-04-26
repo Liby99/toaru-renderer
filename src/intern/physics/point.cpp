@@ -2,8 +2,8 @@
 
 using namespace toaru;
 
-Point::Point(Vector3f position, int index)
-  : mass(0), index(index), velocity(Vector3f::Zero()), force(Vector3f::Zero()) {
+Point::Point(Vector3f position, int index, bool isFixed)
+  : mass(0), index(index), isFixed(isFixed), velocity(Vector3f::Zero()), force(Vector3f::Zero()) {
   this->position = position;
 }
 
@@ -28,17 +28,10 @@ void Point::update(float deltaTime) {
   // TODO: better style to add gravity
   addForce(Vector3f(0, -9.8f * mass, 0));
 
-  // a_i = m^{-1} * f;
-  Vector3f acc = force * invMass;
+  // Do the integration
+  integrate(deltaTime);
 
-  // v_{i+1} = v_i + a_i * dt
-  Vector3f deltaVel = acc * deltaTime;
-  velocity += deltaVel;
-
-  // r_{i+1} = r_i + v_{i+1} * dt
-  Vector3f deltaPos = velocity * deltaTime;
-  position += deltaPos;
-
+  // Clear the force
   force = Vector3f(0, 0, 0);
 
   // TODO: Add ground as a physics object
@@ -50,6 +43,21 @@ void Point::update(float deltaTime) {
 
     // TODO: Add friction 
     force += Vector3f(-velocity.x(), 0, -velocity.z());
+  }
+}
+
+void Point::integrate(float deltaTime) {
+  if (!isFixed) {
+    // a_i = m^{-1} * f;
+    Vector3f acc = force * invMass;
+
+    // v_{i+1} = v_i + a_i * dt
+    Vector3f deltaVel = acc * deltaTime;
+    velocity += deltaVel;
+
+    // r_{i+1} = r_i + v_{i+1} * dt
+    Vector3f deltaPos = velocity * deltaTime;
+    position += deltaPos;
   }
 }
 
