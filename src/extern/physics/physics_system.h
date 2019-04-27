@@ -3,6 +3,7 @@
 
 #include "core/component.h"
 #include "physics_object.h"
+#include "aabb_tree.h"
 #include <vector>
 
 namespace toaru {
@@ -36,6 +37,8 @@ namespace toaru {
   private:
     std::map<std::string, Face *> degenerateFaces;
     const Face &getFace(int i1, int i2, int i3, int opposite);
+
+	void updateAllCollision();
   };
 }
 

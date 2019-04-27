@@ -1,7 +1,4 @@
 #include "physics/physics_system.h"
-#ifdef _WIN32
-#include "omp.h"
-#endif
 
 using namespace toaru;
 using namespace std;
@@ -32,6 +29,9 @@ void PhysicsSystem::stepOnce() {
 void PhysicsSystem::init() {
   for (auto &element : tetrahedrons) {
     element->initRestState();
+  }
+  for (auto &obj : objects) {
+    obj->buildAABBTree();
   }
 }
 
@@ -80,7 +80,8 @@ int PhysicsSystem::addTetrahedron(int objId, int i1, int i2, int i3, int i4) {
   return tetraId;
 }
 
-int PhysicsSystem::createBox(const PhysicsMaterial &mat, Vector3f center, Vector3f size, Vector3u sub) {
+int PhysicsSystem::createBox(const PhysicsMaterial &mat, Vector3f center, Vector3f size,
+                             Vector3u sub) {
   int objId = addObject(mat);
   Vector3f start = center - size / 2.0f;
   Vector3f step = Vector3f(size.x() / sub.x(), size.y() / sub.y(), size.z() / sub.z());
@@ -106,8 +107,8 @@ int PhysicsSystem::createBox(const PhysicsMaterial &mat, Vector3f center, Vector
     for (int j = 0; j < sub.y(); j++) {
       for (int k = 0; k < sub.z(); k++) {
         bool startFrom000 = (i + j + k) % 2 == 0;
-        int i0 = points[i][j][k], i1 = points[i][j][k + 1], i2 = points[i + 1][j][k + 1], 
-            i3 = points[i + 1][j][k], i4 = points[i][j + 1][k], i5 = points[i][j + 1][k + 1], 
+        int i0 = points[i][j][k], i1 = points[i][j][k + 1], i2 = points[i + 1][j][k + 1],
+            i3 = points[i + 1][j][k], i4 = points[i][j + 1][k], i5 = points[i][j + 1][k + 1],
             i6 = points[i + 1][j + 1][k + 1], i7 = points[i + 1][j + 1][k];
         if (startFrom000) {
           addTetrahedron(objId, i0, i2, i1, i5);
@@ -132,7 +133,8 @@ int PhysicsSystem::createBox(const PhysicsMaterial &mat, Vector3f center, Vector
 const Face &PhysicsSystem::getFace(int i1, int i2, int i3, int opposite) {
   std::vector<int> indices = {i1, i2, i3};
   std::sort(indices.begin(), indices.end());
-  std::string hash = std::to_string(indices[0]) + "," + std::to_string(indices[1]) + "," + std::to_string(indices[2]);
+  std::string hash = std::to_string(indices[0]) + "," + std::to_string(indices[1]) + "," +
+                     std::to_string(indices[2]);
 
   // First make the face
   Point &p1 = *points[i1], &p2 = *points[i2], &p3 = *points[i3], &p4 = *points[opposite];
@@ -149,4 +151,19 @@ const Face &PhysicsSystem::getFace(int i1, int i2, int i3, int opposite) {
   // Still put the face into faces vector and return the face reference
   faces.push_back(move(ptr));
   return *faces[faces.size() - 1].get();
+}
+
+void PhysicsSystem::updateAllCollision() {
+  for (int objIndex = 0; objIndex < objects.size(); objIndex++) {
+    auto &obj = objects[objIndex];
+    for (auto tetra : obj->tetrahedrons) {
+      for (int otherIndex = objIndex + 1; otherIndex < objects.size(); otherIndex++) {
+        auto &otherObj = objects[otherIndex];
+        if (otherObj != obj) {
+          auto collision = otherObj->aabbTree->collide(*tetra);
+		  // Deal with the collision
+        }
+      }
+    }
+  }
 }

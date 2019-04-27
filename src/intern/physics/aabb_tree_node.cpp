@@ -2,10 +2,10 @@
 
 using namespace toaru;
 
-AABBTreeNode::AABBTreeNode(std::vector<Tetrahedron *> &allTetras)
+AABBTreeNode::AABBTreeNode(std::vector<const Tetrahedron *> &allTetras)
   : AABBTreeNode(allTetras, 0, allTetras.size()) {}
 
-AABBTreeNode::AABBTreeNode(std::vector<Tetrahedron *> &allTetras, int start, int amount) 
+AABBTreeNode::AABBTreeNode(std::vector<const Tetrahedron *> &allTetras, int start, int amount) 
   : aabb(), startIndex(start), tetraAmount(amount), allTetras(allTetras) {
   int endIndex = start + amount;
 
@@ -80,4 +80,21 @@ const AABB &AABBTreeNode::getBoundingBox() {
 bool AABBTreeNode::isLeftRightIntersecting() {
   if (leafFlag) return false;
   return left->getBoundingBox().intersect(right->getBoundingBox());
+}
+
+std::optional<Collision> AABBTreeNode::collide(const Tetrahedron &tetra) {
+  if (aabb.intersect(tetra)) {
+    if (leafFlag) {
+      int endIndex = startIndex + tetraAmount;
+      for (int i = startIndex; i < endIndex; i++) {
+        auto t = *allTetras[i];
+        return t.collide(tetra);
+	  }
+    } else {
+      auto leftCollision = left->collide(tetra);
+      auto rightCollision = right->collide(tetra);
+    }
+  } else {
+    return std::nullopt;
+  }
 }

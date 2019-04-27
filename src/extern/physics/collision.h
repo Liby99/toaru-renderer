@@ -9,7 +9,6 @@ namespace toaru {
     Vector3f center;
     float volume;
     Tetrahedron *t1, *t2;
-
     Collision(Tetrahedron &t1, Tetrahedron &t2);
   };
 }
