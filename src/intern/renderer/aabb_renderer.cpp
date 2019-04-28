@@ -59,14 +59,6 @@ void AABBRenderer::renderAABB(const AABB &aabb) {
   positions.col(5) << mi.x(), ma.y(), ma.z();
   positions.col(6) << ma;
   positions.col(7) << ma.x(), ma.y(), mi.z();
-  // positions.col(0) << 0, 0, 0;
-  // positions.col(1) << 0, 0, 1;
-  // positions.col(2) << 1, 0, 1;
-  // positions.col(3) << 1, 0, 0;
-  // positions.col(4) << 0, 1, 0;
-  // positions.col(5) << 0, 1, 1;
-  // positions.col(6) << 1, 1, 1;
-  // positions.col(7) << 1, 1, 0;
 
   // Material specific
   material->prerender();
@@ -79,31 +71,24 @@ void AABBRenderer::renderAABB(const AABB &aabb) {
   glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
 
   // Render 6 faces
-  shader.drawIndexed(GL_TRIANGLES, 0, 12);
+  shader.drawIndexed(GL_LINES, 0, 12);
 
   // Change back to face render mode
   glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
 }
 
 void AABBRenderer::initializeIndices() {
-  // indices = MatrixXu(4, 6);
-  // indices.col(0) << 3, 2, 1, 0;
-  // indices.col(1) << 1, 2, 6, 5;
-  // indices.col(2) << 2, 3, 7, 6;
-  // indices.col(3) << 0, 4, 7, 3;
-  // indices.col(4) << 5, 4, 0, 1;
-  // indices.col(5) << 4, 5, 6, 7;
-  indices = MatrixXu(3, 12);
-  indices.col(0) << 2, 1, 0;
-  indices.col(1) << 2, 0, 3;
-  indices.col(2) << 5, 1, 2;
-  indices.col(3) << 5, 2, 6;
-  indices.col(4) << 6, 2, 3;
-  indices.col(5) << 7, 6, 3;
-  indices.col(6) << 5, 0, 1;
-  indices.col(7) << 5, 4, 0;
-  indices.col(8) << 0, 4, 3;
-  indices.col(9) << 3, 4, 7;
-  indices.col(10) << 4, 5, 6;
-  indices.col(11) << 4, 6, 7;
+  indices = MatrixXu(2, 12);
+  indices.col(0) << 0, 1;
+  indices.col(1) << 1, 2;
+  indices.col(2) << 2, 3;
+  indices.col(3) << 3, 0;
+  indices.col(4) << 0, 4;
+  indices.col(5) << 1, 5;
+  indices.col(6) << 2, 6;
+  indices.col(7) << 3, 7;
+  indices.col(8) << 4, 5;
+  indices.col(9) << 5, 6;
+  indices.col(10) << 6, 7;
+  indices.col(11) << 7, 4;
 }
