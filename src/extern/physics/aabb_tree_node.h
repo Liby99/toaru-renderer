@@ -19,11 +19,11 @@ namespace toaru {
 
     void refit();
 
-    bool isLeaf();
-    const AABBTreeNode &getLeft();
-    const AABBTreeNode &getRight();
-    const AABB &getBoundingBox();
-    bool isLeftRightIntersecting();
+    bool isLeaf() const;
+    const AABBTreeNode &getLeft() const;
+    const AABBTreeNode &getRight() const;
+    const AABB &getBoundingBox() const;
+    bool isLeftRightIntersecting() const;
 
     void handleCollision(Tetrahedron &tetra);
   };

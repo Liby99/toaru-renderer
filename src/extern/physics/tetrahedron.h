@@ -7,8 +7,6 @@
 #include "utility/math.h"
 
 namespace toaru {
-  class Face;
-
   class Tetrahedron{
   public:
     // Mass

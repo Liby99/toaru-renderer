@@ -1,4 +1,5 @@
 #include "physics/face.h"
+#include "physics/tetrahedron.h"
 
 using namespace toaru;
 

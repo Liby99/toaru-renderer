@@ -3,6 +3,7 @@
 #include "mesh/plane.h"
 #include "mesh/cube.h"
 #include "renderer/physics_system_renderer.h"
+#include "renderer/aabb_renderer.h"
 #include "renderer/mesh_renderer.h"
 #include "core/shader.h"
 #include "core/viewer.h"

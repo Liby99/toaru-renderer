@@ -2,10 +2,7 @@
 #define TOARU_FACE_H
 
 #include "utility/math.h"
-
 #include "point.h"
-#include "tetrahedron.h"
-
 #include <memory>
 
 namespace toaru {

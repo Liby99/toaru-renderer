@@ -72,23 +72,23 @@ void AABBTreeNode::refit() {
   }
 }
 
-bool AABBTreeNode::isLeaf() {
+bool AABBTreeNode::isLeaf() const {
   return leafFlag;
 }
 
-const AABBTreeNode &AABBTreeNode::getLeft() {
+const AABBTreeNode &AABBTreeNode::getLeft() const {
   return *left;
 }
 
-const AABBTreeNode &AABBTreeNode::getRight() {
+const AABBTreeNode &AABBTreeNode::getRight() const {
   return *right;
 }
 
-const AABB &AABBTreeNode::getBoundingBox() {
+const AABB &AABBTreeNode::getBoundingBox() const {
   return aabb;
 }
 
-bool AABBTreeNode::isLeftRightIntersecting() {
+bool AABBTreeNode::isLeftRightIntersecting() const {
   if (leafFlag) return false;
   return left->getBoundingBox().intersect(right->getBoundingBox());
 }

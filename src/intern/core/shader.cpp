@@ -37,10 +37,10 @@ const std::string Shader::DEFAULT_FRAG_SHADER =
     "uniform vec3 diffuseColor = vec3(0.3);\n"
     "out vec4 finalColor;\n"
     "void main() {\n"
-    "    vec3 irradiance = ambientColor + lightColor * max(0, "
+    "    vec3 irradiance = lightColor * max(0, "
     "dot(lightDirection, fragNormal));\n"
     "    vec3 reflectance = irradiance * diffuseColor;\n"
-    "    finalColor = vec4(sqrt(reflectance), 1);\n"
+    "    finalColor = vec4(ambientColor + sqrt(reflectance), 1);\n"
     "}";
 
 void Shader::init() {
