@@ -6,6 +6,10 @@ AABBTree::AABBTree(std::vector<Tetrahedron *> &allTetras) {
   root = make_unique<AABBTreeNode>(allTetras);
 }
 
-std::optional<Collision> AABBTree::collide(Tetrahedron &tetra) {
-  return std::nullopt;
+void AABBTree::handleCollision(Tetrahedron &tetra) {
+  root->handleCollision(tetra);
+}
+
+void AABBTree::refit() {
+  root->refit();
 }

@@ -55,29 +55,55 @@ AABBTreeNode::AABBTreeNode(std::vector<Tetrahedron *> &allTetras, int start, int
 
 void AABBTreeNode::refit() {
   aabb.reset();
-  int endAmount = startIndex + tetraAmount;
-  for (int i = startIndex; i < endAmount; i++) {
-    aabb.extend(*allTetras[i]);
+  if (leafFlag) {
+
+    // If is leaf, then extend by all the tetrahedrons inside this node
+    int endAmount = startIndex + tetraAmount;
+    for (int i = startIndex; i < endAmount; i++) {
+      aabb.extend(*allTetras[i]);
+    }
+  } else {
+
+    // If is not leaf, recursively refit through left and right nodes, then extend using left and right nodes
+    left->refit();
+    right->refit();
+    aabb.extend(left->aabb);
+    aabb.extend(right->aabb);
   }
 }
 
-bool AABBTreeNode::isLeaf() {
+bool AABBTreeNode::isLeaf() const {
   return leafFlag;
 }
 
-const AABBTreeNode &AABBTreeNode::getLeft() {
+const AABBTreeNode &AABBTreeNode::getLeft() const {
   return *left;
 }
 
-const AABBTreeNode &AABBTreeNode::getRight() {
+const AABBTreeNode &AABBTreeNode::getRight() const {
   return *right;
 }
 
-const AABB &AABBTreeNode::getBoundingBox() {
+const AABB &AABBTreeNode::getBoundingBox() const {
   return aabb;
 }
 
-bool AABBTreeNode::isLeftRightIntersecting() {
+bool AABBTreeNode::isLeftRightIntersecting() const {
   if (leafFlag) return false;
   return left->getBoundingBox().intersect(right->getBoundingBox());
+}
+
+void AABBTreeNode::handleCollision(Tetrahedron &tetra) {
+  if (aabb.intersect(tetra)) {
+    if (leafFlag) {
+      int endIndex = startIndex + tetraAmount;
+      for (int i = startIndex; i < endIndex; i++) {
+        auto t = *allTetras[i];
+        return t.handleCollision(tetra);
+	    }
+    } else {
+      left->handleCollision(tetra);
+      right->handleCollision(tetra);
+    }
+  }
 }

@@ -1,6 +1,7 @@
 #ifndef TOARU_PHYSICS_AABB_TREE_NODE_H
 #define TOARU_PHYSICS_AABB_TREE_NODE_H
 
+#include <optional>
 #include "aabb.h"
 #include "tetrahedron.h"
 
@@ -18,11 +19,13 @@ namespace toaru {
 
     void refit();
 
-    bool isLeaf();
-    const AABBTreeNode &getLeft();
-    const AABBTreeNode &getRight();
-    const AABB &getBoundingBox();
-    bool isLeftRightIntersecting();
+    bool isLeaf() const;
+    const AABBTreeNode &getLeft() const;
+    const AABBTreeNode &getRight() const;
+    const AABB &getBoundingBox() const;
+    bool isLeftRightIntersecting() const;
+
+    void handleCollision(Tetrahedron &tetra);
   };
 }
 

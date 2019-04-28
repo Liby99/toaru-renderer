@@ -3,6 +3,7 @@
 
 #include "core/component.h"
 #include "physics_object.h"
+#include "aabb_tree.h"
 #include <vector>
 
 namespace toaru {
@@ -21,11 +22,19 @@ namespace toaru {
 
     void play();
     void pause();
-    void stepOnce();
 
   protected:
     virtual void init();
     virtual void update();
+
+    // Initialize stage functions
+    void initRestStates();
+    void buildAABBTrees();
+
+    // Update stage functions
+    void updateObjects();
+	  void processCollisions();
+    void stepOnce();
 
     int addObject(const PhysicsMaterial &mat);
     int addPoint(const Vector3f &pos, bool isFixed = false);

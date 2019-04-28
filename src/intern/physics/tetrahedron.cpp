@@ -1,5 +1,4 @@
 #include "physics/tetrahedron.h"
-#include <iostream>
 
 using namespace toaru;
 
@@ -36,6 +35,10 @@ bool Tetrahedron::intersect(const Tetrahedron &other) const {
 
 void Tetrahedron::addFace(const Face &face) {
   faces.push_back(&face);
+}
+
+void Tetrahedron::handleCollision(Tetrahedron &other) {
+  // TODO: Handle the collision between this tetrahedron and the other one.
 }
 
 void Tetrahedron::update(float deltaTime) {
