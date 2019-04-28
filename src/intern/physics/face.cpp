@@ -31,7 +31,7 @@ Point &Face::getPoint(int i) const {
   return *points[i];
 }
 
-bool Face::intersect(const Ray &ray, Vector3f &pos, Vector3f &norm) {
+bool Face::intersect(const Ray &ray, Vector3f &pos, Vector3f &norm) const {
   // Pre cache the positions
   Vector3f &p0 = getPoint(0).position, &p1 = getPoint(1).position, &p2 = getPoint(2).position;
   Vector3f t0 = p1 - p0, t1 = p2 - p0;
@@ -61,4 +61,8 @@ bool Face::intersect(const Ray &ray, Vector3f &pos, Vector3f &norm) {
   } else {
     return false;
   }
+}
+
+bool Face::isAtBackSide(const Vector3f &p) const {
+  return (p - points[0]->position).dot(getNormal()) < 0;
 }

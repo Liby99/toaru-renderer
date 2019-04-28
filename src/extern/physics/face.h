@@ -39,7 +39,9 @@ namespace toaru {
      *   pos <= intersection position
      *   normal <= face normal
      */
-    bool intersect(const Ray &ray, Vector3f &pos, Vector3f &normal);
+    bool intersect(const Ray &ray, Vector3f &pos, Vector3f &normal) const;
+
+    bool isAtBackSide(const Vector3f &p) const;
   };
 }
 

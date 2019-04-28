@@ -37,8 +37,7 @@ namespace toaru {
 
     const Point &getPoint(int i) const;
     Vector3f getCenter() const;
-    bool isInside(const Vector3f &p) const;
-    bool intersect(const Tetrahedron &other) const;
+    bool contains(const Vector3f &p) const;
 
     void addFace(const Face &face);
     void initRestState();
@@ -47,13 +46,10 @@ namespace toaru {
     void update(float deltaTime);
 
   private:
-    virtual void distributeForceToPoint();
-
-    Matrix3f calculateCurrentFrame();
-
-    Matrix3f toStress(const Matrix3f &strain, const MaterialTensor &t) const;
-
     Matrix3f lastStrain;
+    virtual void distributeForceToPoint();
+    Matrix3f calculateCurrentFrame();
+    Matrix3f toStress(const Matrix3f &strain, const MaterialTensor &t) const;
   };
 }
 #endif
