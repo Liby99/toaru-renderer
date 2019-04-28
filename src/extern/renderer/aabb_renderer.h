@@ -10,6 +10,7 @@ namespace toaru {
   public:
     unique_ptr<Lambertian> material;
     MatrixXu indices;
+    int depth; // Depth < 0 means no depth limit
 
     AABBRenderer();
     virtual void init();
@@ -17,7 +18,7 @@ namespace toaru {
 
   protected:
     void renderAABBTree(const AABBTree &tree);
-    void renderAABBTreeNode(const AABBTreeNode &node);
+    void renderAABBTreeNode(const AABBTreeNode &node, int depth = 0);
     void renderAABB(const AABB &aabb);
 
   private:

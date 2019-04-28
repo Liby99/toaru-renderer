@@ -9,6 +9,7 @@ void PhysicsObject::addTetrahedron(Tetrahedron &tetra) {
 }
 
 void PhysicsObject::buildAABBTree() {
+  aabbTree.reset();
   aabbTree = make_unique<AABBTree>(tetrahedrons);
 }
 

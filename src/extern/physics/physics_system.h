@@ -27,6 +27,11 @@ namespace toaru {
     virtual void init();
     virtual void update();
 
+    // Initialize stage functions
+    void initRestStates();
+    void buildAABBTrees();
+
+    // Update stage functions
     void updateObjects();
 	  void processCollisions();
     void stepOnce();

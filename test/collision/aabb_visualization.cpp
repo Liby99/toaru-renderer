@@ -3,6 +3,51 @@
 
 using namespace toaru;
 
+class AABBRenderMode : public Component {
+public:
+  bool pressingPlus = false, pressingMinus = false, pressingN = false;
+  virtual void update() {
+    AABBRenderer &renderer = object().getComponent<AABBRenderer>("aabb-renderer");
+
+    if (!pressingPlus) {
+      if (context().getKey(']')) {
+        pressingPlus = true;
+        renderer.depth++;
+      }
+    } else {
+      if (!context().getKey(']')) {
+        pressingPlus = false;
+      }
+    }
+
+    if (!pressingMinus) {
+      if (context().getKey('[')) {
+        pressingMinus = true;
+        renderer.depth--;
+      }
+    } else {
+      if (!context().getKey('[')) {
+        pressingMinus = false;
+      }
+    }
+
+    if (!pressingN) {
+      if (context().getKey('n')) {
+        pressingN = true;
+        if (renderer.isEnabled()) {
+          renderer.setEnabled(false);
+        } else {
+          renderer.setEnabled(true);
+        }
+      }
+    } else {
+      if (!context().getKey('n')) {
+        pressingN = false;
+      }
+    }
+  }
+};
+
 class JellySystemRenderSwitch : public Component {
 public:
   bool pressingM = false;
@@ -30,7 +75,7 @@ public:
 
 class JellySystem : public PhysicsSystem {
 public:
-  bool pressingR = false, pressingP = false, pressingY = false;
+  bool pressingR = false, pressingP = false, pressingB = false;
   std::unique_ptr<MaterialTensor> k, d;
   std::unique_ptr<PhysicsMaterial> mat;
 
@@ -65,6 +110,17 @@ public:
       }
     }
 
+    if (!pressingB) {
+      if (context().getKey('B')) {
+        pressingB = true;
+        buildAABBTrees();
+      }
+    } else {
+      if (!context().getKey('B')) {
+        pressingB = false;
+      }
+    }
+
     PhysicsSystem::update();
   }
 };
@@ -87,12 +143,14 @@ int main(int argc, char * argv[]) {
   Lambertian lambMat;
   PhysicsSystemRenderer renderer;
   AABBRenderer aabbRenderer;
+  AABBRenderMode aabbSwitcher;
   JellySystemRenderSwitch switcher;
   physicsHolder.addComponent("system", sys);
   physicsHolder.addComponent("material", lambMat);
-  // physicsHolder.addComponent("renderer", renderer);
+  physicsHolder.addComponent("renderer", renderer);
   physicsHolder.addComponent("switcher", switcher);
   physicsHolder.addComponent("aabb-renderer", aabbRenderer);
+  physicsHolder.addComponent("aabb-switcher", aabbSwitcher);
   scene.root.addChild(physicsHolder);
 
   Entity floorHolder;

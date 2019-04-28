@@ -19,11 +19,11 @@ const std::string Shader::DEFAULT_VERT_SHADER =
     "uniform mat4 model = mat4(1);\n"
     "uniform mat4 viewProj = mat4(1);\n"
     "void main() {\n"
-    "    mat4 mvp = viewProj * model;\n"
-    "    gl_Position = mvp * vec4(position, 1);\n"
-    "    fragPosition = vec3(model * vec4(position, 1));\n"
-    "    fragNormal = vec3(transpose(inverse(model)) * vec4(normal, 0));\n"
-    "    fragTexCoord = texCoord;\n"
+    "  mat4 mvp = viewProj * model;\n"
+    "  gl_Position = mvp * vec4(position, 1);\n"
+    "  fragPosition = vec3(model * vec4(position, 1));\n"
+    "  fragNormal = vec3(transpose(inverse(model)) * vec4(normal, 0));\n"
+    "  fragTexCoord = texCoord;\n"
     "}";
 
 const std::string Shader::DEFAULT_FRAG_SHADER =
@@ -37,10 +37,9 @@ const std::string Shader::DEFAULT_FRAG_SHADER =
     "uniform vec3 diffuseColor = vec3(0.3);\n"
     "out vec4 finalColor;\n"
     "void main() {\n"
-    "    vec3 irradiance = lightColor * max(0, "
-    "dot(lightDirection, fragNormal));\n"
-    "    vec3 reflectance = irradiance * diffuseColor;\n"
-    "    finalColor = vec4(ambientColor + sqrt(reflectance), 1);\n"
+    "  vec3 irradiance = lightColor * max(0, dot(lightDirection, fragNormal));\n"
+    "  vec3 reflectance = irradiance * diffuseColor;\n"
+    "  finalColor = vec4(ambientColor + sqrt(reflectance), 1);\n"
     "}";
 
 void Shader::init() {

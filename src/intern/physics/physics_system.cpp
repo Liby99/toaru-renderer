@@ -14,12 +14,8 @@ void PhysicsSystem::pause() {
 }
 
 void PhysicsSystem::init() {
-  for (auto &element : tetrahedrons) {
-    element->initRestState();
-  }
-  for (auto &obj : objects) {
-    obj->buildAABBTree();
-  }
+  initRestStates();
+  buildAABBTrees();
 }
 
 void PhysicsSystem::update() {
@@ -27,6 +23,18 @@ void PhysicsSystem::update() {
     for (int i = 0; i < step; i++) {
       stepOnce();
     }
+  }
+}
+
+void PhysicsSystem::initRestStates() {
+  for (auto &element : tetrahedrons) {
+    element->initRestState();
+  }
+}
+
+void PhysicsSystem::buildAABBTrees() {
+  for (auto &obj : objects) {
+    obj->buildAABBTree();
   }
 }
 
