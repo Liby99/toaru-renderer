@@ -1,1 +1,0 @@
-copy_model("teapot.obj")
