@@ -1,9 +1,9 @@
 #ifndef TOARU_PHYSICS_AABB_H
 #define TOARU_PHYSICS_AABB_H
 
-#include "utility/math.h"
-#include "tetrahedron.h"
 #include "ray.h"
+#include "tetrahedron.h"
+#include "utility/math.h"
 
 namespace toaru {
   class AxisAlignedBoundingBox {

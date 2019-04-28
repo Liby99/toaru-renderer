@@ -1,9 +1,9 @@
 #ifndef TOARU_PHYSICS_AABB_TREE_NODE_H
 #define TOARU_PHYSICS_AABB_TREE_NODE_H
 
-#include <optional>
 #include "aabb.h"
 #include "tetrahedron.h"
+#include <optional>
 
 namespace toaru {
   class AABBTreeNode {

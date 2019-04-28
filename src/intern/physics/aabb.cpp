@@ -32,8 +32,7 @@ void AxisAlignedBoundingBox::extend(const AxisAlignedBoundingBox &aabb) {
 }
 
 bool AxisAlignedBoundingBox::isInside(const Vector3f &p) const {
-  return p(0) > minCorner(0) && p(0) < maxCorner(0) &&
-         p(1) > minCorner(1) && p(1) < maxCorner(1) &&
+  return p(0) > minCorner(0) && p(0) < maxCorner(0) && p(1) > minCorner(1) && p(1) < maxCorner(1) &&
          p(2) > minCorner(2) && p(2) < maxCorner(2);
 }
 
@@ -52,21 +51,19 @@ bool AxisAlignedBoundingBox::intersect(const Ray &ray) const {
     t1(i) = ((minCorner[i] - ray.origin(i)) / ray.direction(i));
     t2(i) = ((maxCorner[i] - ray.origin(i)) / ray.direction(i));
   }
-  
+
   // Calculate the t min max
   float tmin, tmax;
   tmin = fmaxf(fmaxf(fminf(t1(0), t2(0)), fminf(t1(1), t2(1))), fminf(t1(2), t2(2)));
   tmax = fminf(fminf(fmaxf(t1(0), t2(0)), fmaxf(t1(1), t2(1))), fmaxf(t1(2), t2(2)));
-  
+
   // Check t
   return (tmin > 0 && tmin <= tmax) || (tmin < 0 && tmax > 0);
 }
 
 bool AxisAlignedBoundingBox::intersect(const Tetrahedron &tetra) const {
-  return isInside(tetra.getPoint(0).position) || 
-         isInside(tetra.getPoint(1).position) ||
-         isInside(tetra.getPoint(2).position) ||
-         isInside(tetra.getPoint(3).position);
+  return isInside(tetra.getPoint(0).position) || isInside(tetra.getPoint(1).position) ||
+         isInside(tetra.getPoint(2).position) || isInside(tetra.getPoint(3).position);
 }
 
 Vector3f AxisAlignedBoundingBox::getDimension() const {

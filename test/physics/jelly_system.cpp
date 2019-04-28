@@ -1,5 +1,5 @@
-#include <toaru/toaru.h>
 #include <iostream>
+#include <toaru/toaru.h>
 
 using namespace toaru;
 
@@ -50,8 +50,10 @@ public:
     if (!pressingP) {
       if (context().getKey('P')) {
         pressingP = true;
-        if (isPlaying) pause();
-        else play();
+        if (isPlaying)
+          pause();
+        else
+          play();
       }
     } else {
       if (!context().getKey('P')) {
@@ -60,7 +62,7 @@ public:
     }
 
     if (isPlaying) {
-      for (auto & element : points) {
+      for (auto &element : points) {
         if (element->position.y() > 4.0) {
           if (context().getDirectionKey(Context::Direction::Down))
             element->addForce(Vector3f(0, 0, 10000));
@@ -75,7 +77,7 @@ public:
     }
 
     if (context().getKey('R')) {
-      for (auto & element : points) {
+      for (auto &element : points) {
         element->position.y() += 5;
       }
     }
@@ -84,7 +86,7 @@ public:
   }
 };
 
-int main(int argc, char * argv[]) {
+int main(int argc, char *argv[]) {
   toaru::init(argc, argv);
 
   Scene scene;

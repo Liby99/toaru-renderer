@@ -33,8 +33,10 @@ public:
     if (!pressingP) {
       if (context().getKey('P')) {
         pressingP = true;
-        if (isPlaying) pause();
-        else play();
+        if (isPlaying)
+          pause();
+        else
+          play();
       }
     } else {
       if (!context().getKey('P')) {
@@ -43,7 +45,7 @@ public:
     }
 
     if (context().getKey('R')) {
-      for (auto & element : points) {
+      for (auto &element : points) {
         element->position.y() += 2;
       }
     }
@@ -52,7 +54,7 @@ public:
   }
 };
 
-int main(int argc, char * argv[]) {
+int main(int argc, char *argv[]) {
   toaru::init(argc, argv);
 
   Scene scene;

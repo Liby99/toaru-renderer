@@ -1,9 +1,9 @@
 #ifndef TOARU_FACE_H
 #define TOARU_FACE_H
 
-#include "utility/math.h"
 #include "point.h"
 #include "ray.h"
+#include "utility/math.h"
 #include <memory>
 
 namespace toaru {
@@ -22,7 +22,7 @@ namespace toaru {
     std::shared_ptr<Tetrahedron> t1;
 
     // Opposite points
-    Point& p1;
+    Point &p1;
 
     Face(Point &p0, Point &p1, Point &p2, Point &opposite);
 

@@ -2,8 +2,8 @@
 #define TOARU_AABB_RENDERER_H
 
 #include "core/renderer.h"
-#include "physics/physics_system.h"
 #include "material/lambertian.h"
+#include "physics/physics_system.h"
 
 namespace toaru {
   class AABBRenderer : public Renderer {

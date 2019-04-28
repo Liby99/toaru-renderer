@@ -2,8 +2,8 @@
 
 using namespace toaru;
 
-Tetrahedron::Tetrahedron(const PhysicsMaterial &mat, Point & p0, Point &p1, Point &p2, Point &p3)
-  : mat(mat) {
+Tetrahedron::Tetrahedron(const PhysicsMaterial &mat, Point &p0, Point &p1, Point &p2, Point &p3)
+    : mat(mat) {
   this->points.insert(this->points.end(), {&p0, &p1, &p2, &p3});
   this->plasticStrain.setZero();
 }
@@ -14,7 +14,8 @@ const Point &Tetrahedron::getPoint(int i) const {
 }
 
 Vector3f Tetrahedron::getCenter() const {
-  return (points[0]->position + points[1]->position + points[2]->position + points[3]->position) / 4.0f;
+  return (points[0]->position + points[1]->position + points[2]->position + points[3]->position) /
+         4.0f;
 }
 
 bool Tetrahedron::contains(const Vector3f &p) const {
@@ -59,7 +60,7 @@ void Tetrahedron::update(float deltaTime) {
     plasticStrain -= deltaPlasticStrain;
 
     // Clip plasticStrain
-    plasticStrain *= std::min<float>(1.0, (mat.gamma2)/(plasticStrain.norm()));
+    plasticStrain *= std::min<float>(1.0, (mat.gamma2) / (plasticStrain.norm()));
   }
 
   // Final strain tensor = elastic strain + plastic strain
@@ -79,12 +80,11 @@ void Tetrahedron::update(float deltaTime) {
   Matrix3f stress = toStress(strain, mat.k) + toStress(deltaStrain, mat.d);
 
   // Step 3: Turn the internal stress into forces on the particles
-  std::for_each(faces.begin(), faces.end(), [this, &F, &stress](const Face *face)
-  {
+  std::for_each(faces.begin(), faces.end(), [this, &F, &stress](const Face *face) {
     Vector3f normal = face->restNormal;
     // Vector3f force = 0.5 * F * (normal.transpose() * stress).transpose();
     Vector3f force = 0.5 * F * stress * normal;
-    auto & point = face->getOppositePoint();
+    auto &point = face->getOppositePoint();
     point.addForce(force);
   });
 }
@@ -119,8 +119,7 @@ void Tetrahedron::initRestState() {
 }
 
 void Tetrahedron::distributeForceToPoint() {
-  std::for_each(points.begin(), points.end(),
-                [&](Point *p) { p->addMass(mass * 0.25); });
+  std::for_each(points.begin(), points.end(), [&](Point *p) { p->addMass(mass * 0.25); });
 }
 
 Matrix3f Tetrahedron::calculateCurrentFrame() {
@@ -137,7 +136,6 @@ Matrix3f Tetrahedron::calculateCurrentFrame() {
   }
   return T;
 }
-
 
 Matrix3f Tetrahedron::toStress(const Matrix3f &strain, const MaterialTensor &t) const {
 

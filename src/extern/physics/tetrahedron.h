@@ -7,7 +7,7 @@
 #include "utility/math.h"
 
 namespace toaru {
-  class Tetrahedron{
+  class Tetrahedron {
   public:
     // Mass
     float mass;
@@ -33,7 +33,7 @@ namespace toaru {
     // Physics properties
     const PhysicsMaterial &mat;
 
-    Tetrahedron(const PhysicsMaterial &mat, Point & p0, Point &p1, Point &p2, Point &p3);
+    Tetrahedron(const PhysicsMaterial &mat, Point &p0, Point &p1, Point &p2, Point &p3);
 
     const Point &getPoint(int i) const;
     Vector3f getCenter() const;

@@ -11,6 +11,7 @@ namespace toaru {
     bool renderAllFaces = false, cached = false;
     void refresh();
     virtual void render();
+
   protected:
     std::vector<const Face *> faces;
     MatrixXu indices;

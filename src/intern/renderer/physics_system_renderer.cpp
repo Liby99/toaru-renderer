@@ -83,7 +83,7 @@ void PhysicsSystemRenderer::loadPosAndNorm(const PhysicsSystem &sys) {
   // Go through
   int vertAmount = 0;
   for (auto &face : faces) {
-    
+
     // First get all points
     auto p0 = face->getPoint(0).position;
     auto p1 = face->getPoint(1).position;

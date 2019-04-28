@@ -3,7 +3,7 @@
 using namespace toaru;
 
 Point::Point(Vector3f position, int index, bool isFixed)
-  : mass(0), index(index), isFixed(isFixed), velocity(Vector3f::Zero()), force(Vector3f::Zero()) {
+    : mass(0), index(index), isFixed(isFixed), velocity(Vector3f::Zero()), force(Vector3f::Zero()) {
   this->position = position;
 }
 
@@ -41,8 +41,8 @@ void Point::update(float deltaTime) {
     velocity.x() = velocity.x() * 0.99;
     velocity.z() = velocity.z() * 0.99;
 
-    // TODO: Add friction 
-    //force += Vector3f(-velocity.x(), 0, -velocity.z());
+    // TODO: Add friction
+    // force += Vector3f(-velocity.x(), 0, -velocity.z());
   }
 }
 

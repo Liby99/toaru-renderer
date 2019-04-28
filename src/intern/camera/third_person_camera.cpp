@@ -13,10 +13,9 @@ const float ThirdPersonCamera::MAX_INCLINE = Math::PI / 2 - 0.01f;
 const float ThirdPersonCamera::MIN_INCLINE = -Math::PI / 2 + 0.01f;
 
 ThirdPersonCamera::ThirdPersonCamera()
-  : azimuth(0), incline(0), distance(3),
-    moveSpeed(MOVE_SPEED), scrollSpeed(SCROLL_SPEED), rotateSpeed(ROTATE_SPEED),
-    allowMove(true), allowScroll(true), allowRotate(true),
-    TwoPointCamera() {}
+    : azimuth(0), incline(0), distance(3), moveSpeed(MOVE_SPEED), scrollSpeed(SCROLL_SPEED),
+      rotateSpeed(ROTATE_SPEED), allowMove(true), allowScroll(true), allowRotate(true),
+      TwoPointCamera() {}
 
 void ThirdPersonCamera::init() {
   Vector3f diff = object().transform.position - target;
@@ -29,9 +28,12 @@ void ThirdPersonCamera::update() {
 
   // First update the position and target
   double dt = context().getDeltaTime();
-  if (allowRotate) updateAngle(dt);
-  if (allowScroll) updateDistance(dt);
-  if (allowMove) updateCameraTarget(dt);
+  if (allowRotate)
+    updateAngle(dt);
+  if (allowScroll)
+    updateDistance(dt);
+  if (allowMove)
+    updateCameraTarget(dt);
   updateCameraPosition();
 
   // Then use parent's update

@@ -3,10 +3,10 @@
 using namespace toaru;
 
 AABBTreeNode::AABBTreeNode(std::vector<Tetrahedron *> &allTetras)
-  : AABBTreeNode(allTetras, 0, allTetras.size()) {}
+    : AABBTreeNode(allTetras, 0, allTetras.size()) {}
 
-AABBTreeNode::AABBTreeNode(std::vector<Tetrahedron *> &allTetras, int start, int amount) 
-  : aabb(), startIndex(start), tetraAmount(amount), allTetras(allTetras) {
+AABBTreeNode::AABBTreeNode(std::vector<Tetrahedron *> &allTetras, int start, int amount)
+    : aabb(), startIndex(start), tetraAmount(amount), allTetras(allTetras) {
   int endIndex = start + amount;
 
   // First build the bounding box
@@ -64,7 +64,8 @@ void AABBTreeNode::refit() {
     }
   } else {
 
-    // If is not leaf, recursively refit through left and right nodes, then extend using left and right nodes
+    // If is not leaf, recursively refit through left and right nodes, then extend using left and
+    // right nodes
     left->refit();
     right->refit();
     aabb.extend(left->aabb);
@@ -89,7 +90,8 @@ const AABB &AABBTreeNode::getBoundingBox() const {
 }
 
 bool AABBTreeNode::isLeftRightIntersecting() const {
-  if (leafFlag) return false;
+  if (leafFlag)
+    return false;
   return left->getBoundingBox().intersect(right->getBoundingBox());
 }
 
@@ -100,7 +102,7 @@ void AABBTreeNode::handleCollision(Tetrahedron &tetra) {
       for (int i = startIndex; i < endIndex; i++) {
         auto t = *allTetras[i];
         return t.handleCollision(tetra);
-	    }
+      }
     } else {
       left->handleCollision(tetra);
       right->handleCollision(tetra);
