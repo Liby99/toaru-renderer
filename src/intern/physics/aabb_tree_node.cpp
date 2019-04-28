@@ -2,10 +2,10 @@
 
 using namespace toaru;
 
-AABBTreeNode::AABBTreeNode(std::vector<const Tetrahedron *> &allTetras)
+AABBTreeNode::AABBTreeNode(std::vector<Tetrahedron *> &allTetras)
   : AABBTreeNode(allTetras, 0, allTetras.size()) {}
 
-AABBTreeNode::AABBTreeNode(std::vector<const Tetrahedron *> &allTetras, int start, int amount) 
+AABBTreeNode::AABBTreeNode(std::vector<Tetrahedron *> &allTetras, int start, int amount) 
   : aabb(), startIndex(start), tetraAmount(amount), allTetras(allTetras) {
   int endIndex = start + amount;
 
@@ -55,9 +55,20 @@ AABBTreeNode::AABBTreeNode(std::vector<const Tetrahedron *> &allTetras, int star
 
 void AABBTreeNode::refit() {
   aabb.reset();
-  int endAmount = startIndex + tetraAmount;
-  for (int i = startIndex; i < endAmount; i++) {
-    aabb.extend(*allTetras[i]);
+  if (leafFlag) {
+
+    // If is leaf, then extend by all the tetrahedrons inside this node
+    int endAmount = startIndex + tetraAmount;
+    for (int i = startIndex; i < endAmount; i++) {
+      aabb.extend(*allTetras[i]);
+    }
+  } else {
+
+    // If is not leaf, recursively refit through left and right nodes, then extend using left and right nodes
+    left->refit();
+    right->refit();
+    aabb.extend(left->aabb);
+    aabb.extend(right->aabb);
   }
 }
 
@@ -82,19 +93,17 @@ bool AABBTreeNode::isLeftRightIntersecting() {
   return left->getBoundingBox().intersect(right->getBoundingBox());
 }
 
-std::optional<Collision> AABBTreeNode::collide(const Tetrahedron &tetra) {
+void AABBTreeNode::handleCollision(Tetrahedron &tetra) {
   if (aabb.intersect(tetra)) {
     if (leafFlag) {
       int endIndex = startIndex + tetraAmount;
       for (int i = startIndex; i < endIndex; i++) {
         auto t = *allTetras[i];
-        return t.collide(tetra);
-	  }
+        return t.handleCollision(tetra);
+	    }
     } else {
-      auto leftCollision = left->collide(tetra);
-      auto rightCollision = right->collide(tetra);
+      left->handleCollision(tetra);
+      right->handleCollision(tetra);
     }
-  } else {
-    return std::nullopt;
   }
 }

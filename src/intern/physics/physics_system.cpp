@@ -13,19 +13,6 @@ void PhysicsSystem::pause() {
   isPlaying = false;
 }
 
-void PhysicsSystem::stepOnce() {
-#pragma omp parallel for
-  for (int i = 0; i < tetrahedrons.size(); i++) {
-    auto &element = tetrahedrons[i];
-    element->update(deltaTime);
-  }
-#pragma omp parallel for
-  for (int i = 0; i < points.size(); i++) {
-    auto &element = points[i];
-    element->update(deltaTime);
-  }
-}
-
 void PhysicsSystem::init() {
   for (auto &element : tetrahedrons) {
     element->initRestState();
@@ -40,6 +27,41 @@ void PhysicsSystem::update() {
     for (int i = 0; i < step; i++) {
       stepOnce();
     }
+  }
+}
+
+void PhysicsSystem::updateObjects() {
+  for (auto &obj : objects) {
+    obj->update();
+  }
+}
+
+void PhysicsSystem::processCollisions() {
+  for (int objIndex = 0; objIndex < objects.size(); objIndex++) {
+    auto &obj = objects[objIndex]; // unique_ptr reference
+    for (Tetrahedron *tetra : obj->tetrahedrons) {
+      for (int otherIndex = objIndex + 1; otherIndex < objects.size(); otherIndex++) {
+        auto &otherObj = objects[otherIndex];
+        if (otherObj != obj) {
+          otherObj->aabbTree->handleCollision(*tetra);
+        }
+      }
+    }
+  }
+}
+
+void PhysicsSystem::stepOnce() {
+  updateObjects();
+  processCollisions();
+#pragma omp parallel for
+  for (int i = 0; i < tetrahedrons.size(); i++) {
+    auto &element = tetrahedrons[i];
+    element->update(deltaTime);
+  }
+#pragma omp parallel for
+  for (int i = 0; i < points.size(); i++) {
+    auto &element = points[i];
+    element->update(deltaTime);
   }
 }
 
@@ -151,19 +173,4 @@ const Face &PhysicsSystem::getFace(int i1, int i2, int i3, int opposite) {
   // Still put the face into faces vector and return the face reference
   faces.push_back(move(ptr));
   return *faces[faces.size() - 1].get();
-}
-
-void PhysicsSystem::updateAllCollision() {
-  for (int objIndex = 0; objIndex < objects.size(); objIndex++) {
-    auto &obj = objects[objIndex];
-    for (auto tetra : obj->tetrahedrons) {
-      for (int otherIndex = objIndex + 1; otherIndex < objects.size(); otherIndex++) {
-        auto &otherObj = objects[otherIndex];
-        if (otherObj != obj) {
-          auto collision = otherObj->aabbTree->collide(*tetra);
-		  // Deal with the collision
-        }
-      }
-    }
-  }
 }

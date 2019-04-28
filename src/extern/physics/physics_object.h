@@ -9,10 +9,11 @@ namespace toaru {
   public:
     const PhysicsMaterial &mat;
     std::unique_ptr<AABBTree> aabbTree;
-    std::vector<const Tetrahedron *> tetrahedrons;
+    std::vector<Tetrahedron *> tetrahedrons;
     PhysicsObject(const PhysicsMaterial &mat);
-    void addTetrahedron(const Tetrahedron &tetra);
+    void addTetrahedron(Tetrahedron &tetra);
     void buildAABBTree();
+    void update();
   };
 }
 

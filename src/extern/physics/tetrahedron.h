@@ -45,6 +45,7 @@ namespace toaru {
     void addFace(const Face &face);
     void initRestState();
 
+    void handleCollision(Tetrahedron &other);
     void update(float deltaTime);
 
   private:

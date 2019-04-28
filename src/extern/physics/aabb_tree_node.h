@@ -2,7 +2,6 @@
 #define TOARU_PHYSICS_AABB_TREE_NODE_H
 
 #include <optional>
-#include "collision.h"
 #include "aabb.h"
 #include "tetrahedron.h"
 
@@ -11,12 +10,12 @@ namespace toaru {
   public:
     AABB aabb;
     int startIndex, tetraAmount;
-    std::vector<const Tetrahedron *> &allTetras;
+    std::vector<Tetrahedron *> &allTetras;
     std::unique_ptr<AABBTreeNode> left, right;
     bool leafFlag;
 
-    AABBTreeNode(std::vector<const Tetrahedron *> &allTetras);
-    AABBTreeNode(std::vector<const Tetrahedron *> &allTetras, int start, int amount);
+    AABBTreeNode(std::vector<Tetrahedron *> &allTetras);
+    AABBTreeNode(std::vector<Tetrahedron *> &allTetras, int start, int amount);
 
     void refit();
 
@@ -26,7 +25,7 @@ namespace toaru {
     const AABB &getBoundingBox();
     bool isLeftRightIntersecting();
 
-	std::optional<Collision> collide(const Tetrahedron &tetra);
+    void handleCollision(Tetrahedron &tetra);
   };
 }
 

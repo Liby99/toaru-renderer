@@ -22,11 +22,14 @@ namespace toaru {
 
     void play();
     void pause();
-    void stepOnce();
 
   protected:
     virtual void init();
     virtual void update();
+
+    void updateObjects();
+	  void processCollisions();
+    void stepOnce();
 
     int addObject(const PhysicsMaterial &mat);
     int addPoint(const Vector3f &pos, bool isFixed = false);
@@ -37,8 +40,6 @@ namespace toaru {
   private:
     std::map<std::string, Face *> degenerateFaces;
     const Face &getFace(int i1, int i2, int i3, int opposite);
-
-	void updateAllCollision();
   };
 }
 

@@ -2,10 +2,14 @@
 
 using namespace toaru;
 
-AABBTree::AABBTree(std::vector<const Tetrahedron *> &allTetras) {
+AABBTree::AABBTree(std::vector<Tetrahedron *> &allTetras) {
   root = make_unique<AABBTreeNode>(allTetras);
 }
 
-std::optional<Collision> AABBTree::collide(const Tetrahedron &tetra) {
-  return root.collide(tetra);
+void AABBTree::handleCollision(Tetrahedron &tetra) {
+  root->handleCollision(tetra);
+}
+
+void AABBTree::refit() {
+  root->refit();
 }

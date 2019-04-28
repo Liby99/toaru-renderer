@@ -7,8 +7,9 @@ namespace toaru {
   class AABBTree {
   public:
     std::unique_ptr<AABBTreeNode> root;
-    AABBTree(std::vector<const Tetrahedron *> &allTetras);
-    std::optional<Collision> collide(const Tetrahedron &tetra);
+    AABBTree(std::vector<Tetrahedron *> &allTetras);
+    void handleCollision(Tetrahedron &tetra);
+    void refit();
   };
 }
 

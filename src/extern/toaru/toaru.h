@@ -22,7 +22,6 @@
 #include "physics/aabb_tree_node.h"
 #include "physics/point.h"
 #include "physics/material_tensor.h"
-#include "physics/collision.h"
 #include "physics/physics_material.h"
 #include "physics/ray.h"
 #include "physics/physics_system.h"
