@@ -2,6 +2,10 @@
 
 using namespace toaru;
 
+void PhysicsSystemRenderer::refresh() {
+  cached = false;
+}
+
 void PhysicsSystemRenderer::render() {
   if (object().hasComponent("system")) {
     PhysicsSystem &sys = object().getComponent<PhysicsSystem>("system");
@@ -16,52 +20,14 @@ void PhysicsSystemRenderer::render() {
       shader.setUniform("model", object().transform.getTransform());
       shader.setUniform("viewProj", context().getMainCameraViewProj());
 
-      // First go through indices
-      int maxFaceAmount = sys.faces.size();
-      int faceAmount = 0, vertAmount = 0;
-      MatrixXu indices(3, maxFaceAmount);
-      MatrixXf positions(3, maxFaceAmount * 3);
-      MatrixXf normals(3, maxFaceAmount * 3);
-
-      // Go through
-      for (int i = 0; i < sys.faces.size(); i++) {
-        if (renderAllFaces || !sys.faces[i]->internal) {
-          
-          // First get all points
-          auto p1 = sys.faces[i]->points[0];
-          auto p2 = sys.faces[i]->points[1];
-          auto p3 = sys.faces[i]->points[2];
-
-          // Then get the normal
-          Vector3f n = sys.faces[i]->getNormal();
-
-          // Add a face
-          indices.col(faceAmount) << vertAmount, vertAmount + 1, vertAmount + 2;
-          faceAmount += 1;
-
-          // Add three normals
-          normals.col(vertAmount) = n;
-          normals.col(vertAmount + 1) = n;
-          normals.col(vertAmount + 2) = n;
-
-          // Add three positions
-          positions.col(vertAmount) = p1->position;
-          positions.col(vertAmount + 1) = p2->position;
-          positions.col(vertAmount + 2) = p3->position;
-
-          // Increment the vertices
-          vertAmount += 3;
-        }
+      // If not cached, cache indices data (this could be done only once)
+      if (!cached) {
+        cached = true;
+        cacheIndicesData(sys);
       }
 
-      // Resize the positions and normals
-      indices.conservativeResize(3, faceAmount);
-      positions.conservativeResize(3, vertAmount);
-      normals.conservativeResize(3, vertAmount);
-
-      // std::cout << indices << std::endl;
-      // std::cout << positions << std::endl;
-      // std::cout << normals << std::endl;
+      // Load the positions and normals (this has to be done for each frame)
+      loadPosAndNorm(sys);
 
       // Pass to shader
       shader.uploadIndices(indices);
@@ -84,5 +50,59 @@ void PhysicsSystemRenderer::render() {
       // Set back to mode fill
       glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
     }
+  }
+}
+
+void PhysicsSystemRenderer::cacheIndicesData(const PhysicsSystem &sys) {
+  // First go through indices
+  int maxFaceAmount = sys.faces.size();
+  int faceAmount = 0, vertAmount = 0;
+  indices = MatrixXu(3, maxFaceAmount);
+
+  // Go through
+  for (int i = 0; i < sys.faces.size(); i++) {
+    if (renderAllFaces || !sys.faces[i]->internal) {
+
+      // Add a face
+      faces.push_back(sys.faces[i].get());
+      indices.col(faceAmount) << vertAmount, vertAmount + 1, vertAmount + 2;
+      faceAmount += 1;
+      vertAmount += 3;
+    }
+  }
+
+  // Resize the positions and normals
+  indices.conservativeResize(3, faceAmount);
+}
+
+void PhysicsSystemRenderer::loadPosAndNorm(const PhysicsSystem &sys) {
+  // First go through indices
+  positions = MatrixXf(3, faces.size() * 3);
+  normals = MatrixXf(3, faces.size() * 3);
+
+  // Go through
+  int vertAmount = 0;
+  for (auto &face : faces) {
+    
+    // First get all points
+    auto p0 = face->getPoint(0).position;
+    auto p1 = face->getPoint(1).position;
+    auto p2 = face->getPoint(2).position;
+
+    // Then get the normal
+    Vector3f n = face->getNormal();
+
+    // Add three normals
+    normals.col(vertAmount) = n;
+    normals.col(vertAmount + 1) = n;
+    normals.col(vertAmount + 2) = n;
+
+    // Add three positions
+    positions.col(vertAmount) = p0;
+    positions.col(vertAmount + 1) = p1;
+    positions.col(vertAmount + 2) = p2;
+
+    // Increment the vertices
+    vertAmount += 3;
   }
 }

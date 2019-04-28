@@ -8,8 +8,15 @@
 namespace toaru {
   class PhysicsSystemRenderer : public Renderer {
   public:
-    bool renderAllFaces = false;
+    bool renderAllFaces = false, cached = false;
+    void refresh();
     virtual void render();
+  protected:
+    std::vector<const Face *> faces;
+    MatrixXu indices;
+    MatrixXf positions, normals;
+    void cacheIndicesData(const PhysicsSystem &sys);
+    void loadPosAndNorm(const PhysicsSystem &sys);
   };
 }
 
