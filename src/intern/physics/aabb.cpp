@@ -49,8 +49,8 @@ bool AxisAlignedBoundingBox::intersect(const Ray &ray) const {
   // Calculate the intersections
   Vector3f t1, t2;
   for (int i = 0; i < 3; ++i) {
-    t1(i) = ((minCorner[i] - ray.start(i)) / ray.direction(i));
-    t2(i) = ((maxCorner[i] - ray.start(i)) / ray.direction(i));
+    t1(i) = ((minCorner[i] - ray.origin(i)) / ray.direction(i));
+    t2(i) = ((maxCorner[i] - ray.origin(i)) / ray.direction(i));
   }
   
   // Calculate the t min max

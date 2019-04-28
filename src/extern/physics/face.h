@@ -3,6 +3,7 @@
 
 #include "utility/math.h"
 #include "point.h"
+#include "ray.h"
 #include <memory>
 
 namespace toaru {
@@ -27,7 +28,18 @@ namespace toaru {
 
     bool isInternal() const;
     Vector3f getNormal() const;
-    Point & getOppositePoint() const;
+    Point &getPoint(int i) const;
+    Point &getOppositePoint() const;
+
+    /**
+     * Test if this face intersects ray.
+     * If not intersect, will return false, and the pos, normal remains as is
+     * If is intersecting:
+     *   return true
+     *   pos <= intersection position
+     *   normal <= face normal
+     */
+    bool intersect(const Ray &ray, Vector3f &pos, Vector3f &normal);
   };
 }
 

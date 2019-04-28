@@ -2,4 +2,8 @@
 
 using namespace toaru;
 
-Ray::Ray(Vector3f start, Vector3f direction) : start(start), direction(direction) {}
+Ray::Ray(Vector3f origin, Vector3f direction) : origin(origin), direction(direction) {}
+
+Vector3f Ray::getPoint(float t) const {
+  return origin + t * direction;
+}
