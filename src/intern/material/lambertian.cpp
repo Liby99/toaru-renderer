@@ -8,7 +8,7 @@ const std::string Lambertian::DEFAULT_AMBIENT_NAME = "ambientColor";
 
 const Vector3f Lambertian::DEFAULT_DIFFUSE_COLOR = Vector3f(0.8f, 0.8f, 0.8f);
 
-const Vector3f Lambertian::DEFAULT_AMBIENT_COLOR = Vector3f(0.1f, 0.1f, 0.1f);
+const Vector3f Lambertian::DEFAULT_AMBIENT_COLOR = Vector3f(0.2f, 0.2f, 0.2f);
 
 Lambertian::Lambertian() : Lambertian(Shader::get()) {}
 
