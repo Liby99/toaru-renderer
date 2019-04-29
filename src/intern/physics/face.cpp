@@ -53,7 +53,7 @@ bool Face::intersect(const Ray &ray, Vector3f &pos, Vector3f &norm) const {
   float bcz = 1.0f - bcx - bcy;
 
   // Check if t is greater then 0 and the position is inside the triangle and need update
-  if (t > 0 && bcx >= 0 && bcx <= 1 && bcy >= 0 && bcy <= 1 && bcz >= 0 && bcz <= 1) {
+  if (t > 0 && t < 1 && bcx >= 0 && bcx <= 1 && bcy >= 0 && bcy <= 1 && bcz >= 0 && bcz <= 1) {
     // Intersects
     pos = position;
     norm = normal;
