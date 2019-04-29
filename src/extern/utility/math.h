@@ -29,6 +29,8 @@ namespace toaru {
 
     static float random(float low, float up);
     static float random(float up);
+
+    static bool isEqual(float f1, float f2);
   };
 }
 

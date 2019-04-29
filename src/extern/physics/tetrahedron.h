@@ -43,7 +43,14 @@ namespace toaru {
     void initRestState();
 
     void handleCollision(Tetrahedron &other);
+
+    void checkIntersect(std::vector<Vector3f> &intersects, Tetrahedron &a, Tetrahedron &b);
+
     void update(float deltaTime);
+
+    void addForceAt(const Vector3f &f, const Vector3f &p);
+
+    float getVolume() const;
 
   private:
     Matrix3f lastStrain;

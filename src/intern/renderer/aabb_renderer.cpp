@@ -27,9 +27,9 @@ void AABBRenderer::renderAABBTree(const AABBTree &tree) {
 
 void AABBRenderer::renderAABBTreeNode(const AABBTreeNode &node, int d) {
 
-  // First render the current node aabb
+  //First render the current node aabb
   renderAABB(node.aabb);
-
+  
   // Then recursively render the children
   bool canRecurse = depth < 0 || d <= depth;
   if (canRecurse && !node.isLeaf()) {

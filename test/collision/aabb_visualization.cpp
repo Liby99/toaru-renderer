@@ -6,6 +6,7 @@ using namespace toaru;
 class AABBRenderMode : public Component {
 public:
   bool pressingPlus = false, pressingMinus = false, pressingN = false;
+
   virtual void update() {
     AABBRenderer &renderer = object().getComponent<AABBRenderer>("aabb-renderer");
 
@@ -51,6 +52,7 @@ public:
 class JellySystemRenderSwitch : public Component {
 public:
   bool pressingM = false;
+
   virtual void update() {
     if (!pressingM) {
       if (context().getKey('M')) {
@@ -79,7 +81,8 @@ public:
   std::unique_ptr<MaterialTensor> k, d;
   std::unique_ptr<PhysicsMaterial> mat;
 
-  JellySystem() : PhysicsSystem() {
+  JellySystem()
+    : PhysicsSystem() {
     isPlaying = false;
   }
 
@@ -87,7 +90,8 @@ public:
     k = make_unique<MaterialTensor>(2000000.0f, 0.1f);
     d = make_unique<MaterialTensor>(1000.0f, 1000.0f, false);
     mat = make_unique<PhysicsMaterial>(1000.f, 0.001f, 0.1f, *k, *d);
-    createBox(*mat, Vector3f(0, 5, 0), Vector3f(2, 5, 4), Vector3u(4, 10, 8));
+    createBox(*mat, Vector3f(0, 3, 0), Vector3f(1, 1, 1), Vector3u(1, 1, 1));
+    createBox(*mat, Vector3f(0, 5.5, 0), Vector3f(1, 1, 1), Vector3u(1, 1, 1));
     PhysicsSystem::init();
   }
 
@@ -104,6 +108,10 @@ public:
       if (!context().getKey('P')) {
         pressingP = false;
       }
+    }
+
+    if (context().getKey('T')) {
+      stepOnce();
     }
 
     if (context().getKey('R')) {

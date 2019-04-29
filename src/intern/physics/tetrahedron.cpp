@@ -1,9 +1,11 @@
 #include "physics/tetrahedron.h"
+#include "physics/convex_hull.h"
+#include <iostream>
 
 using namespace toaru;
 
 Tetrahedron::Tetrahedron(const PhysicsMaterial &mat, Point &p0, Point &p1, Point &p2, Point &p3)
-    : mat(mat) {
+  : mat(mat) {
   this->points.insert(this->points.end(), {&p0, &p1, &p2, &p3});
   this->plasticStrain.setZero();
 }
@@ -34,6 +36,84 @@ void Tetrahedron::addFace(const Face &face) {
 
 void Tetrahedron::handleCollision(Tetrahedron &other) {
   // TODO: Handle the collision between this tetrahedron and the other one.
+
+  // Check Collision and get intersection volume.
+  float intersectVolume = -1.0f;
+  Vector3f intersectCenter;
+
+  // if edges(6) of this intersect with faces(3) of other
+  // List to save intersection points
+  std::vector<Vector3f> intersects;
+
+  checkIntersect(intersects, *this, other);
+  checkIntersect(intersects, other, *this);
+
+  for (auto &element : this->points) {
+    if (other.contains(element->position)) {
+      intersects.push_back(element->position);
+    }
+  }
+
+  for (auto &element : other.points) {
+    if (this->contains(element->position)) {
+      intersects.push_back(element->position);
+    }
+  }
+
+  if (intersects.size() > 3) {
+    // std::cout << intersects.size() << std::endl;
+
+    // Construct Convex Hull based on intersection points.
+    ConvexHull ch(intersects);
+    intersectVolume = ch.volume;
+    intersectCenter = ch.center;
+  }
+
+  if (intersectVolume > 0) {
+    // Have intersect volume, TODO: do proper collision response
+    this->addForceAt((this->getCenter() - intersectCenter).normalized() * intersectVolume *
+                     10000000,
+                     intersectCenter);
+    other.addForceAt(-(this->getCenter() - intersectCenter).normalized() * intersectVolume *
+                     10000000,
+                     intersectCenter);
+  }
+}
+
+void Tetrahedron::checkIntersect(std::vector<Vector3f> &intersects, Tetrahedron &a,
+                                 Tetrahedron &b) {
+  // Construct edge
+  auto e0 = a.points[1]->position - a.points[0]->position;
+  auto e1 = a.points[2]->position - a.points[0]->position;
+  auto e2 = a.points[3]->position - a.points[0]->position;
+  auto e3 = a.points[2]->position - a.points[1]->position;
+  auto e4 = a.points[3]->position - a.points[1]->position;
+  auto e5 = a.points[3]->position - a.points[2]->position;
+
+  // List to save rays;
+  std::vector<Ray> rays;
+
+  // Construct rays
+  rays.emplace_back(a.points[0]->position, e0);
+  rays.emplace_back(a.points[0]->position, e1);
+  rays.emplace_back(a.points[0]->position, e2);
+  rays.emplace_back(a.points[1]->position, e3);
+  rays.emplace_back(a.points[1]->position, e4);
+  rays.emplace_back(a.points[2]->position, e5);
+
+  // Rays to faces test
+  for (int i = 0; i < b.faces.size(); i++) {
+    const auto &face = b.faces[i];
+    Vector3f pos;
+    Vector3f normal;
+    for (auto r : rays) {
+      if (face->intersect(r, pos, normal)) {
+        // if intersect, save pos
+        intersects.push_back(pos);
+        // TODO: normal
+      }
+    }
+  }
 }
 
 void Tetrahedron::update(float deltaTime) {
@@ -80,13 +160,49 @@ void Tetrahedron::update(float deltaTime) {
   Matrix3f stress = toStress(strain, mat.k) + toStress(deltaStrain, mat.d);
 
   // Step 3: Turn the internal stress into forces on the particles
-  std::for_each(faces.begin(), faces.end(), [this, &F, &stress](const Face *face) {
+  std::for_each(faces.begin(), faces.end(), [this, &F, &stress](const Face *face)
+  {
     Vector3f normal = face->restNormal;
     // Vector3f force = 0.5 * F * (normal.transpose() * stress).transpose();
     Vector3f force = 0.5 * F * stress * normal;
     auto &point = face->getOppositePoint();
     point.addForce(force);
   });
+}
+
+void Tetrahedron::addForceAt(const Vector3f &f, const Vector3f &p) {
+  // Barycentric coord of tetrahedron: T^{-1} (p - p3)
+  // Construct T
+  Matrix3f T;
+  const auto &p0 = points[0]->position;
+  const auto &p1 = points[1]->position;
+  const auto &p2 = points[2]->position;
+  const auto &p3 = points[3]->position;
+  T << p0.x() - p3.x(), p1.x() - p3.x(), p2.x() - p3.x(), p0.y() - p3.y(), p1.y() - p3.y(),
+    p2.y() - p3.y(), p0.z() - p3.z(), p1.z() - p3.z(), p2.z() - p3.z();
+
+  Matrix3f invT = T.inverse();
+  Vector3f coord = invT * (p - p3);
+  float w = 1 - coord.x() - coord.y() - coord.z();
+  if (coord.x() > 0 && coord.y() > 0 && coord.z() > 0 && w > 0) {
+    points[0]->addForce(f * coord.x());
+    points[1]->addForce(f * coord.y());
+    points[2]->addForce(f * coord.z());
+    points[3]->addForce(f * w);
+  }
+  //
+}
+
+float Tetrahedron::getVolume() const {
+  // Build tetrahedral frame axes
+  std::vector<Vector3f> axes(3);
+  for (int i = 0; i < 3; i++) {
+    axes[i] = this->points[i]->position - this->points[3]->position;
+  }
+  // Calculate volume
+  constexpr float factor = 1.0 / 6.0;
+  float volume = factor * (axes[0].cross(axes[1])).dot(axes[2]);
+  return volume;
 }
 
 void Tetrahedron::initRestState() {

@@ -4,12 +4,14 @@ using namespace toaru;
 
 class TetraSystem : public PhysicsSystem {
 public:
-  bool pressingR = false, pressingP = false, pressingY = false;
+  bool pressingR = false, pressingP = false, pressingY = false, pressingT = false;
   std::unique_ptr<MaterialTensor> k, d;
   std::unique_ptr<PhysicsMaterial> mat;
   int tetraObj;
+  int tetraObj2;
 
-  TetraSystem() : PhysicsSystem() {
+  TetraSystem()
+    : PhysicsSystem() {
     isPlaying = false;
   }
 
@@ -18,13 +20,23 @@ public:
     d = make_unique<MaterialTensor>(1000.0f, 1000.0f, false);
     mat = make_unique<PhysicsMaterial>(1000.f, 0.001f, 0.1f, *k, *d);
     tetraObj = addObject(*mat);
+    tetraObj2 = addObject(*mat);
+    {
+      int p0 = addPoint(Vector3f(0, 3, 0));
+      int p1 = addPoint(Vector3f(0, 2, 1));
+      int p2 = addPoint(Vector3f(-1, 2, -1));
+      int p3 = addPoint(Vector3f(1, 2, -1));
 
-    int p0 = addPoint(Vector3f(0, 3, 0));
-    int p1 = addPoint(Vector3f(0, 2, 1));
-    int p2 = addPoint(Vector3f(-1, 2, -1));
-    int p3 = addPoint(Vector3f(1, 2, -1));
+      addTetrahedron(tetraObj, p0, p2, p1, p3);
+    }
+    {
+      int p0 = addPoint(Vector3f(0, 5, 0));
+      int p1 = addPoint(Vector3f(0, 4, 1));
+      int p2 = addPoint(Vector3f(-1, 4, -1));
+      int p3 = addPoint(Vector3f(1, 4, -1));
 
-    addTetrahedron(tetraObj, p0, p2, p1, p3);
+      addTetrahedron(tetraObj2, p0, p2, p1, p3);
+    }
 
     PhysicsSystem::init();
   }
@@ -47,6 +59,17 @@ public:
     if (context().getKey('R')) {
       for (auto &element : points) {
         element->position.y() += 2;
+      }
+    }
+
+    if (!pressingT) {
+      if (context().getKey('T')) {
+        //pressingT = true;
+        stepOnce();
+      }
+    } else {
+      if (!context().getKey('T')) {
+        pressingT = false;
       }
     }
 
