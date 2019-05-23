@@ -52,7 +52,6 @@ public:
 class JellySystemRenderSwitch : public Component {
 public:
   bool pressingM = false;
-
   virtual void update() {
     if (!pressingM) {
       if (context().getKey('M')) {
@@ -77,12 +76,11 @@ public:
 
 class JellySystem : public PhysicsSystem {
 public:
-  bool pressingR = false, pressingP = false, pressingB = false;
+  bool pressingR = false, pressingP = false, pressingY = false, pressingB = false;
   std::unique_ptr<MaterialTensor> k, d;
   std::unique_ptr<PhysicsMaterial> mat;
 
-  JellySystem()
-    : PhysicsSystem() {
+  JellySystem() : PhysicsSystem() {
     isPlaying = false;
   }
 
@@ -90,8 +88,7 @@ public:
     k = make_unique<MaterialTensor>(2000000.0f, 0.1f);
     d = make_unique<MaterialTensor>(1000.0f, 1000.0f, false);
     mat = make_unique<PhysicsMaterial>(1000.f, 0.001f, 0.1f, *k, *d);
-    createBox(*mat, Vector3f(0, 3, 0), Vector3f(1, 1, 1), Vector3u(1, 1, 1));
-    createBox(*mat, Vector3f(0, 5.5, 0), Vector3f(1, 1, 1), Vector3u(1, 1, 1));
+    createBox(*mat, Vector3f(0, 5, 0), Vector3f(2, 5, 4), Vector3u(4, 10, 8));
     PhysicsSystem::init();
   }
 
@@ -110,8 +107,19 @@ public:
       }
     }
 
-    if (context().getKey('T')) {
-      stepOnce();
+    if (isPlaying) {
+      for (auto &element : points) {
+        if (element->position.y() > 4.0) {
+          if (context().getDirectionKey(Context::Direction::Down))
+            element->addForce(Vector3f(0, 0, 10000));
+          if (context().getDirectionKey(Context::Direction::Up))
+            element->addForce(Vector3f(0, 0, -10000));
+          if (context().getDirectionKey(Context::Direction::Right))
+            element->addForce(Vector3f(10000, 0, 0));
+          if (context().getDirectionKey(Context::Direction::Left))
+            element->addForce(Vector3f(-10000, 0, 0));
+        }
+      }
     }
 
     if (context().getKey('R')) {
@@ -152,9 +160,9 @@ int main(int argc, char *argv[]) {
   JellySystem sys;
   Lambertian lambMat;
   PhysicsSystemRenderer renderer;
+  JellySystemRenderSwitch switcher;
   AABBRenderer aabbRenderer;
   AABBRenderMode aabbSwitcher;
-  JellySystemRenderSwitch switcher;
   physicsHolder.addComponent("system", sys);
   physicsHolder.addComponent("material", lambMat);
   physicsHolder.addComponent("renderer", renderer);
