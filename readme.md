@@ -4,7 +4,7 @@ Toaru Render is some renderer that has an Entity-Component System and can do ren
 
 ## Screenshot
 
-!(Two Cubes)[https://raw.githubusercontent.com/Liby99/toaru-renderer/master/doc/img/two-cubes.png]
+![Two Cubes](https://raw.githubusercontent.com/Liby99/toaru-renderer/master/doc/img/two-cubes.png)
 
 ## Build for Release
 
