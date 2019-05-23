@@ -1,7 +1,10 @@
 #include "physics/convex_hull.h"
 #include <iostream>
+
+using namespace toaru;
+
 #pragma optimize("", off)
-toaru::ConvexHull::ConvexHull(std::vector<Vector3f> ps)
+ConvexHull::ConvexHull(std::vector<Vector3f> ps)
   : center(Vector3f::Zero()),
     volume(0.0f) {
   points.insert(points.end(), ps.begin(), ps.end());
@@ -35,13 +38,13 @@ toaru::ConvexHull::ConvexHull(std::vector<Vector3f> ps)
   //std::cout << volume << std::endl;
 }
 
-std::tuple<int, int, int> toaru::ConvexHull::findTriangleOnHull() {
+std::tuple<int, int, int> ConvexHull::findTriangleOnHull() {
   Edge edge = findEdgeOnHull();
   int r = pivotOnEdge(edge);
   return {edge.p, edge.q, r};
 }
 
-toaru::Edge toaru::ConvexHull::findEdgeOnHull() {
+toaru::Edge ConvexHull::findEdgeOnHull() {
   int p = findFarmostPoint();
   Vector3f q = points[p];
   bool found = false;
@@ -58,7 +61,7 @@ toaru::Edge toaru::ConvexHull::findEdgeOnHull() {
   return Edge(p, r);
 }
 
-int toaru::ConvexHull::findFarmostPoint() {
+int ConvexHull::findFarmostPoint() {
   int minIndex = -1;
   Vector3f min = Vector3f(std::numeric_limits<float>::max(),
                           std::numeric_limits<float>::max(),
@@ -74,7 +77,7 @@ int toaru::ConvexHull::findFarmostPoint() {
   return minIndex;
 }
 
-int toaru::ConvexHull::compareTwoPoint(const Vector3f &p1, const Vector3f &p2) {
+int ConvexHull::compareTwoPoint(const Vector3f &p1, const Vector3f &p2) {
   if (p1.y() < p2.y()) {
     return -1;
   } else if (Math::isEqual(p1.y(), p2.y())) {
@@ -97,11 +100,11 @@ int toaru::ConvexHull::compareTwoPoint(const Vector3f &p1, const Vector3f &p2) {
   }
 }
 
-float toaru::ConvexHull::squaredArea(const Vector3f &p1, const Vector3f &p2, const Vector3f &p3) {
+float ConvexHull::squaredArea(const Vector3f &p1, const Vector3f &p2, const Vector3f &p3) {
   return ((p2 - p1).cross((p3 - p1))).squaredNorm();
 }
 
-float toaru::ConvexHull::signedVolume(const Vector3f &p1, const Vector3f &p2, const Vector3f &p3,
+float ConvexHull::signedVolume(const Vector3f &p1, const Vector3f &p2, const Vector3f &p3,
                                       const Vector3f &p4) {
   const auto e1 = p2 - p1;
   const auto e2 = p3 - p1;
@@ -113,11 +116,11 @@ float toaru::ConvexHull::signedVolume(const Vector3f &p1, const Vector3f &p2, co
   return volume;
 }
 
-int toaru::ConvexHull::pivotOnEdge(Edge &edge) {
+int ConvexHull::pivotOnEdge(Edge &edge) {
   return pivotOnEdge(points[edge.p], points[edge.q]);
 }
 
-int toaru::ConvexHull::pivotOnEdge(const Vector3f &q0, const Vector3f &q1) {
+int ConvexHull::pivotOnEdge(const Vector3f &q0, const Vector3f &q1) {
   int ret = 0;
   Vector3f pPoint = points[ret];
   float areaSq = squaredArea(q0, q1, pPoint);
@@ -140,9 +143,9 @@ int toaru::ConvexHull::pivotOnEdge(const Vector3f &q0, const Vector3f &q1) {
   return ret;
 }
 
-void toaru::ConvexHull::giftWrap() {
+void ConvexHull::giftWrap() {
   // TODO: clean up
-  
+
   auto t = findTriangleOnHull();
   const auto &[t0, t1, t2] = t;
   edges.insert({Edge(t1, t0), Edge(t2, t1), Edge(t0, t2)});

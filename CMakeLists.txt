@@ -10,6 +10,7 @@ option(USE_OPEN_MP "Build use open mp" OFF)
 # Global setup
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_MACOSX_RPATH 1)
+set(CMAKE_CXX_FLAGS_RELEASE "-O3")
 set(build_dir ${CMAKE_BINARY_DIR})
 set(curr_dir ${CMAKE_CURRENT_LIST_DIR})
 set(script_dir ${curr_dir}/script)

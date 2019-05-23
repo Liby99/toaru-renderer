@@ -76,7 +76,7 @@ public:
 
 class JellySystem : public PhysicsSystem {
 public:
-  bool pressingR = false, pressingP = false, pressingY = false;
+  bool pressingR = false, pressingP = false, pressingY = false, pressingB = false;
   std::unique_ptr<MaterialTensor> k, d;
   std::unique_ptr<PhysicsMaterial> mat;
 
@@ -125,6 +125,17 @@ public:
     if (context().getKey('R')) {
       for (auto &element : points) {
         element->position.y() += 5;
+      }
+    }
+
+    if (!pressingB) {
+      if (context().getKey('B')) {
+        pressingB = true;
+        buildAABBTrees();
+      }
+    } else {
+      if (!context().getKey('B')) {
+        pressingB = false;
       }
     }
 
