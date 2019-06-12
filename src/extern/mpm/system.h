@@ -2,7 +2,7 @@
 #define MPM_SYSTEM_H
 
 #include "mesh/point_cloud.h"
-#include "Grid.h"
+#include "grid.h"
 
 namespace toaru::mpm {
   class System : public PointCloud {

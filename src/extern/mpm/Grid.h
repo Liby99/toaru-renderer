@@ -4,8 +4,8 @@
 #include <tuple>
 #include <vector>
 
-#include "Cell.h"
-#include "Particle.h"
+#include "cell.h"
+#include "particle.h"
 
 namespace toaru::mpm {
   class Grid {

@@ -1,4 +1,4 @@
-﻿#include "mpm/Grid.h"
+﻿#include "mpm/grid.h"
 
 using namespace toaru::mpm;
 

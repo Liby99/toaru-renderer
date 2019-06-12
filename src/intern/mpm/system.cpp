@@ -25,6 +25,6 @@ void System::fill() {
   for (int i = 0; i < particleAmount; i++) {
     const Particle &p = grid.particles[i];
     positions.col(i) = p.position;
-    colors.col(i) = Vector3f(p.Jp, p.Jp, p.Jp);
+    colors.col(i) = Vector3f(1, 1, 1);
   }
 }
