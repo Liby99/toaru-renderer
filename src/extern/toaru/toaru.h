@@ -1,7 +1,9 @@
 // clang-format off
+#include "mesh/point_cloud.h"
 #include "mesh/sphere.h"
 #include "mesh/plane.h"
 #include "mesh/cube.h"
+#include "renderer/point_cloud_renderer.h"
 #include "renderer/physics_system_renderer.h"
 #include "renderer/aabb_renderer.h"
 #include "renderer/mesh_renderer.h"

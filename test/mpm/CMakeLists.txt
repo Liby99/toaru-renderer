@@ -1,0 +1,1 @@
+copy_shader("colored_point_cloud")
