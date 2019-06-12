@@ -27,8 +27,17 @@ namespace toaru {
     static Vector3f polarToCart(const Vector2f &pol);
     static Vector3f polarToCart(float theta, float phi);
 
-    static float random(float low, float up);
-    static float random(float up);
+    static inline float random(float low, float up) {
+      return low + ((float)rand() / (float)RAND_MAX) * (up - low);
+    }
+
+    static inline float random(float up) {
+      return ((float)rand() / (float)RAND_MAX) * up;
+    }
+
+    static inline float random() {
+      return ((float)rand() / (float)RAND_MAX);
+    }
 
     static bool isEqual(float f1, float f2);
   };

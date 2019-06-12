@@ -16,15 +16,3 @@ Vector3f Math::polarToCart(float theta, float phi) {
   float sint = sin(theta), cost = cos(theta), sinp = sin(phi), cosp = cos(phi);
   return Vector3f(sint * cosp, sint * sinp, cost);
 }
-
-float Math::random(float low, float up) {
-  return low + ((float)rand() / (float)RAND_MAX) * (up - low);
-}
-
-float Math::random(float up) {
-  return ((float)rand() / (float)RAND_MAX) * up;
-}
-
-bool Math::isEqual(float f1, float f2) {
-  return abs(f1 - f2) < std::numeric_limits<float>::epsilon();
-}
