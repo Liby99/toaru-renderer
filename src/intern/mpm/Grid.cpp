@@ -1,6 +1,9 @@
-﻿#include "mpm/grid.h"
+﻿#include <mpm/grid.h>
 
-using namespace toaru::mpm;
+using namespace toaru;
+using Grid = mpm::Grid;
+using Cell = mpm::Cell;
+using Particle = mpm::Particle;
 
 Grid::Grid(const Vector3f& center, const Vector3f& size, const Vector3u& resolution)
   : center(center), size(size) {
@@ -51,6 +54,7 @@ void Grid::resetCells() {
   }
 }
 
+#pragma optimize("", off)
 void Grid::p2g() {
   for (Particle& p : particles) {
     auto index = getCellIndex(p);
@@ -99,13 +103,15 @@ void Grid::p2g() {
     Matrix3f F = D.matrixU() * S * D.matrixU().transpose();
 
     // Quadratic Dp, analogous to an inertia tensor
-    Matrix3f Dp;
+    Matrix3f Dp = Matrix3f::Zero();
     Dp.diagonal() << 0.25 * dx * dx, 0.25 * dy * dy, 0.25 * dz * dz;
     Matrix3f invDp = Dp.inverse();
 
     // Fixed corotated constitutive model
     // Stress tensor ??
-    Matrix3f stress = 2.0 * mu * (p.F - Q) + lambda * (J - 1) * J * p.F.transpose();
+    Matrix3f l = Matrix3f::Zero();
+    l.diagonal() << lambda * (J - 1) * J, lambda * (J - 1) * J, lambda * (J - 1) * J;
+    Matrix3f stress = 2.0 * mu * (p.F - Q).transpose() * p.F + l;
 
     // Eqn 29 Ni(x)Qp(xi − xp) and Eqn 18 det(p.F) * σ = (∂Ψ/∂p.F)p.F^T ??
     //Matrix3f Qp = deltaTime * initialVolume * invDp * J * stress + p.mass * p.C;
@@ -114,7 +120,7 @@ void Grid::p2g() {
     auto apicP = p.mass * p.C;
 
     // Stress momentum;
-    auto stressP = 4.0 * invDp * deltaTime * initialVolume * stress * p.F.transpose();
+    auto stressP = - invDp * deltaTime * initialVolume * stress;
 
     // 2.3 Update neighboring grid
     std::vector<Index> neighbors;
@@ -129,16 +135,21 @@ void Grid::p2g() {
       Vector3f momentum = p.velocity * p.mass;
       // P2G
       Cell& cell = getCell(neighbors[i]);
+      float old = cell.momentum.y();
       // Mass
       cell.mass += weight * p.mass;
       // Momentum ??
-      cell.momentum += momentum;
+      cell.momentum += weight * momentum;
 
       // APIC momentum contribution
       cell.momentum += apicP * deltaPos * weight;
 
       // Stress momentum contribution
-      cell.momentum += stress * deltaPos * weight;
+      //cell.momentum += stressP * deltaPos * weight;
+
+      if(abs(cell.momentum.y()) > 1000) {
+        int a = 0;
+      }
       //cell.momentum += weight * (momentum + Qp * deltaPos);
     }
   }
@@ -160,6 +171,7 @@ void Grid::updateGrid() {
       }
 
       // 3.2 enforce boundary conditions
+      float y = cell.velocity.y();
       auto center = getCellCenter(getCellIndex(i));
       if(center.x() < boundary || center.x() > xres * dx - boundary ||
 		    center.z() < boundary || center.z() > zres * dz - boundary ||
@@ -168,16 +180,21 @@ void Grid::updateGrid() {
       }
 
       if(center.y() < boundary) {
-        cell.velocity.y() = std::max(0.0f, -cell.velocity.y());
+        cell.velocity.y() = std::max(0.0f, y);
+      }
+
+      if(abs(cell.velocity.y()) > 10) {
+        int a = 0;
       }
 
     }
     // TODO
   }
 }
-
 void Grid::g2p() {
+  int count = 0;
   for (Particle& p : particles) {
+    count += 1;
     /*if (isAPIC) {
 
     }else if (isPolyPIC) {
@@ -190,12 +207,14 @@ void Grid::g2p() {
 
     // APIC G2P affine velocity reconstruction
     // Quadratic Dp, analogous to an inertia tensor
-    Matrix3f Dp;
+    Matrix3f Dp = Matrix3f::Zero();
     Dp.diagonal() << 0.25 * dx * dx, 0.25 * dy * dy, 0.25 * dz * dz;
     Matrix3f invDp = Dp.inverse();
 
+
     // Get neighboring grid
     auto index = getCellIndex(p);
+
     std::vector<Index> neighbors;
     populateCellNeighbors(index, neighbors);
     auto [x0, y0, z0] = index;
@@ -209,7 +228,10 @@ void Grid::g2p() {
 
       // Updating particle affine momentum
       p.C += cell.velocity * deltaPos.transpose() * weight;
-
+      
+      if(abs(p.C(1, 1))>1) {
+        int a = 0;
+      }
       // Updating velocity
       p.velocity += cell.velocity * weight;
 	  }
@@ -217,13 +239,21 @@ void Grid::g2p() {
     // Advection
     p.position += p.velocity * deltaTime;
 
+    p.position.x() = std::max(std::min(p.position.x(), xres * dx), 0.0f);
+    p.position.y() = std::max(std::min(p.position.y(), yres * dy), 0.0f);
+    p.position.z() = std::max(std::min(p.position.z(), zres * dz), 0.0f);
+
     // Updating particle affine momentum
     p.C *= invDp;
 
     // 4.1: update particle's deformation gradient using MLS-MPM's velocity gradient estimate
     // Velocity gradient = new Affine momentum
     p.F = (Matrix3f::Identity() + deltaTime * p.C) * p.F;
+    p.Jp = p.F.determinant();
 
+    if(count == 500) {
+      int a = 0;
+    }
     // 4.1: update particle's deformation gradient using MLS-MPM's velocity gradient estimate
     // Reference: MLS-MPM paper, Eq. 17
 
@@ -236,7 +266,7 @@ void Grid::g2p() {
     //// 4.4: advect particle positions by their velocity
   }
 }
-
+#pragma optimize("", on)
 Cell& Grid::getCell(const Grid::Index& index) {
   auto [x, y, z] = index;
   return cells[x * yres * zres + y * zres + z];
@@ -256,8 +286,8 @@ void Grid::populateCellNeighbors(const Grid::Index& index, std::vector<Grid::Ind
   for (int i = x - 1; i <= x + 1; i++) {
     for (int j = y - 1; j <= y + 1; j++) {
       for (int k = z - 1; k <= z + 1; k++) {
-        if (i >= 0 && i < xres && j >= 0 && j < yres && k >= 0 && k < zres && (i != x || j != y || k != z)) {
-          neighbors.push_back(std::make_tuple(i, j, k));
+        if (i >= 0 && i < xres && j >= 0 && j < yres && k >= 0 && k < zres) {
+          neighbors.push_back(std::make_tuple(i, j, k)); //  && (i != x || j != y || k != z)
         }
       }
     }

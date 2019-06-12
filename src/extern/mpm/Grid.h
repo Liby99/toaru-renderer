@@ -6,6 +6,7 @@
 
 #include "cell.h"
 #include "particle.h"
+#include "utility/math.h"
 
 namespace toaru::mpm {
   class Grid {
@@ -26,15 +27,15 @@ namespace toaru::mpm {
     float nu = 0.2f; // Poisson's ratios
     float lambda0 = 0.0f;
     float mu0 = 0.0f;
-    float initialVolume = 1.0f;
+    float initialVolume = 0.01f;
 
     // Time step
-    float deltaTime = 0.01f;
+    float deltaTime = 0.0000001f;
 
     bool hasGravity = false;
-    Vector3f gravity = Vector3f(0, -9.8, 0);
+    Vector3f gravity = Vector3f(0, -0.98, 0);
 
-    float boundary = 0.1;
+    float boundary = 1.5;
 
     std::vector<Particle> particles;
     Cell *cells;

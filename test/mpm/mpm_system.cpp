@@ -5,12 +5,13 @@ using namespace toaru;
 int main(int argc, char **argv) {
 
   // First setup the mpm grid
-  mpm::Grid grid(Vector3f(0.5, 0.5, 0.5), Vector3f(1, 1, 1), Vector3u(100, 100, 100));
+  mpm::Grid grid(Vector3f(10, 10, 10), Vector3f(20, 20, 20), Vector3u(20, 20, 20));
   for (int i = 0; i < 1000; i++) {
-    std::unique_ptr<mpm::Particle> p = std::make_unique<mpm::Particle>(Vector3f(Math::random(), Math::random(), Math::random()));
+    mpm::Particle* p = new mpm::Particle(Vector3f(Math::random()*20, Math::random()*20, Math::random()*20));
+    p->mass = 0.01;
     grid.addParticle(*p);
   }
-
+  grid.hasGravity = true;
   // Start the application
   toaru::init(argc, argv);
 

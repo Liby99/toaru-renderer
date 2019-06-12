@@ -1,4 +1,5 @@
 #include "mpm/system.h"
+#include <Windows.h>
 
 using namespace toaru::mpm;
 
@@ -13,9 +14,19 @@ void System::init() {
     indices.col(i) << i;
   }
 }
-
+bool pressed = false;
 void System::update() {
-  grid.step(); // First step
+  if(GetAsyncKeyState(VK_INSERT)){
+    if(!pressed){
+      grid.step(); // First step
+      pressed = true;
+    }
+  }else {
+    pressed = false;
+  }
+  if(GetAsyncKeyState(VK_HOME)) {
+    grid.step(); 
+  }
   // clear(); // Clear the point cloud
   fill(); // Fill in the data
 }
@@ -25,6 +36,6 @@ void System::fill() {
   for (int i = 0; i < particleAmount; i++) {
     const Particle &p = grid.particles[i];
     positions.col(i) = p.position;
-    colors.col(i) = Vector3f(1, 1, 1);
+    colors.col(i) = p.velocity;
   }
 }
