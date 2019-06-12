@@ -48,7 +48,9 @@ void Shader::init() {
     if (simple) {
       shader->init("default", DEFAULT_VERT_SHADER, DEFAULT_FRAG_SHADER);
     } else {
-      shader->initFromFiles(name, path + ".vert.glsl", path + ".frag.glsl");
+      if (!shader->initFromFiles(name, path + ".vert.glsl", path + ".frag.glsl")) {
+        std::cout << "Failed loading shader " << path << std::endl;
+      }
     }
   }
 }

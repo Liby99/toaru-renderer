@@ -9,9 +9,13 @@ PointCloudRenderer::PointCloudRenderer(const std::string &name) :
 
 PointCloudRenderer::PointCloudRenderer(const std::string &name, float pointSize) :
   pointCloudName(name),
-  shader(Shader::get("colored_point_cloud")),
+  shader(Shader::get(Path::getAbsolutePathTo("./shader/colored_point_cloud"))),
   pointSize(pointSize),
   Renderer() {}
+
+void PointCloudRenderer::init() {
+  shader.init();
+}
 
 void PointCloudRenderer::render() {
   if (object().hasComponent(pointCloudName)) {
@@ -22,7 +26,7 @@ void PointCloudRenderer::render() {
 
     // Get the transform matrices
     shader.setUniform("model", object().transform.getTransform());
-    shader.setUniform("viewProj", context().getMainCameraViewProj());
+    shader.setUniform("viewPersp", context().getMainCameraViewProj());
 
     // Keep the old point size
     GLfloat oldSize;
@@ -33,6 +37,8 @@ void PointCloudRenderer::render() {
     shader.uploadIndices(pc.indices);
     shader.uploadAttr("point", pc.positions);
     shader.uploadAttr("color", pc.colors);
+
+    // Draw the points
     shader.drawIndexed(GL_POINTS, 0, pc.numPositions());
 
     // Restore the old point size

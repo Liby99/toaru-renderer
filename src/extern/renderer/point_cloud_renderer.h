@@ -10,12 +10,14 @@ namespace toaru {
   public:
     const static float DEFAULT_POINT_SIZE;
 
-    const std::string &pointCloudName;
+    std::string pointCloudName;
     Shader &shader;
     float pointSize;
 
     PointCloudRenderer(const std::string &name);
     PointCloudRenderer(const std::string &name, float pointSize);
+
+    virtual void init();
     virtual void render();
   };
 }

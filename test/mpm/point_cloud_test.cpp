@@ -8,6 +8,7 @@ int main(int argc, char **argv) {
   Scene scene;
 
   Entity camHolder;
+  camHolder.transform.position = Vector3f(10, 10, 10);
   ThirdPersonCamera cam;
   camHolder.addComponent("camera", cam);
   scene.root.addChild(camHolder);
@@ -15,17 +16,17 @@ int main(int argc, char **argv) {
   Entity pcHolder;
   PointCloud pc({
     Vector3f(0, 0, 0),
-    Vector3f(0, 0, 1),
-    Vector3f(1, 0, 0),
-    Vector3f(1, 0, 1)
+    Vector3f(0, 0.1, 0.5),
+    Vector3f(0.5, 0.2, 0),
+    Vector3f(0.5, 0.3, 0.5)
   }, {
     Vector3f(1, 1, 1),
     Vector3f(1, 1, 1),
     Vector3f(1, 1, 1),
     Vector3f(1, 1, 1)
   });
-  PointCloudRenderer pcRenderer("point_cloud");
-  pcHolder.addComponent("point_cloud", pc);
+  PointCloudRenderer pcRenderer("pc");
+  pcHolder.addComponent("pc", pc);
   pcHolder.addComponent("renderer", pcRenderer);
   scene.root.addChild(pcHolder);
 
