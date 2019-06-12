@@ -16,3 +16,7 @@ Vector3f Math::polarToCart(float theta, float phi) {
   float sint = sin(theta), cost = cos(theta), sinp = sin(phi), cosp = cos(phi);
   return Vector3f(sint * cosp, sint * sinp, cost);
 }
+
+bool Math::isEqual(float f1, float f2) {
+  return abs(f1 - f2) < std::numeric_limits<float>::epsilon();
+}

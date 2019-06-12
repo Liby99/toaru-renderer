@@ -24,6 +24,7 @@
 #include "mpm/Cell.h"
 #include "mpm/Grid.h"
 #include "mpm/Particle.h"
+#include "mpm/system.h"
 #include "physics/aabb_tree.h"
 #include "physics/aabb_tree_node.h"
 #include "physics/point.h"
