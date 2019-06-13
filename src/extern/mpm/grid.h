@@ -30,10 +30,14 @@ namespace toaru::mpm {
     float initialVolume = 1.0f;
 
     // Time step
-    float deltaTime = 0.0002f;
+    float deltaTime = 0.0003f;
 
     bool hasGravity = false;
     Vector3f gravity = Vector3f(0, -200, 0);
+    int stepCount = 0;
+
+    // use generated volume
+    bool generateVolume = true;
 
     float boundary = 0.03;
 

@@ -96,7 +96,7 @@ void Grid::init() {
 }
 
 void Grid::step() {
-
+  stepCount += 1;
   // 1. Clear all cells
   resetCells();
 
@@ -188,8 +188,12 @@ void Grid::p2g() {
     auto apicP = p.mass * p.C;
 
     // Stress momentum;
-    auto stressP = - invDp * deltaTime * p.initialVolume * stress;
-
+    Matrix3f stressP;
+    if(generateVolume){
+      stressP = - invDp * deltaTime * p.initialVolume * stress;
+    } else {
+      stressP = - invDp * deltaTime * initialVolume * stress;
+    }
     //Matrix3f stress = 2.0 * mu * (p.F - Q) + lambda * (J - 1) * J * p.F.transpose();
 
     // Eqn 29 Ni(x)Qp(xi − xp) and Eqn 18 det(p.F) * σ = (∂Ψ/∂p.F)p.F^T ??
