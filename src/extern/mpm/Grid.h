@@ -27,15 +27,15 @@ namespace toaru::mpm {
     float nu = 0.2f; // Poisson's ratios
     float lambda0 = 0.0f;
     float mu0 = 0.0f;
-    float initialVolume = 0.01f;
+    float initialVolume = 0.1f;
 
     // Time step
-    float deltaTime = 0.0000001f;
+    float deltaTime = 0.001f;
 
     bool hasGravity = false;
-    Vector3f gravity = Vector3f(0, -0.98, 0);
+    Vector3f gravity = Vector3f(0, -200, 0);
 
-    float boundary = 1.5;
+    float boundary = 0.1;
 
     std::vector<Particle> particles;
     Cell *cells;

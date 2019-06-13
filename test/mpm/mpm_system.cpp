@@ -5,10 +5,10 @@ using namespace toaru;
 int main(int argc, char **argv) {
 
   // First setup the mpm grid
-  mpm::Grid grid(Vector3f(10, 10, 10), Vector3f(20, 20, 20), Vector3u(20, 20, 20));
-  for (int i = 0; i < 1000; i++) {
-    mpm::Particle* p = new mpm::Particle(Vector3f(Math::random()*20, Math::random()*20, Math::random()*20));
-    p->mass = 0.01;
+  mpm::Grid grid(Vector3f(5, 5, 5), Vector3f(10, 10, 10), Vector3u(80, 80, 80));
+  for (int i = 0; i < 5000; i++) {
+    mpm::Particle* p = new mpm::Particle(Vector3f(Math::random()+2, Math::random()+2, Math::random()+2));
+    p->mass = 1.0;
     grid.addParticle(*p);
   }
   grid.hasGravity = true;
@@ -18,7 +18,7 @@ int main(int argc, char **argv) {
   Scene scene;
 
   Entity camHolder;
-  camHolder.transform.position << 3, 3, 3;
+  camHolder.transform.position << -3, -3, -3;
   ThirdPersonCamera cam;
   camHolder.addComponent("camera", cam);
   scene.root.addChild(camHolder);

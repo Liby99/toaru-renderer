@@ -36,6 +36,6 @@ void System::fill() {
   for (int i = 0; i < particleAmount; i++) {
     const Particle &p = grid.particles[i];
     positions.col(i) = p.position;
-    colors.col(i) = p.velocity;
+    colors.col(i) = Vector3f::Ones(); //p.velocity;
   }
 }

@@ -1,4 +1,5 @@
 ﻿#include <mpm/grid.h>
+#include <iostream>
 
 using namespace toaru;
 using Grid = mpm::Grid;
@@ -54,7 +55,7 @@ void Grid::resetCells() {
   }
 }
 
-#pragma optimize("", off)
+//#pragma optimize("", off)
 void Grid::p2g() {
   for (Particle& p : particles) {
     auto index = getCellIndex(p);
@@ -72,19 +73,22 @@ void Grid::p2g() {
     Vector3f invh(invdx, invdy, invdz);
     Vector3f powInvh(invdx * invdx, invdy * invdy, invdz * invdz);
 
-    Vector3f constant1(1.125f, 1.125f, 1.125f);
+    Vector3f constant1(0.125f, 0.125f, 0.125f);
     Vector3f constant2(0.75f, 0.75f, 0.75f);
+
+    Vector3f x = invh.cwiseProduct(cellDiff);
+    Vector3f xx = powInvh.cwiseProduct(powCellDiff);
 
     // 2.1 Calculate weights (in column)
     Matrix3f weights;
-    weights << 0.5f * powInvh.cwiseProduct(powCellDiff) + 1.5f * invh.cwiseProduct(cellDiff) + constant1,
-      -powInvh.cwiseProduct(powCellDiff) + constant2,
-      0.5f * powInvh.cwiseProduct(powCellDiff) - 1.5f * invh.cwiseProduct(cellDiff) + constant1;
+    weights << constant1 - 0.5f * x + 0.5f * xx,
+      -xx + constant2,
+      constant1 + 0.5f * x + 0.5f * xx;
 
     p.W = weights;
 
     // 2.2 CPIC
-    float exp = std::exp(e * (1 - p.Jp));
+    float exp = std::exp(xi * (1 - p.Jp));
     float lambda = lambda0 * exp;
     float mu = mu0 * exp;
 
@@ -122,6 +126,16 @@ void Grid::p2g() {
     // Stress momentum;
     auto stressP = - invDp * deltaTime * initialVolume * stress;
 
+    //Matrix3f stress = 2.0 * mu * (p.F - Q) + lambda * (J - 1) * J * p.F.transpose();
+
+    // Eqn 29 Ni(x)Qp(xi − xp) and Eqn 18 det(p.F) * σ = (∂Ψ/∂p.F)p.F^T ??
+    //Matrix3f Qp = deltaTime * initialVolume * invDp * J * stress + p.mass * p.C;
+
+
+    // Stress momentum;
+    //auto stressP = invDp * deltaTime * initialVolume * stress * p.F.transpose();
+
+
     // 2.3 Update neighboring grid
     std::vector<Index> neighbors;
     populateCellNeighbors(index, neighbors);
@@ -131,7 +145,11 @@ void Grid::p2g() {
       float weight = p.W.col(x - x0 + 1).x() *
           p.W.col(y - y0 + 1).y() *
           p.W.col(z - z0 + 1).z();
-      Vector3f deltaPos =  getCellCenter(neighbors[i]) - p.position;
+
+      if(weight > 1) {
+        std::cout << "wrong" << std::endl;
+      }
+      Vector3f deltaPos = (getCellCenter(neighbors[i]) - p.position) * dx;
       Vector3f momentum = p.velocity * p.mass;
       // P2G
       Cell& cell = getCell(neighbors[i]);
@@ -145,8 +163,10 @@ void Grid::p2g() {
       cell.momentum += apicP * deltaPos * weight;
 
       // Stress momentum contribution
-      //cell.momentum += stressP * deltaPos * weight;
-
+      cell.momentum += stressP * deltaPos * weight;
+      if(isnan(cell.momentum.y())) {
+        int a = 0;
+      }
       if(abs(cell.momentum.y()) > 1000) {
         int a = 0;
       }
@@ -210,7 +230,7 @@ void Grid::g2p() {
     Matrix3f Dp = Matrix3f::Zero();
     Dp.diagonal() << 0.25 * dx * dx, 0.25 * dy * dy, 0.25 * dz * dz;
     Matrix3f invDp = Dp.inverse();
-
+    Vector3f invh(invdx, invdy, invdz);
 
     // Get neighboring grid
     auto index = getCellIndex(p);
@@ -224,7 +244,7 @@ void Grid::g2p() {
       float weight = p.W.col(x - x0 + 1).x() *
           p.W.col(y - y0 + 1).y() *
           p.W.col(z - z0 + 1).z();
-      Vector3f deltaPos =  getCellCenter(neighbors[i]) - p.position;
+      Vector3f deltaPos = (getCellCenter(neighbors[i]) - p.position) * dx;
 
       // Updating particle affine momentum
       p.C += cell.velocity * deltaPos.transpose() * weight;
@@ -233,12 +253,19 @@ void Grid::g2p() {
         int a = 0;
       }
       // Updating velocity
+      if(isnan(cell.velocity.x())) {
+        int a = 0;
+      }
       p.velocity += cell.velocity * weight;
 	  }
 
     // Advection
     p.position += p.velocity * deltaTime;
 
+    if(isnan(p.position.x())) {
+      int a = 0;
+    }
+    //std::cout << p.position << std::endl;
     p.position.x() = std::max(std::min(p.position.x(), xres * dx), 0.0f);
     p.position.y() = std::max(std::min(p.position.y(), yres * dy), 0.0f);
     p.position.z() = std::max(std::min(p.position.z(), zres * dz), 0.0f);
@@ -249,7 +276,19 @@ void Grid::g2p() {
     // 4.1: update particle's deformation gradient using MLS-MPM's velocity gradient estimate
     // Velocity gradient = new Affine momentum
     p.F = (Matrix3f::Identity() + deltaTime * p.C) * p.F;
-    p.Jp = p.F.determinant();
+
+    // SVD decomposition
+    Eigen::JacobiSVD<Matrix3f> D(p.F, Eigen::ComputeFullU | Eigen::ComputeFullV);
+    Matrix3f S = Matrix3f::Zero();
+    S.diagonal() << std::clamp(D.singularValues()(0), 1.0f - theta_c, 1.0f + theta_s),
+    std::clamp(D.singularValues()(1), 1.0f - theta_c, 1.0f + theta_s),
+    std::clamp(D.singularValues()(2), 1.0f - theta_c, 1.0f + theta_s);
+    
+
+    float oldJ = p.F.determinant();
+    p.F = D.matrixU() * S * D.matrixV().transpose();
+
+    p.Jp = std::clamp(p.Jp * oldJ / p.F.determinant(), 0.6f, 20.0f);
 
     if(count == 500) {
       int a = 0;
