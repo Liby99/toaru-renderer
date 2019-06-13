@@ -16,17 +16,17 @@ void System::init() {
 }
 bool pressed = false;
 void System::update() {
-  if(GetAsyncKeyState(VK_INSERT)){
-    if(!pressed){
+  //if(GetAsyncKeyState(VK_INSERT)){
+    //if(!pressed){
       grid.step(); // First step
-      pressed = true;
-    }
-  }else {
-    pressed = false;
-  }
-  if(GetAsyncKeyState(VK_HOME)) {
-    grid.step(); 
-  }
+      //pressed = true;
+    //}
+  //}else {
+  //  pressed = false;
+  //}
+  //if(GetAsyncKeyState(VK_HOME)) {
+  //  grid.step(); 
+  //}
   // clear(); // Clear the point cloud
   fill(); // Fill in the data
 }

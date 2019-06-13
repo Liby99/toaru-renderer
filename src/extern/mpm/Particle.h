@@ -12,6 +12,7 @@ namespace toaru::mpm {
     Matrix3f C; // Affine momentum of APIC
     float Jp; // Determinant of the deformation gradient
     Matrix3f W; // Kernel Function
+    float initialVolume;
 
     Particle();
     Particle(const Vector3f &pos);

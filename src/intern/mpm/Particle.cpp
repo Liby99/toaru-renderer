@@ -11,4 +11,5 @@ Particle::Particle(const Vector3f &pos) :
   F(Matrix3f::Identity()),
   C(Matrix3f::Zero()),
   Jp(1.0f),
-  W(Matrix3f::Zero()) {}
+  W(Matrix3f::Zero()),
+  initialVolume(0.0f){}
