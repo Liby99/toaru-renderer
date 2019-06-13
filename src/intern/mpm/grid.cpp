@@ -1,5 +1,6 @@
 ﻿#include <mpm/grid.h>
 #include <iostream>
+//#include <omp.h>
 
 using namespace toaru;
 using Grid = mpm::Grid;
@@ -117,7 +118,10 @@ void Grid::resetCells() {
 
 //#pragma optimize("", off)
 void Grid::p2g() {
-  for (Particle &p : particles) {
+#pragma omp parallel for
+  for (int c = 0; c < particles.size(); c ++) {
+    Particle &p = particles[c];
+    //std::cout << omp_get_max_threads() <<std::endl;
     auto index = getCellIndex(p);
 
     // Get center of current cell
@@ -158,13 +162,13 @@ void Grid::p2g() {
     // Polar decomposition
     Eigen::JacobiSVD<Matrix3f> D(p.F, Eigen::ComputeFullU | Eigen::ComputeFullV);
 
-    // Q = V * U';
-    // F = U * S * U';
-    // origF = Q*F = V * U' * U * S * U' = V * S * U';
-    Matrix3f Q = D.matrixV() * D.matrixU().transpose();
+    // Q = U * V';
+    // F = V * S * V';
+    // origF = Q*F = U * V' * V * S * V' = U * S * V';
+    Matrix3f Q = D.matrixU() * D.matrixV().transpose();
     Matrix3f S = Matrix3f::Zero();
     S.diagonal() << D.singularValues();
-    Matrix3f F = D.matrixU() * S * D.matrixU().transpose();
+    Matrix3f F = D.matrixV() * S * D.matrixV().transpose();
 
     // Quadratic Dp, analogous to an inertia tensor
     Matrix3f Dp = Matrix3f::Zero();
@@ -184,7 +188,7 @@ void Grid::p2g() {
     auto apicP = p.mass * p.C;
 
     // Stress momentum;
-    auto stressP = - invDp * deltaTime * initialVolume * stress;
+    auto stressP = - invDp * deltaTime * p.initialVolume * stress;
 
     //Matrix3f stress = 2.0 * mu * (p.F - Q) + lambda * (J - 1) * J * p.F.transpose();
 
@@ -192,7 +196,7 @@ void Grid::p2g() {
     //Matrix3f Qp = deltaTime * initialVolume * invDp * J * stress + p.mass * p.C;
 
     // Stress momentum;
-    //auto stressP = invDp * deltaTime * initialVolume * stress * p.F.transpose();
+    //auto stressP = invDp * deltaTime * p.initialVolume * stress * p.F * p.F.transpose();
 
     // 2.3 Update neighboring grid
     std::vector<Index> neighbors;
@@ -235,6 +239,7 @@ void Grid::p2g() {
 
 void Grid::updateGrid() {
   // 3. Calculate grid velocities
+  #pragma omp parallel for
   for (int i = 0; i < totalCellAmount; i++) {
     // 3.1 Calculate grid velocity based on momentum found in the P2G stage
     Cell &cell = cells[i];
@@ -272,7 +277,9 @@ void Grid::updateGrid() {
 
 void Grid::g2p() {
   int count = 0;
-  for (Particle &p : particles) {
+#pragma omp parallel for
+  for (int c = 0; c < particles.size(); c ++) {
+    Particle &p = particles[c];
     count += 1;
     /*if (isAPIC) {
 
@@ -304,7 +311,6 @@ void Grid::g2p() {
                      p.W.col(y - y0 + 1).y() *
                      p.W.col(z - z0 + 1).z();
       Vector3f deltaPos = (getCellCenter(neighbors[i]) - p.position);
-
       // Updating particle affine momentum
       p.C += cell.velocity * deltaPos.transpose() * weight;
 

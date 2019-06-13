@@ -5,12 +5,13 @@ project(toaru)
 # Options
 option(TOARU_BUILD_APP "Building application executables" ON)
 option(TOARU_BUILD_TEST "Building test executables" ON)
-option(USE_OPEN_MP "Build use open mp" OFF)
+option(USE_OPEN_MP "Build use open mp" ON)
 
 # Global setup
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_MACOSX_RPATH 1)
 set(CMAKE_CXX_FLAGS_RELEASE "-O3")
+
 set(build_dir ${CMAKE_BINARY_DIR})
 set(curr_dir ${CMAKE_CURRENT_LIST_DIR})
 set(script_dir ${curr_dir}/script)
@@ -31,6 +32,10 @@ if(MINGW)
     -Wno-int-in-bool-context -Wno-tautological-compare -Wno-class-memaccess \
     -Wno-maybe-uninitialized -Wno-return-type -Wno-cast-function-type -Wno-implicit-fallthrough")
 endif()
+
+if (MSVC)
+  set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /openmp")
+endif(MSVC)
 
 # Include OpenMP
 if(USE_OPEN_MP)
@@ -89,7 +94,7 @@ include_directories(src/extern)
 file(GLOB_RECURSE toaru_sources ${intern_dir}/*.cpp ${extern_dir}/*.h)
 set(toaru ${toaru_sources})
 add_library(toaru STATIC ${toaru})
-target_link_libraries(toaru nanogui assimp ${NANOGUI_EXTRA_LIBS})
+target_link_libraries(toaru nanogui assimp ${NANOGUI_EXTRA_LIBS} ${OpenMP_CXX_LIBRARIES})
 
 # Compile all the executable files
 if(TOARU_BUILD_TEST)

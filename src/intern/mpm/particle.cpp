@@ -7,6 +7,7 @@ Particle::Particle() : Particle(Vector3f::Zero()) {}
 Particle::Particle(const Vector3f &pos) :
   position(pos),
   velocity(Vector3f::Zero()),
+  color(Vector3f::Ones()),
   mass(1.0f),
   F(Matrix3f::Identity()),
   C(Matrix3f::Zero()),

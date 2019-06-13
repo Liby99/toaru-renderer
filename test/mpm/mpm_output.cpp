@@ -7,7 +7,7 @@ using namespace toaru;
 
 int main() {
 
-  int particlePerBox = 1000, numKeyframes = 5;
+  int particlePerBox = 1000, numKeyframes = 200;
 
   std::vector<Vector3f> boxCenters = {
     Vector3f(0, 1, 0),
@@ -26,6 +26,7 @@ int main() {
       )));
     }
   }
+  grid.hasGravity = true;
 
   for (int i = 0; i < numKeyframes; i++) {
     std::string filename = "frame_" + std::to_string(i) + ".json";
