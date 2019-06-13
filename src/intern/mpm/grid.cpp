@@ -162,13 +162,13 @@ void Grid::p2g() {
     // Polar decomposition
     Eigen::JacobiSVD<Matrix3f> D(p.F, Eigen::ComputeFullU | Eigen::ComputeFullV);
 
-    // Q = V * U';
-    // F = U * S * U';
-    // origF = Q*F = V * U' * U * S * U' = V * S * U';
-    Matrix3f Q = D.matrixV() * D.matrixU().transpose();
+    // Q = U * V';
+    // F = V * S * V';
+    // origF = Q*F = U * V' * V * S * V' = U * S * V';
+    Matrix3f Q = D.matrixU() * D.matrixV().transpose();
     Matrix3f S = Matrix3f::Zero();
     S.diagonal() << D.singularValues();
-    Matrix3f F = D.matrixU() * S * D.matrixU().transpose();
+    Matrix3f F = D.matrixV() * S * D.matrixV().transpose();
 
     // Quadratic Dp, analogous to an inertia tensor
     Matrix3f Dp = Matrix3f::Zero();
