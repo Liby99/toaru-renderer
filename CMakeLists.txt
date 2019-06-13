@@ -74,7 +74,7 @@ check_library("stb")
 include_directories(lib/stb/)
 
 # Python
-find_package(Python2 COMPONENTS Interpreter Development)
+find_package(Python3 COMPONENTS Interpreter Development)
 
 # Generate single header file using the script
 set(generate_header ${script_dir}/generate_header.py)
@@ -113,6 +113,7 @@ foreach(exec_source ${tests} ${apps})
 endforeach()
 
 # Add pympm
+include_directories(${Python3_INCLUDE_DIRS})
 file(GLOB pympm_file python/pympm.cpp)
 add_library(pympm SHARED ${pympm_file})
-target_link_libraries(pympm toaru ${Python2_LIBRARIES})
+target_link_libraries(pympm toaru ${Python3_LIBRARIES})

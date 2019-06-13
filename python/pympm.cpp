@@ -1,4 +1,4 @@
-#include <Python/Python.h>
+#include "Python.h"
 #include <iostream>
 
 #include <toaru/toaru.h>
@@ -27,9 +27,9 @@ static PyObject *mpm_simulate(PyObject *self, PyObject *args) {
     // Fill in the data
     auto vertices = PyList_New(grid.particles.size());
     for (int j = 0; j < grid.particles.size(); j++) {
-      auto pos = PyTuple_New(3);
+      auto pos = PyList_New(3);
       for (int k = 0; k < 3; k++) {
-        PyTuple_SetItem(pos, k, PyFloat_FromDouble(grid.particles[j].position(k)));
+        PyList_SetItem(pos, k, PyFloat_FromDouble(grid.particles[j].position(k)));
       }
       PyList_SetItem(vertices, j, pos);
     }
@@ -50,6 +50,14 @@ static PyMethodDef MpmMethods[] = {
   {NULL, NULL, 0, NULL}
 };
 
-PyMODINIT_FUNC initpympm(void) {
-  (void) Py_InitModule("pympm", MpmMethods);
+static struct PyModuleDef pympmModule = {
+    PyModuleDef_HEAD_INIT,
+    "pympm",   /* name of module */
+    NULL, /* module documentation, may be NULL */
+    -1,       /* size of per-interpreter state of the module, or -1 if the module keeps state in global variables. */
+    MpmMethods
+};
+
+PyMODINIT_FUNC PyInit_pympm(void) {
+  return PyModule_Create(&pympmModule);
 }
