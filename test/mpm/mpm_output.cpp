@@ -7,25 +7,28 @@ using namespace toaru;
 
 int main() {
 
-  int particlePerBox = 1000, numKeyframes = 200;
+  int particlePerBox = 1000, numKeyframes = 200, skipFrame = 10;
 
-  std::vector<Vector3f> boxCenters = {
-    Vector3f(0, 1, 0),
-    Vector3f(-0.5f, 4, -0.5f),
-    Vector3f(0.5f, 5, 0.5f)
-  };
-
-  mpm::Grid grid(Vector3f(0, 0, 5), Vector3f(10, 10, 10), Vector3u(100, 100, 100));
-  for (int i = 0; i < boxCenters.size(); i++) {
-    auto p = boxCenters[i];
-    for (int j = 0; j < particlePerBox; j++) {
-      grid.addParticle(mpm::Particle(Vector3f(
-        Math::random(p.x() - 0.5f, p.x() + 0.5f),
-        Math::random(p.y() - 0.5f, p.y() + 0.5f),
-        Math::random(p.z() - 0.5f, p.z() + 0.5f)
-      )));
-    }
+  mpm::Grid grid(Vector3f(5, 5, 5), Vector3f(10, 10, 10), Vector3u(100, 100, 100));
+  for (int i = 0; i < particlePerBox; i++) {
+    mpm::Particle* p = new mpm::Particle(Vector3f(Math::random()+2.1, Math::random()+1.6, Math::random()+2.1));
+    p->mass = 1.5;
+    p->color = Vector3f(1,0,0);
+    grid.addParticle(*p);
   }
+  for (int i = 0; i < particlePerBox; i++) {
+    mpm::Particle* p = new mpm::Particle(Vector3f(Math::random()+2.7, Math::random()+2.7, Math::random()+2.7));
+    p->mass = 3.5;
+    p->color = Vector3f(0,1,0);
+    grid.addParticle(*p);
+  }
+  for (int i = 0; i < particlePerBox; i++) {
+    mpm::Particle* p = new mpm::Particle(Vector3f(Math::random()+1.5, Math::random()+0.5, Math::random()+1.5));
+    p->mass = 1.1;
+    p->color = Vector3f(0,0,1);
+    grid.addParticle(*p);
+  }
+  grid.init();
   grid.hasGravity = true;
 
   for (int i = 0; i < numKeyframes; i++) {
@@ -44,6 +47,8 @@ int main() {
     file << "]";
     file.close();
 
-    grid.step();
+    for (int j = 0; j < skipFrame; j++) {
+      grid.step();
+    }
   }
 }
