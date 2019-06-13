@@ -15,9 +15,9 @@ frames = 0, 25, 50, 75, 100
 values = 0.0, 3.0, 5.0, 3.0, 0.0
 
 for v in mesh.vertices:
-    fcurves = [action.fcurves.new(data_path % v.index, i) for i in range(3)]
+    fcurves = [action.fcurves.new(data_path % v.index, index=i) for i in range(3)]
     co_rest = v.co
     for t, value in zip(frames, values):
         co_kf = co_rest + value * co_rest
         for fcu, val in zip(fcurves, values):
-            fcu.keyframe_points.insert(t, val, {'FAST'})
+            fcu.keyframe_points.insert(t, val, options={'FAST'})
