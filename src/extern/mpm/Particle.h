@@ -7,6 +7,7 @@ namespace toaru::mpm {
   class Particle {
   public:
     Vector3f position, velocity;
+    Vector3f color;
     float mass;
     Matrix3f F; // Deformation gradient
     Matrix3f C; // Affine momentum of APIC
