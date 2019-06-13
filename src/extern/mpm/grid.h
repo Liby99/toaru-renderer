@@ -19,12 +19,12 @@ namespace toaru::mpm {
     float dx, dy, dz, invdx, invdy, invdz;
 
     // Physical constant
-    float xi = 5; // hardening
+    float xi = 10; // hardening
     float e = 140000.0f; // initial young's modulus
-    float theta_c = 2.5 * 1e-2; // Critical compression
-    float theta_s = 7.5 * 1e-3; // Critical stretch
+    float theta_c = 2.5 * 1e-4; // Critical compression
+    float theta_s = 7.5 * 1e-5; // Critical stretch
     // float rho = 400.0f; // initial density
-    float nu = 0.1f; // Poisson's ratios
+    float nu = 0.495f; // Poisson's ratios
     float lambda0 = 0.0f;
     float mu0 = 0.0f;
     float initialVolume = 1.0f;
@@ -35,7 +35,7 @@ namespace toaru::mpm {
     bool hasGravity = false;
     Vector3f gravity = Vector3f(0, -200, 0);
 
-    float boundary = 0.1;
+    float boundary = 0.03;
 
     std::vector<Particle> particles;
     Cell *cells;
