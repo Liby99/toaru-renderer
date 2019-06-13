@@ -73,6 +73,9 @@ include_directories(lib/assimp/include)
 check_library("stb")
 include_directories(lib/stb/)
 
+# Python
+find_package(Python3 COMPONENTS Interpreter Development)
+
 # Generate single header file using the script
 set(generate_header ${script_dir}/generate_header.py)
 execute_process(COMMAND python3 ${generate_header} toaru ${extern_dir})
@@ -108,3 +111,9 @@ foreach(exec_source ${tests} ${apps})
   target_link_libraries(${target_name} toaru)
   include("${target_dir}/CMakeLists.txt" OPTIONAL)
 endforeach()
+
+# Add pympm
+include_directories(${Python3_INCLUDE_DIRS})
+file(GLOB pympm_file python/pympm.cpp)
+add_library(pympm SHARED ${pympm_file})
+target_link_libraries(pympm toaru ${Python3_LIBRARIES})
